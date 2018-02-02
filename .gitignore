@@ -10,3 +10,5 @@ build/
 .idea/
 *.iml
 local.properties
+app/gradle/wrapper/gradle-wrapper.jar
+app/.idea/misc.xml
