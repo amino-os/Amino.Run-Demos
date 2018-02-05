@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.openalpr.OpenALPR;
+import org.openalpr.model.Result;
 import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static File destination;
     private TextView resultTextView;
     private ImageView imageView;
+    private static final int MAX_NUM_OF_PLATES = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +78,16 @@ public class MainActivity extends AppCompatActivity {
 
             // Picasso requires permission.WRITE_EXTERNAL_STORAGE
             Picasso.with(MainActivity.this).load(destination).fit().centerCrop().into(imageView);
+            resultTextView.setMovementMethod(new ScrollingMovementMethod());
             resultTextView.setText("Processing");
+
 
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    String result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+                    String result = OpenALPR.Factory
+                            .create(MainActivity.this, ANDROID_DATA_DIR)
+                            .recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, MAX_NUM_OF_PLATES);
 
                     Log.d("OPEN ALPR", result);
 
@@ -93,11 +100,15 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "It was not possible to detect the licence plate.", Toast.LENGTH_LONG).show();
                                     resultTextView.setText("It was not possible to detect the licence plate.");
                                 } else {
-                                    resultTextView.setText("Plate: " + results.getResults().get(0).getPlate()
-                                            // Trim confidence to two decimal places
-                                            + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
-                                            // Convert processing time to seconds and trim to two decimal places
-                                            + " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds");
+                                    String textToShow = " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds\n";
+                                    textToShow += "Number of plates found: " + results.getResults().size() +"\n";
+
+                                    for (Result result : results.getResults()) {
+                                        textToShow += "Plate: " + result.getPlate()
+                                                + " Confidence: " + String.format("%.2f", result.getConfidence()) + "%\n";
+                                    }
+
+                                    resultTextView.setText(textToShow);
                                 }
                             }
                         });
