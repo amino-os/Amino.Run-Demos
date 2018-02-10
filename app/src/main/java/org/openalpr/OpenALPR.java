@@ -79,10 +79,29 @@ public interface OpenALPR {
             if (instance == null) {
                 instance = new AlprJNIWrapper();
 
-                Utils.copyAssetFolder(context.getAssets(), "runtime_data", androidDataDir + File.separatorChar + "runtime_data");
+                //Utils.copyAssetFolder(context.getAssets(), "runtime_data", androidDataDir + File.separatorChar + "runtime_data");
             }
 
             return instance;
+        }
+
+        /**
+         *
+         * @param context The application context.
+         * @param androidDataDir The application data directory. Something like: "/data/data/com.sandro.openalprsample".
+         *
+         * @return returns the OpenALPR instance.
+         */
+        public synchronized static OpenALPR create() {
+            if (instance == null) {
+                instance = new AlprJNIWrapper();
+            }
+
+            return instance;
+        }
+
+        public synchronized static boolean isOpenALPRNull() {
+            return (instance == null);
         }
     }
 

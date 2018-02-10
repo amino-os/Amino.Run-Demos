@@ -1,12 +1,13 @@
 package org.openalpr;
 
+
 /**
  * Open ALPR wrapper.
  */
 public class AlprJNIWrapper implements OpenALPR {
 
     static {
-        System.loadLibrary("openalpr-native");
+        System.loadLibrary("openlapr-native");
     }
 
     /* (non-Javadoc)

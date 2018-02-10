@@ -3,14 +3,17 @@ package com.sandro.openalprsample;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +29,13 @@ import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.openalpr.OpenALPR;
+import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
 import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,8 +76,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
-            final ProgressDialog progress = ProgressDialog.show(this, "Loading", "Parsing result...", true);
-            final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+            try {
+//                Uri fileUri = Uri.fromFile(destination);
+//                String fileName = destination.getName();
+//                long fileSize = destination.length();
+
+//                final ProgressDialog progressFileInfo
+//                        = ProgressDialog.show(this, "FileSize", "Name = " + fileName + " Size = " + fileSize, true);
+
+            final ProgressDialog progress
+                    = ProgressDialog.show(this, "Loading", "Parsing result...", true);
+            final String openAlprConfFile
+                    = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 10;
 
@@ -85,9 +100,17 @@ public class MainActivity extends AppCompatActivity {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    String result = OpenALPR.Factory
-                            .create(MainActivity.this, ANDROID_DATA_DIR)
-                            .recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, MAX_NUM_OF_PLATES);
+                    String result = null;
+
+                    try {
+                        String filePath = destination.getAbsolutePath();
+                        OpenAlprSapphire oas = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES);
+                        result = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+//                        OpenAlprSapphire oas = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES);
+//                        result = oas.execute().get();
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
 
                     Log.d("OPEN ALPR", result);
 
@@ -122,11 +145,44 @@ public class MainActivity extends AppCompatActivity {
                                 resultTextView.setText(resultsError.getMsg());
                             }
                         });
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
+//                    progressFileInfo.dismiss();
                     progress.dismiss();
                 }
             });
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class OpenAlprSapphire extends AsyncTask<Void, Void, String> {
+        private Context context;
+        private String ANDROID_DATA_DIR;
+        private String countryCode;
+        private String secondParam;
+        private String absolutePath;
+        private String openAlprConfFile;
+        private int MAX_NUM_OF_PLATES;
+
+        private OpenAlprSapphire(Context context, String ANDROID_DATA_DIR, String countryCode, String secondParam, String absolutePath, String openAlprConfFile, int MAX_NUM_OF_PLATES) {
+            this.context = context;
+            this.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
+            this.countryCode = countryCode;
+            this.secondParam = secondParam;
+            this.absolutePath = absolutePath;
+            this.openAlprConfFile = openAlprConfFile;
+            this.MAX_NUM_OF_PLATES = MAX_NUM_OF_PLATES;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            SapphireAccess.context = MainActivity.this;
+            SapphireAccess.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
+            String result = SapphireAccess.getResult(this.countryCode, this.secondParam, this.absolutePath, this.openAlprConfFile, this.MAX_NUM_OF_PLATES);
+            return result;
         }
     }
 
@@ -176,19 +232,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePicture() {
-        // Use a folder to store all results
-        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
-        if (!folder.exists()) {
-            folder.mkdir();
+        try {
+            createImageFile();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
         }
 
-        // Generate the path for the next photo
-        String name = dateToString(new Date(), "yyyy-MM-dd-hh-mm-ss");
-        destination = new File(folder, name + ".jpg");
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
-        startActivityForResult(intent, REQUEST_IMAGE);
+        if (destination != null) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
+            startActivityForResult(intent, REQUEST_IMAGE);
+        }
     }
 
     @Override
@@ -198,4 +253,17 @@ public class MainActivity extends AppCompatActivity {
             Picasso.with(MainActivity.this).load(destination).fit().centerCrop().into(imageView);
         }
     }
+
+    private void createImageFile() {
+        // Use a folder to store all results
+        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        // Generate the path for the next photo
+        String name = dateToString(new Date(), "yyyy-MM-dd-hh-mm-ss");
+        destination = new File(folder, name + ".jpg");
+    }
+
 }

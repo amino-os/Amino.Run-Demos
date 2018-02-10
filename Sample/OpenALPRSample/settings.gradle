@@ -1,3 +1,3 @@
-include ':app', ':OpenALPR'
+include ':app', ':OpenALPR', ':dependencies:java.rmi', ':dependencies:apache.harmony', ':sapphire-core'
 
 project(':OpenALPR').projectDir = new File('../../app')
