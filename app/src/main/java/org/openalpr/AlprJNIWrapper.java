@@ -7,7 +7,12 @@ package org.openalpr;
 public class AlprJNIWrapper implements OpenALPR {
 
     static {
-        System.loadLibrary("openlapr-native");
+        try {
+            System.loadLibrary("openlapr-native");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /* (non-Javadoc)

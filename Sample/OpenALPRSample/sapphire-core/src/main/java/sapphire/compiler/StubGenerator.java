@@ -62,6 +62,7 @@ public class StubGenerator {
 	public static void generateStubs(String srcFolder, String packageName, String destFolder) {
 		System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		File directory = new File(srcFolder);
+		System.out.println(System.getProperty("user.dir"));
 		File[] fList = directory.listFiles();
 		for (File file : fList){
 			if (file.isFile() && file.getName().endsWith("AlprSapphire.class")) {

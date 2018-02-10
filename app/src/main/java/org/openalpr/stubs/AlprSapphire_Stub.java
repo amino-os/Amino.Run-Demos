@@ -29,6 +29,26 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
 
 
 
+    // Implementation of saveImage(String, byte[], int)
+    public boolean saveImage(java.lang.String $param_String_1, byte[] $param_arrayOf_byte_2, int $param_int_3) {
+        java.lang.Object $__result = null;
+        try {
+            if ($__directInvocation)
+                $__result = super.saveImage( $param_String_1,  $param_arrayOf_byte_2,  $param_int_3);
+            else {
+                java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
+                String $__method = "public boolean org.openalpr.AlprSapphire.saveImage(java.lang.String,byte[],int)";
+                $__params.add($param_String_1);
+                $__params.add($param_arrayOf_byte_2);
+                $__params.add($param_int_3);
+                $__result = $__client.onRPC($__method, $__params);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ((java.lang.Boolean) $__result).booleanValue();
+    }
+
     // Implementation of recognizeWithCountryRegionNConfig(String, String, String, String, int)
     public java.lang.String recognizeWithCountryRegionNConfig(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, int $param_int_5) {
         java.lang.Object $__result = null;

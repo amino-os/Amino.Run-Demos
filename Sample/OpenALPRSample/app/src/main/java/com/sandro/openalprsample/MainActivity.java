@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             final String openAlprConfFile
                     = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 10;
+            options.inSampleSize = 4;
 
             // Picasso requires permission.WRITE_EXTERNAL_STORAGE
             Picasso.with(MainActivity.this).load(destination).fit().centerCrop().into(imageView);
@@ -104,10 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         String filePath = destination.getAbsolutePath();
-                        OpenAlprSapphire oas = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES);
                         result = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
-//                        OpenAlprSapphire oas = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES);
-//                        result = oas.execute().get();
                     } catch(Exception e) {
                         e.printStackTrace();
                     }

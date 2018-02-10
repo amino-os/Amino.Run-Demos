@@ -2,11 +2,15 @@ package org.openalpr;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.openalpr.model.Result;
 import org.openalpr.util.Utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -39,6 +43,30 @@ public class SapphireAccess
                 lr = (AlprSapphire) server.getAppEntryPoint();
             }
 
+            // Upload the image file.
+            File file = new File(absolutePath);
+            long fileLength = file.length();
+            System.out.println("File length = " + fileLength);
+            FileInputStream in = new FileInputStream(file);
+            byte [] imageData = new byte[1024*1024];
+
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 4;
+//
+//            Bitmap bm = BitmapFactory.decodeFile(absolutePath, options);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bm.compress(Bitmap.CompressFormat.JPEG, 40, baos);
+
+            try {
+                int mylen = in.read(imageData);
+                while (mylen > 0) {
+                    lr.saveImage(file.getName(), imageData, mylen);
+                    mylen = in.read(imageData);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             if (lr.isOpenALPRNull()) {
                 lr.create();
                 Utils.copyAssetFolder
@@ -46,7 +74,7 @@ public class SapphireAccess
             };
 
             result = lr.recognizeWithCountryRegionNConfig
-                    ("us", "", absolutePath, openAlprConfFile, MAX_NUM_OF_PLATES);
+                    ("us", "", file.getName(), openAlprConfFile, MAX_NUM_OF_PLATES);
 
         }
         catch (Exception e) {
