@@ -26,7 +26,7 @@ public class SapphireAccess
     public static Context context;
     public static String ANDROID_DATA_DIR;
 
-    public static String getResult(String countryCode, String secondParam, String absolutePath, String openAlprConfFile, int MAX_NUM_OF_PLATES) {
+    public static String getResult(String countryCode, String region, String imageFilePath, String openAlprConfFile) {
         String result = null;
 
         try {
@@ -44,7 +44,7 @@ public class SapphireAccess
             }
 
             // Upload the image file.
-            File file = new File(absolutePath);
+            File file = new File(imageFilePath);
             long fileLength = file.length();
             System.out.println("File length = " + fileLength);
             FileInputStream in = new FileInputStream(file);
@@ -67,14 +67,14 @@ public class SapphireAccess
                 e.printStackTrace();
             }
 
-            if (lr.isOpenALPRNull()) {
-                lr.create();
-                Utils.copyAssetFolder
-                        (context.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
-            };
+//            if (lr.isOpenALPRNull()) {
+                //lr.create();
+//                Utils.copyAssetFolder
+//                        (context.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
+//            };
 
             result = lr.recognizeWithCountryRegionNConfig
-                    ("us", "", file.getName(), openAlprConfFile, MAX_NUM_OF_PLATES);
+                    (countryCode, region, openAlprConfFile, file.getName(), Constants.MAX_NUM_OF_PLATES);
 
         }
         catch (Exception e) {

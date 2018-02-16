@@ -22,8 +22,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 /** 
@@ -44,9 +46,16 @@ public class KernelServerImpl implements KernelServer{
 	private KernelClient client;
 	
 	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost) {
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
+
 		objectManager = new KernelObjectManager();
 	    Registry registry;
 		try {
+			logger.info("OMS : " + omsHost.getHostName() + ":" + omsHost.getPort());
 			registry = LocateRegistry.getRegistry(omsHost.getHostName(), omsHost.getPort());
 			oms = (OMSServer) registry.lookup("SapphireOMS");
 		} catch (Exception e) {
@@ -224,6 +233,11 @@ public class KernelServerImpl implements KernelServer{
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
 
 		if (args.length != 4) {
 			System.out.println("Incorrect arguments to the kernel server");
@@ -241,8 +255,11 @@ public class KernelServerImpl implements KernelServer{
 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
 			return;
 		}
-		
-		System.setProperty("java.rmi.server.hostname", host.getAddress().getHostAddress());
+
+		logger.info("java.rmi.server.hostname" + host.getAddress().getHostAddress());
+		//System.setProperty("java.rmi.server.hostname", host.getAddress().getHostAddress());
+		logger.info("Revised java.rmi.server.hostname" + host.getAddress().getHostAddress());
+		System.setProperty("java.rmi.server.hostname", host.getHostName());
 
 		try {
 			KernelServerImpl server = new KernelServerImpl(host, omsHost);
@@ -252,9 +269,8 @@ public class KernelServerImpl implements KernelServer{
 			
 			oms.registerKernelServer(host);
 			
-			logger.info("Server ready!");
-			System.out.println("Server ready!");
-			
+			logger.info("Server ready! Host: " + host.getHostString());
+
 			/* Start a thread that print memory stats */
 			server.getMemoryStatThread().start();
 

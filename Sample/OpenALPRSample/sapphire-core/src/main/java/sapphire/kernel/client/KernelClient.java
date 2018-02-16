@@ -5,7 +5,10 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Hashtable;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import sapphire.kernel.common.GlobalKernelReferences;
 import sapphire.kernel.common.KernelOID;
@@ -37,7 +40,14 @@ public class KernelClient {
 	 * @param hostname
 	 */
 	private KernelServer addHost(InetSocketAddress host) {
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
+
 		try {
+			logger.info("Getting the registry for host. Host: " + host.getHostName() + ":" + host.getPort()+ " Address:" + host.getAddress());
 		    Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
 		    KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
 		    servers.put(host, server);
@@ -106,13 +116,21 @@ public class KernelClient {
 	 */
 	public Object makeKernelRPC(KernelObjectStub stub, KernelRPC rpc) throws KernelObjectNotFoundException, Exception {
 		InetSocketAddress host = stub.$__getHostname();
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
+
 		logger.info("Making RPC to " + host.toString() + " RPC: " + rpc.toString());
 
 		// Check whether this object is local.
 		KernelServer server;
 		if (host.equals(GlobalKernelReferences.nodeServer.getLocalHost())) {
+			logger.info(("Object is local."));
 			server = GlobalKernelReferences.nodeServer;
 		} else {
+			logger.info("Object is in server. Host name: " + host.getHostName() + " Host address: "+ host.getAddress() + "Host port: " + host.getPort());
 			server = getServer(host);
 		}
 		

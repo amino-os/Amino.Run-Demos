@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import sapphire.common.AppObjectStub;
 import sapphire.common.SapphireObjectID;
@@ -35,7 +37,7 @@ import org.json.JSONException;
  */
 public class OMSServerImpl implements OMSServer{
 	   private static Logger logger = Logger.getLogger("sapphire.oms.OMSServerImpl");
-	
+
 	   private GlobalKernelObjectManager kernelObjectManager;
 	   private AppObjectStub appEntryPoint = null;
 	   private String appEntryClassName;
@@ -49,6 +51,11 @@ public class OMSServerImpl implements OMSServer{
     	   serverManager = new KernelServerManager();
     	   objectManager = new SapphireObjectManager();
     	   this.appEntryClassName = appEntryClassName;
+    	   logger.setLevel(Level.ALL);
+		   ConsoleHandler handler = new ConsoleHandler();
+		   handler.setLevel(Level.ALL);
+		   handler.setFormatter(new SimpleFormatter());
+		   logger.addHandler(handler);
        }
 
        /** KERNEL METHODS **/
@@ -154,6 +161,7 @@ public class OMSServerImpl implements OMSServer{
 //       }
 
        public static void main(String args[]) {
+
     	   if (args.length != 3) {
     		   System.out.println("Invalid arguments to OMS.");
     		   System.out.println("[IP] [port] [AppClassName]");
@@ -168,8 +176,9 @@ public class OMSServerImpl implements OMSServer{
     		   System.out.println("[IP] [port] [AppClassName]");
     		   return;
     	   }
- 
+
     	   System.setProperty("java.rmi.server.hostname", args[0]);
+
     	   try {
     		   OMSServerImpl oms = new OMSServerImpl(args[2]);
     		   OMSServer omsStub = (OMSServer) UnicastRemoteObject.exportObject(oms, 0);
@@ -178,12 +187,16 @@ public class OMSServerImpl implements OMSServer{
     		   logger.info("OMS ready");
     	   	   for (Iterator<InetSocketAddress> it = oms.getServers().iterator(); it.hasNext();) {
         		   InetSocketAddress address = it.next();
-        		   logger.fine("   " + address.getHostName().toString() + ":" + address.getPort());
+				   System.out.println("   " + address.getHostName().toString() + ":" + address.getPort());
+//        		   logger.fine("   " + address.getHostName().toString() + ":" + address.getPort());
         	   }
     	   } catch (Exception e) {
+			   System.out.println("Server exception: " + e.toString());
+			   e.printStackTrace();
     		   logger.severe("Server exception: " + e.toString());
     		   e.printStackTrace();
     	   }
+		   logger.info("OMS main method complete.");
     }
 
 	@Override

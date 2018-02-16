@@ -1,23 +1,15 @@
 package org.openalpr;
 
-import org.openalpr.model.Result;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
-import sapphire.app.AppEntryPoint;
-import sapphire.app.AppObjectNotCreatedException;
 import sapphire.app.SapphireObject;
-import sapphire.common.AppObjectStub;
 import sapphire.policy.ShiftPolicy;
-
-import static sapphire.runtime.Sapphire.new_;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
 public class AlprSapphire implements SapphireObject<ShiftPolicy> {
-    private final String SERVER_DIRECTORY = "d:\\temp\\";
 
     public AlprSapphire() {}
 
@@ -39,7 +31,7 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 
     public boolean saveImage(String fileName, byte[] bytes, int len) {
         try {
-            String filePath = SERVER_DIRECTORY + fileName;
+            String filePath = Constants.SERVER_DIRECTORY + fileName;
             File f = new File(filePath);
             f.createNewFile();
             FileOutputStream out = new FileOutputStream(f, true);
@@ -54,13 +46,24 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 
         return false;
     }
-    public String recognizeWithCountryRegionNConfig(String country, String region, String fileName, String configFilePath, int MAX_NUM_OF_PLATES) {
+    public String recognizeWithCountryRegionNConfig(String country, String region, String configFilePath, String fileName, int MAX_NUM_OF_PLATES) {
         try {
+            String imageFilePath = Constants.SERVER_DIRECTORY + fileName;
+
+            System.out.println("Creating instance.");
             OpenALPR instance = OpenALPR.Factory.create();
-            String serverFilePath = SERVER_DIRECTORY + fileName;
-            String result = instance.recognizeWithCountryRegionNConfig(country, region, serverFilePath, configFilePath, MAX_NUM_OF_PLATES);
+            if (instance == null) {
+                System.out.println("Instance is still null.");
+            }
+
+            System.out.println("Instance created. Calling native API. server file path: " + imageFilePath + " config file path: "+ configFilePath);
+
+//            String result = instance.recognizeWithCountryRegionNConfig(country, region, configFilePath, imageFilePath, MAX_NUM_OF_PLATES);
+            String result = instance.recognizeInServer(country, region, configFilePath, imageFilePath, Constants.RUNTIME_DIRECTORY, MAX_NUM_OF_PLATES);
+            System.out.println("Result returned fine");
             return result;
         } catch (Exception e) {
+            System.out.println("There was an error." + e.getMessage());
             e.printStackTrace();
         }
 

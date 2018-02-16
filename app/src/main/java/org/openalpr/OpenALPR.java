@@ -59,6 +59,14 @@ public interface OpenALPR {
      */
     String version();
 
+    // Added methods for Ubuntu server.
+    String recognizeInServer(String country, String region, String configFilePath, String imgFilePath, String runtimeDir, int topN);
+    void initialize(String country, String configFile, String runtimeDir);
+    String native_recognize(String imageFile);
+    void set_default_region(String region);
+    void set_top_n(int topN);
+    // End of added methods for Ubuntu server.
+
     /**
      * OpenALPR factory.
      */
@@ -94,6 +102,7 @@ public interface OpenALPR {
          */
         public synchronized static OpenALPR create() {
             if (instance == null) {
+                System.out.println("Instance is null. Creating...");
                 instance = new AlprJNIWrapper();
             }
 

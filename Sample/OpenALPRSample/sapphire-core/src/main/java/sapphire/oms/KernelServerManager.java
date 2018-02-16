@@ -9,8 +9,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.json.JSONException;
 
@@ -30,6 +32,11 @@ public class KernelServerManager {
 	public KernelServerManager() throws IOException, NotBoundException, JSONException {
 		servers = new ConcurrentHashMap<InetSocketAddress, KernelServer>();
 		regions = new ConcurrentHashMap<String, ArrayList<InetSocketAddress>>();
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
 	}
 
     /**

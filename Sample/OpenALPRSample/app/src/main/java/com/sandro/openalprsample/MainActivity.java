@@ -3,17 +3,14 @@ package com.sandro.openalprsample;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,14 +25,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
-import org.openalpr.OpenALPR;
+import org.openalpr.Constants;
 import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
 import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private static File destination;
     private TextView resultTextView;
     private ImageView imageView;
-    private static final int MAX_NUM_OF_PLATES = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             final ProgressDialog progress
                     = ProgressDialog.show(this, "Loading", "Parsing result...", true);
             final String openAlprConfFile
-                    = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+                    = Constants.RUNTIME_ASSET_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4;
 
@@ -103,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
                     String result = null;
 
                     try {
-                        String filePath = destination.getAbsolutePath();
-                        result = new OpenAlprSapphire(MainActivity.this, ANDROID_DATA_DIR, "us", "", filePath, openAlprConfFile, MAX_NUM_OF_PLATES).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                        String imageFilePath = destination.getAbsolutePath();
+                        result = new OpenAlprSapphire(ANDROID_DATA_DIR, "us", "", imageFilePath, openAlprConfFile).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
@@ -156,29 +151,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class OpenAlprSapphire extends AsyncTask<Void, Void, String> {
-        private Context context;
         private String ANDROID_DATA_DIR;
         private String countryCode;
-        private String secondParam;
-        private String absolutePath;
+        private String region;
+        private String imageFilePath;
         private String openAlprConfFile;
-        private int MAX_NUM_OF_PLATES;
 
-        private OpenAlprSapphire(Context context, String ANDROID_DATA_DIR, String countryCode, String secondParam, String absolutePath, String openAlprConfFile, int MAX_NUM_OF_PLATES) {
-            this.context = context;
+        private OpenAlprSapphire(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, String openAlprConfFile) {
             this.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
             this.countryCode = countryCode;
-            this.secondParam = secondParam;
-            this.absolutePath = absolutePath;
+            this.region = region;
+            this.imageFilePath = imageFilePath;
             this.openAlprConfFile = openAlprConfFile;
-            this.MAX_NUM_OF_PLATES = MAX_NUM_OF_PLATES;
         }
 
         @Override
         protected String doInBackground(Void... params) {
             SapphireAccess.context = MainActivity.this;
             SapphireAccess.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
-            String result = SapphireAccess.getResult(this.countryCode, this.secondParam, this.absolutePath, this.openAlprConfFile, this.MAX_NUM_OF_PLATES);
+            String result = SapphireAccess.getResult(this.countryCode, this.region, this.imageFilePath, this.openAlprConfFile);
             return result;
         }
     }
