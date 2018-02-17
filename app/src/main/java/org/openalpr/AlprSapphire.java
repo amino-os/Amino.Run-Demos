@@ -1,7 +1,10 @@
 package org.openalpr;
 
+import com.openalpr.jni.Alpr;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 
 import sapphire.app.SapphireObject;
 import sapphire.policy.ShiftPolicy;
@@ -46,27 +49,67 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 
         return false;
     }
-    public String recognizeWithCountryRegionNConfig(String country, String region, String configFilePath, String fileName, int MAX_NUM_OF_PLATES) {
+
+    /**
+     * Process the image on default machine (e.g., Linux)
+     * @param country
+     * @param region
+     * @param configFilePath
+     * @param fileName
+     * @param MAX_NUM_OF_PLATES
+     * @return
+     */
+    public String recognizeImageOnDefault(String country, String region, String openAlprConfFile, String fileName, int MAX_NUM_OF_PLATES) {
+
+        Alpr alpr;
         try {
-            String imageFilePath = Constants.SERVER_DIRECTORY + fileName;
+            alpr = new Alpr(country, openAlprConfFile, Constants.RUNTIME_ASSET_DIR_LINUX);
+            alpr.setTopN(MAX_NUM_OF_PLATES);
+            alpr.setDefaultRegion("");
 
-            System.out.println("Creating instance.");
-            OpenALPR instance = OpenALPR.Factory.create();
-            if (instance == null) {
-                System.out.println("Instance is still null.");
-            }
-
-            System.out.println("Instance created. Calling native API. server file path: " + imageFilePath + " config file path: "+ configFilePath);
-
-//            String result = instance.recognizeWithCountryRegionNConfig(country, region, configFilePath, imageFilePath, MAX_NUM_OF_PLATES);
-            String result = instance.recognizeInServer(country, region, configFilePath, imageFilePath, Constants.RUNTIME_DIRECTORY, MAX_NUM_OF_PLATES);
-            System.out.println("Result returned fine");
-            return result;
         } catch (Exception e) {
-            System.out.println("There was an error." + e.getMessage());
+            System.out.println("There was an error at Initialization: " + e.getMessage());
             e.printStackTrace();
+            return "Error: " + e.toString();
         }
 
-        return "Error";
+        // Read an image into a byte array and send it to OpenALPR
+        byte[] imageData;
+
+        try {
+            RandomAccessFile f = new RandomAccessFile(fileName, "r");
+            imageData = new byte[(int)f.length()];
+            f.readFully(imageData);        }
+        catch (Exception e) {
+            System.out.println("There was an error at RandomAccessFile: " + e.getMessage());
+            e.printStackTrace();
+            return "Error: " + e.toString();
+        }
+
+        try {
+            String results = alpr.recognizeImageOnDefault(imageData);
+
+            return results;
+//
+//            System.out.println("OpenALPR Version: " + alpr.getVersion());
+//            System.out.println("Image Size: " + results.getImgWidth() + "x" + results.getImgHeight());
+//            System.out.println("Processing Time: " + results.getTotalProcessingTimeMs() + " ms");
+//            System.out.println("Found " + results.getPlates().size() + " results");
+//
+//            System.out.format("  %-15s%-8s\n", "Plate Number", "Confidence");
+//            for (AlprPlateResult result : results.getPlates()) {
+//                for (AlprPlate plate : result.getTopNPlates()) {
+//                    if (plate.isMatchesTemplate())
+//                        System.out.print("  * ");
+//                    else
+//                        System.out.print("  - ");
+//                    System.out.format("%-15s%-8f\n", plate.getCharacters(), plate.getOverallConfidence());
+//                }
+//            }
+        } catch (Exception e) {
+            System.out.println("There was an error at recognizeImageOnDefault." + e.getMessage());
+            e.printStackTrace();
+            return "Error at recognizeImageOnDefault: " + e.getMessage();
+        }
     }
 }

@@ -49,28 +49,6 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
         return ((java.lang.Boolean) $__result).booleanValue();
     }
 
-    // Implementation of recognizeWithCountryRegionNConfig(String, String, String, String, int)
-    public java.lang.String recognizeWithCountryRegionNConfig(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, int $param_int_5) {
-        java.lang.Object $__result = null;
-        try {
-            if ($__directInvocation)
-                $__result = super.recognizeWithCountryRegionNConfig( $param_String_1,  $param_String_2,  $param_String_3,  $param_String_4,  $param_int_5);
-            else {
-                java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public java.lang.String org.openalpr.AlprSapphire.recognizeWithCountryRegionNConfig(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int)";
-                $__params.add($param_String_1);
-                $__params.add($param_String_2);
-                $__params.add($param_String_3);
-                $__params.add($param_String_4);
-                $__params.add($param_int_5);
-                $__result = $__client.onRPC($__method, $__params);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ((java.lang.String) $__result);
-    }
-
     // Implementation of recognizeWithCountryNRegion(String, String, String, int)
     public java.lang.String recognizeWithCountryNRegion(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, int $param_int_4) {
         java.lang.Object $__result = null;
@@ -84,6 +62,28 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
                 $__params.add($param_String_2);
                 $__params.add($param_String_3);
                 $__params.add($param_int_4);
+                $__result = $__client.onRPC($__method, $__params);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ((java.lang.String) $__result);
+    }
+
+    // Implementation of recognizeImageOnDefault(String, String, String, String, int)
+    public java.lang.String recognizeImageOnDefault(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, int $param_int_5) {
+        java.lang.Object $__result = null;
+        try {
+            if ($__directInvocation)
+                $__result = super.recognizeImageOnDefault( $param_String_1,  $param_String_2,  $param_String_3,  $param_String_4,  $param_int_5);
+            else {
+                java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
+                String $__method = "public java.lang.String org.openalpr.AlprSapphire.recognizeImageOnDefault(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int)";
+                $__params.add($param_String_1);
+                $__params.add($param_String_2);
+                $__params.add($param_String_3);
+                $__params.add($param_String_4);
+                $__params.add($param_int_5);
                 $__result = $__client.onRPC($__method, $__params);
             }
         } catch (Exception e) {

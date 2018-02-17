@@ -2,13 +2,7 @@ package org.openalpr;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
-import org.openalpr.model.Result;
-import org.openalpr.util.Utils;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
@@ -48,7 +42,7 @@ public class SapphireAccess
             long fileLength = file.length();
             System.out.println("File length = " + fileLength);
             FileInputStream in = new FileInputStream(file);
-            byte [] imageData = new byte[1024*1024];
+            byte [] imageData = new byte[4096*1024];
 
 //            BitmapFactory.Options options = new BitmapFactory.Options();
 //            options.inSampleSize = 4;
@@ -73,8 +67,8 @@ public class SapphireAccess
 //                        (context.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
 //            };
 
-            result = lr.recognizeWithCountryRegionNConfig
-                    (countryCode, region, openAlprConfFile, file.getName(), Constants.MAX_NUM_OF_PLATES);
+            result = lr.recognizeImageOnDefault
+                    (countryCode, region, Constants.OPEN_ALPR_CONF_FILE_LINUX, file.getName(), Constants.MAX_NUM_OF_PLATES);
 
         }
         catch (Exception e) {
@@ -84,5 +78,4 @@ public class SapphireAccess
 
         return result;
     }
-
 }

@@ -2,7 +2,9 @@ package com.sandro.openalprsample;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -26,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.openalpr.Constants;
+import org.openalpr.OpenALPR;
 import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
 import org.openalpr.model.Results;
@@ -81,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
             final ProgressDialog progress
                     = ProgressDialog.show(this, "Loading", "Parsing result...", true);
-            final String openAlprConfFile
-                    = Constants.RUNTIME_ASSET_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+            final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4;
 
@@ -99,7 +101,9 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         String imageFilePath = destination.getAbsolutePath();
-                        result = new OpenAlprSapphire(ANDROID_DATA_DIR, "us", "", imageFilePath, openAlprConfFile).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+//                        result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+
+                        result = new OpenAlprSapphire(ANDROID_DATA_DIR, "us", "", imageFilePath, Constants.OPEN_ALPR_CONF_FILE_LINUX).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
@@ -162,7 +166,8 @@ public class MainActivity extends AppCompatActivity {
             this.countryCode = countryCode;
             this.region = region;
             this.imageFilePath = imageFilePath;
-            this.openAlprConfFile = openAlprConfFile;
+            this.openAlprConfFile = openAlprConfFile; // Android
+            this.openAlprConfFile = Constants.RUNTIME_ASSET_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
         }
 
         @Override
@@ -254,4 +259,25 @@ public class MainActivity extends AppCompatActivity {
         destination = new File(folder, name + ".jpg");
     }
 
+    /**
+     * This method cannot be used in Linux as Android package is non-existent.
+     * It should be removed but retaining in case this can be used to determine whether to run different JNI package.
+     * @param context
+     * @param packageName
+     * @return
+     */
+    public boolean isAppRunningOnAndroid(final Context context, final String packageName) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+        if (procInfos != null)
+        {
+            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
+                if (processInfo.processName.equals(packageName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

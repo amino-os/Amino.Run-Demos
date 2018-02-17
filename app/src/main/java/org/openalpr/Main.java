@@ -12,18 +12,16 @@ import java.io.File;
  */
 public class Main {
     final String FileName = "2018-02-14-10-58-41.jpg";
-    final String RUNTIME_ASSET_DIR = "/usr/share/openalpr/runtime_data";
-    final String openAlprConfFile = "/etc/openalpr/openalpr.conf";
     final String country = "us";
 
-    private void exec2() {
-        String configfile = openAlprConfFile;
-        String runtimeDataDir = RUNTIME_ASSET_DIR;
+    private void execOnDefault() {
+        String configfile = Constants.OPEN_ALPR_CONF_FILE_LINUX;
+        String runtimeDataDir = Constants.RUNTIME_ASSET_DIR_LINUX;
 
         Alpr alpr = new Alpr(country, configfile, runtimeDataDir);
 
         alpr.setTopN(10);
-        alpr.setDefaultRegion("wa");
+        alpr.setDefaultRegion("");
 
         // Read an image into a byte array and send it to OpenALPR
 //        byte [] imageData = new byte[1024*1024];
@@ -64,28 +62,8 @@ public class Main {
             e.printStackTrace();
         }
     }
-    private void exec() {
-        try {
-            String imageFilePath = Constants.SERVER_DIRECTORY + FileName;
-            System.out.println("Creating instance.");
-            OpenALPR instance = OpenALPR.Factory.create();
-            if (instance == null) {
-                System.out.println("Instance is still null.");
-            }
-
-            System.out.println("Instance created. Calling native API. server file path: " + imageFilePath + " config file path: "+ openAlprConfFile);
-
-//            String result = instance.recognizeWithCountryRegionNConfig(country, region, configFilePath, imageFilePath, MAX_NUM_OF_PLATES);
-            String result = instance.recognizeInServer("us", "", openAlprConfFile, imageFilePath, RUNTIME_ASSET_DIR, Constants.MAX_NUM_OF_PLATES);
-            System.out.println("Result returned fine");
-            System.out.println("Result: " + result);
-        } catch (Exception e) {
-            System.out.println("There was an error." + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String args[]) {
-        new Main().exec2();
+        new Main().execOnDefault();
     }
 }

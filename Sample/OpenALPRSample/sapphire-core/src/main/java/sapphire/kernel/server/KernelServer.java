@@ -21,5 +21,4 @@ public interface KernelServer extends Remote {
 	void copyKernelObject(KernelOID oid, KernelObject object) throws RemoteException, KernelObjectNotFoundException;
 
 	AppObjectStub startApp(String className) throws RemoteException;
-//	AppObjectStub startApp(String className, Object object) throws RemoteException;
 }

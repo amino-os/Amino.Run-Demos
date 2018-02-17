@@ -8,7 +8,8 @@ public class AlprJNIWrapper implements OpenALPR {
     static {
         try {
             System.out.println("Loading openalpr-native library.");
-            System.loadLibrary("openalprjni");
+//            System.loadLibrary("openalprjni");
+            System.loadLibrary("openalpr-native");
             System.out.println("Successfully loaded.");
         }
         catch(Exception e) {

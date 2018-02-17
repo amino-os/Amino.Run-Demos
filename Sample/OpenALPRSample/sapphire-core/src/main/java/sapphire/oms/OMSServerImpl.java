@@ -137,9 +137,18 @@ public class OMSServerImpl implements OMSServer{
     	   if (appEntryPoint != null) {
     		   return appEntryPoint;
     	   } else {
-    		   	InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
-    		   	KernelServer server = serverManager.getServer(host); 
-    		   	appEntryPoint = server.startApp(appEntryClassName);
+				try {
+					InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
+					KernelServer server = serverManager.getServer(host);
+					logger.info("Starting app at the server: " + host.getHostString());
+					logger.info(" appEntryClassName: " + appEntryClassName);
+
+					appEntryPoint = server.startApp(appEntryClassName);
+					logger.info(" Successfully started " + appEntryClassName);
+				} catch(Exception e) {
+					e.printStackTrace();
+					logger.severe(e.toString());
+				}
     		   	return appEntryPoint;
     	   }
        }

@@ -87,7 +87,7 @@ public interface OpenALPR {
             if (instance == null) {
                 instance = new AlprJNIWrapper();
 
-                //Utils.copyAssetFolder(context.getAssets(), "runtime_data", androidDataDir + File.separatorChar + "runtime_data");
+                Utils.copyAssetFolder(context.getAssets(), "runtime_data", androidDataDir + File.separatorChar + "runtime_data");
             }
 
             return instance;
