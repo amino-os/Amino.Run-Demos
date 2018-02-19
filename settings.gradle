@@ -1,1 +1,1 @@
-include ':app', ':elygo-lib'
+include ':app', ':elygo-lib', ':dependencies:java.rmi', ':dependencies:apache.harmony', ':sapphire-core'
