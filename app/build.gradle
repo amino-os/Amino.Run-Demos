@@ -44,7 +44,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:25.4.0'
-
     compile project(':elygo-lib')
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':sapphire-core')
 }
