@@ -106,30 +106,34 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="com.google.firebase:firebase-ads-9.6.1" level="project" />
     <orderEntry type="library" name="ch.acra:acra:4.6.2@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-base-9.6.1" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-ui-25.4.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-compat-25.4.0" level="project" />
+    <orderEntry type="library" name="com.google.android.gms:play-services-basement-9.6.1" level="project" />
+    <orderEntry type="library" name="com.google.firebase:firebase-analytics-impl-9.6.1" level="project" />
+    <orderEntry type="library" name="com.google.firebase:firebase-core-9.6.1" level="project" />
+    <orderEntry type="library" name="com.google.firebase:firebase-iid-9.6.1" level="project" />
+    <orderEntry type="library" name="com.android.support:support-annotations:25.4.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-utils-25.4.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-v4-25.4.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-fragment-25.4.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-media-compat-25.4.0" level="project" />
+    <orderEntry type="library" name="com.google.firebase:firebase-ads-9.6.1" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-gass-9.6.1" level="project" />
     <orderEntry type="library" name="com.android.support:animated-vector-drawable-25.4.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tasks-9.6.1" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-common-9.6.1" level="project" />
-    <orderEntry type="library" name="com.android.support:support-core-ui-25.4.0" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-25.4.0" level="project" />
-    <orderEntry type="library" name="com.android.support:support-compat-25.4.0" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-basement-9.6.1" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-clearcut-9.6.1" level="project" />
-    <orderEntry type="library" name="com.google.firebase:firebase-analytics-impl-9.6.1" level="project" />
-    <orderEntry type="library" name="com.google.firebase:firebase-core-9.6.1" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-ads-9.6.1" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-analytics-9.6.1" level="project" />
-    <orderEntry type="library" name="com.google.firebase:firebase-iid-9.6.1" level="project" />
-    <orderEntry type="library" name="com.android.support:support-annotations:25.4.0@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-core-utils-25.4.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-ads-lite-9.6.1" level="project" />
-    <orderEntry type="library" name="com.android.support:support-v4-25.4.0" level="project" />
+    <orderEntry type="library" name="org.json:json:20171018@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-vector-drawable-25.4.0" level="project" />
-    <orderEntry type="library" name="com.android.support:support-fragment-25.4.0" level="project" />
-    <orderEntry type="library" name="com.android.support:support-media-compat-25.4.0" level="project" />
     <orderEntry type="module" module-name="elygo-lib" />
+    <orderEntry type="module" module-name="java.rmi" />
+    <orderEntry type="module" module-name="apache.harmony" />
+    <orderEntry type="module" module-name="sapphire-core" />
   </component>
 </module>
