@@ -19,7 +19,7 @@ public class PachiEngine extends ExternalGtpEngine {
      * Increment this counter each time you update the pachi executable
      * (this will force the app to extract it again).
      */
-    private static final int EXE_VERSION = 3;
+    private static final int EXE_VERSION = 5;
 
     private static final String ENGINE_NAME = "Pachi";
     private static final String ENGINE_VERSION = "10.00";
@@ -56,6 +56,7 @@ public class PachiEngine extends ExternalGtpEngine {
         return new String[]{"-t", "" + _time, "max_tree_size=" + _maxTreeSize};
     }
 
+
     @Override
     protected File getEngineFile() {
         File dir = _context.getDir("engines", Context.MODE_PRIVATE);
@@ -72,6 +73,10 @@ public class PachiEngine extends ExternalGtpEngine {
                 outputStream = new BufferedOutputStream(new FileOutputStream(file), 4096);
                 inputStream = new BufferedInputStream(_context.getResources().openRawResource(R.raw.pachi), 4096);
                 Utils.copyStream(inputStream, outputStream, 4096);
+
+                extractRawResToFile(R.raw.libcaffe, dir,"libcaffe.so");
+                extractRawResToFile(R.raw.golast19, dir,"golast19.prototxt");
+                extractRawResToFile(R.raw.golast, dir, "golast.trained");
 
                 try {
                     //file.setExecutable(true); TODO test this instead of chmod
@@ -97,6 +102,15 @@ public class PachiEngine extends ExternalGtpEngine {
         }
 
         return file;
+    }
+
+    private void extractRawResToFile(int resID, File dir, String fileName) throws IOException {
+        File f = new File(dir, fileName);
+        OutputStream o = new BufferedOutputStream(new FileOutputStream(f), 4096);
+        InputStream i = new BufferedInputStream(_context.getResources().openRawResource(resID), 4096);
+        Utils.copyStream(i, o, 4096);
+        i.close();
+        o.close();
     }
 
     @Override

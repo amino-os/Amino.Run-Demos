@@ -1,0 +1,558 @@
+name: "LogReg"
+input: "data"
+input_dim: 1
+input_dim: 13
+input_dim: 19
+input_dim: 19
+
+#this part should be the same in learning and prediction network
+layers {
+  name: "conv1_7x7_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "data"
+  top: "conv2"
+  convolution_param {
+    num_output: 128
+    kernel_size: 7
+    pad: 3
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu2"
+  type: RELU
+  bottom: "conv2"
+  top: "conv2"
+}
+
+layers {
+  name: "conv2_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv2"
+  top: "conv3"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu3"
+  type: RELU
+  bottom: "conv3"
+  top: "conv3"
+}
+
+layers {
+  name: "conv3_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv3"
+  top: "conv4"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu4"
+  type: RELU
+  bottom: "conv4"
+  top: "conv4"
+}
+
+layers {
+  name: "conv4_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv4"
+  top: "conv5"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu5"
+  type: RELU
+  bottom: "conv5"
+  top: "conv5"
+}
+
+layers {
+  name: "conv5_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv5"
+  top: "conv6"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu6"
+  type: RELU
+  bottom: "conv6"
+  top: "conv6"
+}
+
+
+layers {
+  name: "conv6_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv6"
+  top: "conv7"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu7"
+  type: RELU
+  bottom: "conv7"
+  top: "conv7"
+}
+
+
+layers {
+  name: "conv7_5x5_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv7"
+  top: "conv8"
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu8"
+  type: RELU
+  bottom: "conv8"
+  top: "conv8"
+}
+
+
+layers {
+  name: "conv8_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv8"
+  top: "conv9"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu9"
+  type: RELU
+  bottom: "conv9"
+  top: "conv9"
+}
+
+layers {
+  name: "conv9_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv9"
+  top: "conv10"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu10"
+  type: RELU
+  bottom: "conv10"
+  top: "conv10"
+}
+
+layers {
+  name: "conv10_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv10"
+  top: "conv11"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu11"
+  type: RELU
+  bottom: "conv11"
+  top: "conv11"
+}
+
+layers {
+  name: "conv11_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv11"
+  top: "conv12"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu12"
+  type: RELU
+  bottom: "conv12"
+  top: "conv12"
+}
+
+layers {
+  name: "conv12_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv12"
+  top: "conv13"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu13"
+  type: RELU
+  bottom: "conv13"
+  top: "conv13"
+}
+
+layers {
+  name: "conv13_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv13"
+  top: "conv14"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu14"
+  type: RELU
+  bottom: "conv14"
+  top: "conv14"
+}
+
+layers {
+  name: "conv14_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv14"
+  top: "conv15"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu15"
+  type: RELU
+  bottom: "conv15"
+  top: "conv15"
+}
+
+layers {
+  name: "conv15_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv15"
+  top: "conv16"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu16"
+  type: RELU
+  bottom: "conv16"
+  top: "conv16"
+}
+
+layers {
+  name: "conv16_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv16"
+  top: "conv17"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu17"
+  type: RELU
+  bottom: "conv17"
+  top: "conv17"
+}
+
+layers {
+  name: "conv17_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv17"
+  top: "conv18"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu18"
+  type: RELU
+  bottom: "conv18"
+  top: "conv18"
+}
+
+layers {
+  name: "conv18_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv18"
+  top: "conv19"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu19"
+  type: RELU
+  bottom: "conv19"
+  top: "conv19"
+}
+
+layers {
+  name: "conv19_3x3_128"
+  type: CONVOLUTION
+  blobs_lr: 1.
+  blobs_lr: 2.
+  bottom: "conv19"
+  top: "conv20"
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    pad: 1
+    weight_filler {
+      type: "xavier"
+      }
+      bias_filler {
+      type: "constant"
+      }
+    }
+}
+
+layers {
+  name: "relu20"
+  type: RELU
+  bottom: "conv20"
+  top: "conv20"
+}
+
+
+
+#layers {
+#  name: "ip"
+#  type: INNER_PRODUCT
+#  bottom: "conv9"
+#  top: "ip_zw"
+#  inner_product_param {
+#    num_output: 361
+#    weight_filler {
+#      type: "xavier"
+#      }
+#    bias_filler {
+#      type: "constant"
+#      }
+#   }
+#}
+
+layers {
+  name: "flat"
+  type: FLATTEN
+  bottom: "conv20"
+  top: "ip_zw"
+}
+
+
+#only prediction
+layers {
+  name: "softmax"
+  type: SOFTMAX
+  bottom: "ip_zw"
+  top: "ip"
+}
+

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
+import java.util.Map;
 
 
 /**
@@ -51,7 +52,12 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                 String[] args = new String[len + 1];
                 args[0] = getEngineFile().getAbsolutePath();
                 System.arraycopy(processArgs, 0, args, 1, len);
-                _engineProcess = new ProcessBuilder(args).start();
+                //_engineProcess = new ProcessBuilder(args).start();
+                ProcessBuilder pb = new ProcessBuilder(args);
+                pb.directory(new File("/data/data/net.lrstudios.android.pachi/app_engines/"));
+                Map<String, String> env = pb.environment();
+                env.put("LD_LIBRARY_PATH", "/data/data/net.lrstudios.android.pachi/app_engines/");
+                _engineProcess = pb.start();
                 _isRunning = true;
             }
             else {
