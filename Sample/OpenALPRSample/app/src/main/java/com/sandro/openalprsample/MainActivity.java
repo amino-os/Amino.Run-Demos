@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -29,12 +30,13 @@ import com.squareup.picasso.Picasso;
 
 import org.openalpr.Constants;
 import org.openalpr.OpenALPR;
-import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
 import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +45,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.openalpr.Constants.maxSizeOfPictureToProcess;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE = 100;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private String ANDROID_DATA_DIR;
     private static File destination;
     private TextView resultTextView;
+    private TextView whereToProcessTextView;
     private ImageView imageView;
 
     @Override
@@ -59,16 +64,34 @@ public class MainActivity extends AppCompatActivity {
 
         ANDROID_DATA_DIR = this.getApplicationInfo().dataDir;
 
+        resultTextView = (TextView) findViewById(R.id.textView);
+        whereToProcessTextView = (TextView) findViewById(R.id.textView_where_to_process);
+        imageView = (ImageView) findViewById(R.id.imageView);
+
+        resultTextView.setText("Press the button below to start a request.");
+        whereToProcessTextView.setText(Configuration.getWhereToProcess());
+
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkPermission();
             }
         });
-        resultTextView = (TextView) findViewById(R.id.textView);
-        imageView = (ImageView) findViewById(R.id.imageView);
 
-        resultTextView.setText("Press the button below to start a request.");
+        findViewById(R.id.button_device).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Configuration.WhereToProcess = Configuration.ProcessEntity.DEVICE;
+                whereToProcessTextView.setText(Configuration.getWhereToProcess());
+            }
+        });
+        findViewById(R.id.button_server).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
+                whereToProcessTextView.setText(Configuration.getWhereToProcess());
+            }
+        });
     }
 
     @Override
@@ -93,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
             resultTextView.setMovementMethod(new ScrollingMovementMethod());
             resultTextView.setText("Processing");
 
-
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -101,9 +123,13 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         String imageFilePath = destination.getAbsolutePath();
-//                        result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+                        resizeImageIfNecessary(imageFilePath);
 
-                        result = new OpenAlprSapphire(ANDROID_DATA_DIR, "us", "", imageFilePath, Constants.OPEN_ALPR_CONF_FILE_LINUX).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                        if (Configuration.WhereToProcess == Configuration.ProcessEntity.DEVICE) {
+                            result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+                        } else {
+                            result = new OpenAlprSapphire(ANDROID_DATA_DIR, "us", "", imageFilePath).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                        }
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
@@ -154,28 +180,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class OpenAlprSapphire extends AsyncTask<Void, Void, String> {
-        private String ANDROID_DATA_DIR;
-        private String countryCode;
-        private String region;
-        private String imageFilePath;
-        private String openAlprConfFile;
+    /**
+     * Resize the image saved by the camera if either width or height is bigger than the allowed maximum size and overwrite.
+     */
+    private void resizeImageIfNecessary(String imageFilePath) {
 
-        private OpenAlprSapphire(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, String openAlprConfFile) {
-            this.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
-            this.countryCode = countryCode;
-            this.region = region;
-            this.imageFilePath = imageFilePath;
-            this.openAlprConfFile = openAlprConfFile; // Android
-            this.openAlprConfFile = Constants.RUNTIME_ASSET_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap photo = BitmapFactory.decodeFile(imageFilePath, options);
+        int bmOriginalWidth = photo.getWidth();
+        int bmOriginalHeight = photo.getHeight();
+        if (bmOriginalWidth <= Constants.maxSizeOfPictureToProcess && bmOriginalHeight <= Constants.maxSizeOfPictureToProcess) {
+            // No need to reduce the size of original picture.
+            return;
         }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            SapphireAccess.context = MainActivity.this;
-            SapphireAccess.ANDROID_DATA_DIR = ANDROID_DATA_DIR;
-            String result = SapphireAccess.getResult(this.countryCode, this.region, this.imageFilePath, this.openAlprConfFile);
-            return result;
+        // Reduce the size of image to the maximum allowed size as defined in Constants.
+        double reduceRatio = 0;
+        if (bmOriginalWidth > bmOriginalHeight) {
+            reduceRatio = 1.0 * Constants.maxSizeOfPictureToProcess / bmOriginalWidth;
+        } else {
+            reduceRatio = 1.0 * Constants.maxSizeOfPictureToProcess / bmOriginalHeight;
+        }
+        int newWidth = (int)((double) bmOriginalWidth * reduceRatio);
+        int newHeight = (int)((double) bmOriginalHeight * reduceRatio);
+        photo = Bitmap.createScaledBitmap(photo, newWidth, newHeight, false);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+        File f = new File(imageFilePath);
+        try {
+            f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -234,6 +275,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (destination != null) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra("outputX", 1280);
+            intent.putExtra("outputY", 720);
+            intent.putExtra("scale", true);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
             startActivityForResult(intent, REQUEST_IMAGE);
         }

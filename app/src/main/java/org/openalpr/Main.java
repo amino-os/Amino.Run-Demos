@@ -11,10 +11,9 @@ import java.io.File;
  * Open ALPR Sapphire wrapper.
  */
 public class Main {
-    final String FileName = "2018-02-14-10-58-41.jpg";
     final String country = "us";
 
-    private void execOnDefault() {
+    private void execOnDefault(String fileName) {
         String configfile = Constants.OPEN_ALPR_CONF_FILE_LINUX;
         String runtimeDataDir = Constants.RUNTIME_ASSET_DIR_LINUX;
 
@@ -24,15 +23,14 @@ public class Main {
         alpr.setDefaultRegion("");
 
         // Read an image into a byte array and send it to OpenALPR
-//        byte [] imageData = new byte[1024*1024];
         byte[] imageData;
 
         try {
-            File file = new File(FileName);
+            File file = new File(fileName);
             long fileLength = file.length();
             System.out.println("File length = " + fileLength);
 
-            RandomAccessFile f = new RandomAccessFile(FileName, "r");
+            RandomAccessFile f = new RandomAccessFile(fileName, "r");
             imageData = new byte[(int)f.length()];
             f.readFully(imageData);        }
         catch (Exception e) {
@@ -64,6 +62,11 @@ public class Main {
     }
 
     public static void main(String args[]) {
-        new Main().execOnDefault();
+        if (args == null || args.length == 0) {
+            System.out.println("Please provide an image filename to load.");
+            return;
+        }
+
+        new Main().execOnDefault(args[0]);
     }
 }

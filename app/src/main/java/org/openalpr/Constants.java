@@ -18,4 +18,7 @@ public class Constants
     public static String[] omsAddress = { "ec2-18-216-118-195.us-east-2.compute.amazonaws.com", "22346" };
     public static String[] hostAddress = { "192.168.10.125", "22345" };
     public static String PackageName = "org.openalpr";
+
+    // Max size of pixels to process either at width or height (original picture should be compressed to this max size).
+    public static int maxSizeOfPictureToProcess = 1920;
 }

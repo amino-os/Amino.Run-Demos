@@ -17,10 +17,9 @@ public class SapphireAccess
 {
     public static OMSServer server;
     public static AlprSapphire lr;
-    public static Context context;
     public static String ANDROID_DATA_DIR;
 
-    public static String getResult(String countryCode, String region, String imageFilePath, String openAlprConfFile) {
+    public static String getResult(String countryCode, String region, String imageFilePath) {
         String result = null;
 
         try {
@@ -42,17 +41,11 @@ public class SapphireAccess
             long fileLength = file.length();
             System.out.println("File length = " + fileLength);
             FileInputStream in = new FileInputStream(file);
-            byte [] imageData = new byte[4096*1024];
-
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inSampleSize = 4;
-//
-//            Bitmap bm = BitmapFactory.decodeFile(absolutePath, options);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bm.compress(Bitmap.CompressFormat.JPEG, 40, baos);
+            byte [] imageData = new byte[8192*1024];
 
             try {
                 int mylen = in.read(imageData);
+                System.out.println("Size of image = " + mylen);
                 while (mylen > 0) {
                     lr.saveImage(file.getName(), imageData, mylen);
                     mylen = in.read(imageData);

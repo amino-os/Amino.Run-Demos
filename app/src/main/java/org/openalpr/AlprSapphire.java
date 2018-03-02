@@ -54,7 +54,7 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
      * Process the image on default machine (e.g., Linux)
      * @param country
      * @param region
-     * @param configFilePath
+     * @param openAlprConfFile
      * @param fileName
      * @param MAX_NUM_OF_PLATES
      * @return
@@ -68,7 +68,6 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
             alpr.setDefaultRegion("");
 
         } catch (Exception e) {
-            System.out.println("There was an error at Initialization: " + e.getMessage());
             e.printStackTrace();
             return "Error: " + e.toString();
         }
@@ -81,7 +80,6 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
             imageData = new byte[(int)f.length()];
             f.readFully(imageData);        }
         catch (Exception e) {
-            System.out.println("There was an error at RandomAccessFile: " + e.getMessage());
             e.printStackTrace();
             return "Error: " + e.toString();
         }
@@ -95,19 +93,8 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 //            System.out.println("Image Size: " + results.getImgWidth() + "x" + results.getImgHeight());
 //            System.out.println("Processing Time: " + results.getTotalProcessingTimeMs() + " ms");
 //            System.out.println("Found " + results.getPlates().size() + " results");
-//
-//            System.out.format("  %-15s%-8s\n", "Plate Number", "Confidence");
-//            for (AlprPlateResult result : results.getPlates()) {
-//                for (AlprPlate plate : result.getTopNPlates()) {
-//                    if (plate.isMatchesTemplate())
-//                        System.out.print("  * ");
-//                    else
-//                        System.out.print("  - ");
-//                    System.out.format("%-15s%-8f\n", plate.getCharacters(), plate.getOverallConfidence());
-//                }
-//            }
+
         } catch (Exception e) {
-            System.out.println("There was an error at recognizeImageOnDefault." + e.getMessage());
             e.printStackTrace();
             return "Error at recognizeImageOnDefault: " + e.getMessage();
         }
