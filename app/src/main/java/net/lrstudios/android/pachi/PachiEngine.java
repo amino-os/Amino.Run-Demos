@@ -57,7 +57,7 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
 
     @Override
     protected String[] getProcessArgs() {
-        return new String[]{"-t", "" + _time, "max_tree_size=" + _maxTreeSize};
+        return new String[]{"-t", "=5000:15000", "threads=4,max_tree_size=4096"};
     }
 
 

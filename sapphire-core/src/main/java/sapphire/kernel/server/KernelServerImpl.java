@@ -230,7 +230,9 @@ public class KernelServerImpl implements KernelServer{
 
 		try {
 			KernelServerImpl server = new KernelServerImpl(host, omsHost);
-			KernelServer stub = (KernelServer) UnicastRemoteObject.exportObject(server, 0);
+
+			final int kernelServerPort = 35455;
+			KernelServer stub = (KernelServer) UnicastRemoteObject.exportObject(server, kernelServerPort);
 			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[1]));
 			registry.rebind("SapphireKernelServer", stub);
 			

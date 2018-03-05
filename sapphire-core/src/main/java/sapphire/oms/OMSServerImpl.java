@@ -152,11 +152,14 @@ public class OMSServerImpl implements OMSServer{
     		   System.out.println("[IP] [port] [AppClassName]");
     		   return;
     	   }
- 
+
+    	   // hard coding for docker ease
+    	   final int omsPort = 35459;
+
     	   System.setProperty("java.rmi.server.hostname", args[0]);
     	   try {
     		   OMSServerImpl oms = new OMSServerImpl(args[2]);
-    		   OMSServer omsStub = (OMSServer) UnicastRemoteObject.exportObject(oms, 0);
+    		   OMSServer omsStub = (OMSServer) UnicastRemoteObject.exportObject(oms, omsPort);
     		   Registry registry = LocateRegistry.createRegistry(port);
     		   registry.rebind("SapphireOMS", omsStub);
     		   logger.info("OMS ready");
