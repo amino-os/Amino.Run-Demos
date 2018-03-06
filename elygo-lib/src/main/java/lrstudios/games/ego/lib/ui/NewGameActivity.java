@@ -20,10 +20,15 @@ package lrstudios.games.ego.lib.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import lrstudios.games.ego.lib.GoBoard;
 import lrstudios.games.ego.lib.IntentGameInfo;
@@ -31,6 +36,7 @@ import lrstudios.games.ego.lib.R;
 import lrstudios.games.ego.lib.UpdatePrefsTask;
 import lrstudios.util.android.ui.BetterFragmentActivity;
 
+import sapphire.kernel.server.KernelServerImpl;
 
 /**
  * Allows to start a game against a bot.
@@ -44,6 +50,9 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
     private Spinner _spn_handicap;
     private Spinner _spn_level;
     private Button _btn_continue;
+
+    private RadioGroup _sapphiration_rg;
+    private EditText _omsIp;
 
     private static final String
             _PREF_BOARDSIZE = "newgame_boardsize",
@@ -71,6 +80,9 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
         _spn_handicap = (Spinner) findViewById(R.id.spn_play_handicap);
         _btn_continue = (Button) findViewById(R.id.btn_play_continue);
 
+        _sapphiration_rg = (RadioGroup)findViewById(R.id.sapphirization);
+        _omsIp = (EditText)findViewById(R.id.omsIp);
+
         // Restore last values
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         _spn_boardSize.setSelection(prefs.getInt(_PREF_BOARDSIZE, 1));
@@ -85,6 +97,10 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
         _updateButtons();
     }
 
+    public boolean isLocal(){
+        int radioButtonId = this._sapphiration_rg.getCheckedRadioButtonId();
+        return radioButtonId == R.id.radioButtonLocal;
+    }
 
     @Override
     public void onClick(View v) {
@@ -123,21 +139,51 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
             gameInfo.color = color;
             gameInfo.handicap = handicap;
 
+            boolean isLocal = this.isLocal();
+            String omsHost = this._omsIp.getText().toString();
+            this.enableNetworkOps();
+            String ipLocal = getWifiIPAddress();
+
+            KernelServerImpl.main(new String[]{ipLocal, "22344", omsHost, "22343"});
+
             intent = new Intent(NewGameActivity.this, GtpBoardActivity.class);
             intent.putExtra(GtpBoardActivity.INTENT_GTP_BOT_CLASS, getBotClass());
             intent.putExtra(BaseBoardActivity.INTENT_GAME_INFO, gameInfo);
+            intent.putExtra(GtpBoardActivity.INTENT_SO_TARGET, isLocal?"local":"cloud");
+            intent.putExtra(GtpBoardActivity.INTENT_LOCAL_HOST, ipLocal);
             startActivityForResult(intent, 0);
         }
         else if (id == R.id.btn_play_continue) {
             gameInfo = new IntentGameInfo();
             gameInfo.botLevel = level;
 
+            boolean isLocal = this.isLocal();
+            String omsHost = this._omsIp.getText().toString();
+            this.enableNetworkOps();
+            String ipLocal = getWifiIPAddress();
+
+            KernelServerImpl.main(new String[]{ipLocal, "22344", omsHost, "22343"});
+
             intent = new Intent(NewGameActivity.this, GtpBoardActivity.class);
             intent.putExtra(GtpBoardActivity.INTENT_PLAY_RESTORE, true);
             intent.putExtra(GtpBoardActivity.INTENT_GTP_BOT_CLASS, getBotClass());
             intent.putExtra(BaseBoardActivity.INTENT_GAME_INFO, gameInfo);
+            intent.putExtra(GtpBoardActivity.INTENT_SO_TARGET, isLocal?"local":"cloud");
+            intent.putExtra(GtpBoardActivity.INTENT_LOCAL_HOST, ipLocal);
             startActivityForResult(intent, 0);
         }
+    }
+
+    private void enableNetworkOps() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+    }
+
+    private String getWifiIPAddress() {
+        WifiManager wifiManager = (WifiManager)getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int ip = wifiInfo.getIpAddress();
+        return android.text.format.Formatter.formatIpAddress(ip);
     }
 
 

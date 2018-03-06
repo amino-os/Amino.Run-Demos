@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +40,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.DecimalFormat;
@@ -49,7 +50,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.Properties;
 
 import lrstudios.games.ego.lib.BoardView;
 import lrstudios.games.ego.lib.Coords;
@@ -68,19 +68,19 @@ import lrstudios.games.ego.lib.ScoreView;
 import lrstudios.games.ego.lib.Utils;
 import sapphire.kernel.common.GlobalKernelReferences;
 import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.GlobalKernelObjectManager;
 import sapphire.oms.OMSServer;
-import sapphire.runtime.Sapphire;
 
 public class GtpBoardActivity extends NAActivity implements BoardView.BoardListener, Serializable {
     private transient static final String TAG = "GtpBoardActivity";
+    public transient static Context actionContext;
 
     public transient static final int
             MSG_GTP_MOVE = 2,
             MSG_FINAL_SCORE = 3;
 
     public transient static final String
+            INTENT_SO_TARGET = "sapphire.target",
+            INTENT_LOCAL_HOST = "local.host",
             INTENT_PLAY_RESTORE = "lrstudios.games.ego.PLAY_RESTORE",
             INTENT_GTP_BOT_CLASS = "lrstudios.games.ego.BOT_CLASS";
 
@@ -91,9 +91,37 @@ public class GtpBoardActivity extends NAActivity implements BoardView.BoardListe
     private transient GtpEngine _engine;
     private transient ProgressDialog _waitingScoreDialog;
 
+    private InetSocketAddress getSapphireTarget(boolean isLocal, String localIp)
+    {
+        OMSServer oms = GlobalKernelReferences.nodeServer.oms;
+
+        ArrayList<InetSocketAddress> kernelServers = null;
+        try {
+            kernelServers = oms.getServers();
+            for (InetSocketAddress sockAddr : kernelServers) {
+                if (isLocal){
+                    if (sockAddr.getHostName().equals(localIp)){
+                        return sockAddr;
+                    }
+                } else {
+                    if (!sockAddr.getHostName().equals(localIp)) {
+                        return sockAddr;
+                    }
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+        throw new RuntimeException("cannot determine the target node of sapphire model.");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        actionContext = this;
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -128,13 +156,16 @@ public class GtpBoardActivity extends NAActivity implements BoardView.BoardListe
             OMSServer oms = GlobalKernelReferences.nodeServer.oms;
 
             ArrayList<InetSocketAddress> kernelServers = oms.getServers();
-            InetSocketAddress host = kernelServers.get(0);
-            Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
+            String soTarget = (String)extras.get(INTENT_SO_TARGET);
+            Boolean isLocal = soTarget.equals("local");
+            String localIp = (String)extras.get(INTENT_LOCAL_HOST);
+            InetSocketAddress target = this.getSapphireTarget(isLocal, localIp);
+            Registry registry = LocateRegistry.getRegistry(target.getHostName(), target.getPort());
             KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
-            Object ae = server.startApp("lrstudios.games.ego.lib.DCAPStart");
-            GtpEngineManager engineManager = (GtpEngineManager)ae;
+            Object appEntry = server.startApp("lrstudios.games.ego.lib.DCAPStart");
+            GtpEngineManager engineManager = (GtpEngineManager)appEntry;
 
-            _engine = engineManager.getEngine(botClass, new EngineContext()); //this);
+            _engine = engineManager.getEngine(botClass, new EngineContext());
         }
         catch (Exception e) {
             e.printStackTrace();

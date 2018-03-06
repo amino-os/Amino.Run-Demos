@@ -146,6 +146,50 @@
                 android:layout_height="40dp"
                 android:drawSelectorOnTop="true"
                 android:entries="@array/playHandicap" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OMS ip:" />
+
+            <EditText
+                android:id="@+id/omsIp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="192.168.10.229" />
+
+            <RadioGroup
+                android:id="@+id/sapphirization"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkedButton="@+id/radioButtonLocal"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radioButtonLocal"
+                    style="@android:style/Widget.CompoundButton.RadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_weight="3"
+                    android:text="Local AI"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonCloud"
+                    style="@android:style/Widget.CompoundButton.RadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_weight="3"
+                    android:text="Cloud AI"
+                    android:textStyle="bold" />
+            </RadioGroup>
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

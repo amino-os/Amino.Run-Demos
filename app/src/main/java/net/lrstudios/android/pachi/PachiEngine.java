@@ -7,7 +7,9 @@ import android.util.Log;
 
 import lrstudios.games.ego.lib.EngineContext;
 import lrstudios.games.ego.lib.ExternalGtpEngine;
+import lrstudios.games.ego.lib.GtpEngine;
 import lrstudios.games.ego.lib.Utils;
+import lrstudios.games.ego.lib.ui.GtpBoardActivity;
 import lrstudios.util.android.AndroidUtils;
 import sapphire.app.SapphireObject;
 
@@ -32,7 +34,6 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
 
     private int _time = 600;
     private int _maxTreeSize = 256;
-
 
     public PachiEngine(EngineContext context) {
         super(context);
@@ -66,8 +67,8 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
         File dir = new File(_context.getDir());
 
         File file = new File(dir, "pachi");
-// todo: enable the engine file update
-/*
+
+        Context _context = GtpBoardActivity.actionContext;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
         int version = prefs.getInt(PREF_KEY_VERSION, 0);
         if (version < EXE_VERSION) {
@@ -106,11 +107,12 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
                 Utils.closeObject(outputStream);
             }
         }
-*/
+
         return file;
     }
-/*
+
     private void extractRawResToFile(int resID, File dir, String fileName) throws IOException {
+        Context _context = (Context) GtpBoardActivity.actionContext;
         File f = new File(dir, fileName);
         OutputStream o = new BufferedOutputStream(new FileOutputStream(f), 4096);
         InputStream i = new BufferedInputStream(_context.getResources().openRawResource(resID), 4096);
@@ -118,7 +120,7 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
         i.close();
         o.close();
     }
-*/
+
     @Override
     public String getName() {
         return ENGINE_NAME;
