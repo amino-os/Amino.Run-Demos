@@ -1,4 +1,4 @@
-package com.openalpr.jni;
+package org.openalpr;
 
 
 public class AlprException extends Exception {

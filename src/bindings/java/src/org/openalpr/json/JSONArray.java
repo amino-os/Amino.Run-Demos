@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openalpr.jni.json;
+package org.openalpr.json;
 
 import java.util.ArrayList;
 import java.util.Collection;

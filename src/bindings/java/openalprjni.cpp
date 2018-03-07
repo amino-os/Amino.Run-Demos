@@ -1,13 +1,13 @@
 #include <alpr.h>
  
-#include "com_openalpr_jni_Alpr.h"
+#include "org_openalpr_Alpr.h"
 
 using namespace alpr;
 
 bool initialized = false;
 static Alpr* nativeAlpr;
 
-JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_initialize
+JNIEXPORT void JNICALL Java_org_openalpr_Alpr_initialize
   (JNIEnv *env, jobject thisObj, jstring jcountry, jstring jconfigFile, jstring jruntimeDir)
   {
     //printf("Initialize");
@@ -32,7 +32,7 @@ JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_initialize
     return;
   }
 
-JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_dispose
+JNIEXPORT void JNICALL Java_org_openalpr_Alpr_dispose
   (JNIEnv *env, jobject thisObj)
   {
     //printf("Dispose");
@@ -41,7 +41,7 @@ JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_dispose
   }
 
 
-JNIEXPORT jboolean JNICALL Java_com_openalpr_jni_Alpr_is_1loaded
+JNIEXPORT jboolean JNICALL Java_org_openalpr_Alpr_is_1loaded
   (JNIEnv *env, jobject thisObj)
   {
     //printf("IS LOADED");
@@ -53,7 +53,7 @@ JNIEXPORT jboolean JNICALL Java_com_openalpr_jni_Alpr_is_1loaded
         
   }
 
-JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__Ljava_lang_String_2
+JNIEXPORT jstring JNICALL Java_org_openalpr_Alpr_native_1recognize__Ljava_lang_String_2
   (JNIEnv *env, jobject thisObj, jstring jimageFile)
   {
     //printf("Recognize file");
@@ -71,7 +71,7 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__Ljava_la
   }
 
 
-JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize___3B
+JNIEXPORT jstring JNICALL Java_org_openalpr_Alpr_native_1recognize___3B
   (JNIEnv *env, jobject thisObj, jbyteArray jimageBytes)
   {
     //printf("Recognize byte array");
@@ -89,7 +89,7 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize___3B
     return env->NewStringUTF(json.c_str());
   }
 
-JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__JIII
+JNIEXPORT jstring JNICALL Java_org_openalpr_Alpr_native_1recognize__JIII
   (JNIEnv *env, jobject thisObj, jlong data, jint bytesPerPixel, jint width, jint height)
   {
     //printf("Recognize data pointer");
@@ -107,7 +107,7 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__JIII
   }
 
 
-JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_set_1default_1region
+JNIEXPORT void JNICALL Java_org_openalpr_Alpr_set_1default_1region
   (JNIEnv *env, jobject thisObj, jstring jdefault_region)
   {
     // Convert strings from java to C++ and release resources
@@ -118,19 +118,19 @@ JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_set_1default_1region
     nativeAlpr->setDefaultRegion(default_region);
   }
 
-JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_detect_1region
+JNIEXPORT void JNICALL Java_org_openalpr_Alpr_detect_1region
   (JNIEnv *env, jobject thisObj, jboolean detect_region)
   {
     nativeAlpr->setDetectRegion(detect_region);
   }
 
-JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_set_1top_1n
+JNIEXPORT void JNICALL Java_org_openalpr_Alpr_set_1top_1n
   (JNIEnv *env, jobject thisObj, jint top_n)
   {
     nativeAlpr->setTopN(top_n);
   }
 
-JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_get_1version
+JNIEXPORT jstring JNICALL Java_org_openalpr_Alpr_get_1version
   (JNIEnv *env, jobject thisObj)
   {
     std::string version = nativeAlpr->getVersion();
