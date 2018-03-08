@@ -5,6 +5,8 @@
 package lrstudios.games.ego.lib.stubs;
 
 
+import lrstudios.games.ego.lib.EngineContext;
+
 public final class GtpEngineManager_Stub extends lrstudios.games.ego.lib.GtpEngineManager implements sapphire.common.AppObjectStub {
 
     sapphire.policy.SapphirePolicy.SapphireClientPolicy $__client = null;
@@ -30,7 +32,7 @@ public final class GtpEngineManager_Stub extends lrstudios.games.ego.lib.GtpEngi
 
 
     // Implementation of getEngine(Class, Context)
-    public lrstudios.games.ego.lib.GtpEngine getEngine(java.lang.Class $param_Class_1, android.content.Context $param_Context_2)
+    public lrstudios.games.ego.lib.GtpEngine getEngine(java.lang.Class $param_Class_1, EngineContext $param_Context_2)
 //            throws java.lang.NoSuchMethodException, java.lang.InstantiationException, java.lang.IllegalAccessException, java.lang.reflect.InvocationTargetException {
     {
         java.lang.Object $__result = null;
@@ -39,7 +41,8 @@ public final class GtpEngineManager_Stub extends lrstudios.games.ego.lib.GtpEngi
                 $__result = super.getEngine( $param_Class_1,  $param_Context_2);
             else {
                 java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public lrstudios.games.ego.lib.GtpEngine lrstudios.games.ego.lib.GtpEngineManager.getEngine(java.lang.Class<?>,android.content.Context) throws java.lang.NoSuchMethodException,java.lang.InstantiationException,java.lang.IllegalAccessException,java.lang.reflect.InvocationTargetException";
+                //String $__method = "public lrstudios.games.ego.lib.GtpEngine lrstudios.games.ego.lib.GtpEngineManager.getEngine(java.lang.Class<?>,android.content.Context) throws java.lang.NoSuchMethodException,java.lang.InstantiationException,java.lang.IllegalAccessException,java.lang.reflect.InvocationTargetException";
+                String $__method = "public lrstudios.games.ego.lib.GtpEngine lrstudios.games.ego.lib.GtpEngineManager.getEngine(java.lang.Class<?>,lrstudios.games.ego.lib.EngineContext)";
                 $__params.add($param_Class_1);
                 $__params.add($param_Context_2);
                 $__result = $__client.onRPC($__method, $__params);

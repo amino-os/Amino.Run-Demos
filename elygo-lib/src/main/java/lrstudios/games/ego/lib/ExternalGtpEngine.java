@@ -37,7 +37,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
     protected abstract File getEngineFile();
 
 
-    public ExternalGtpEngine(Context context) {
+    public ExternalGtpEngine(EngineContext context) {
         super(context);
     }
 

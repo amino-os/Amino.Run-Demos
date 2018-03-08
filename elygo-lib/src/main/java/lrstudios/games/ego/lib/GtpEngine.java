@@ -21,13 +21,14 @@ package lrstudios.games.ego.lib;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 
 /**
  * Represents a Go engine which uses the standard GTP protocol to communicate.
  */
-public abstract class GtpEngine {
+public abstract class GtpEngine implements Serializable {
     private static final String TAG = "GtpEngine";
 
     private static final String _BOARD_LETTERS = "ABCDEFGHJKLMNOPQRSTUVWXYZ"; // no 'I'
@@ -37,7 +38,7 @@ public abstract class GtpEngine {
     private byte _playerColor;
     private int _boardSize;
     private GoGame _game;
-    protected Context _context;
+    protected EngineContext _context;
 
 
     /**
@@ -64,7 +65,7 @@ public abstract class GtpEngine {
     public abstract String getVersion();
 
 
-    public GtpEngine(Context context) {
+    public GtpEngine(EngineContext context) {
         _context = context;
     }
 

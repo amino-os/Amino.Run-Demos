@@ -5,6 +5,7 @@
 package net.lrstudios.android.pachi.stubs;
 
 
+import lrstudios.games.ego.lib.EngineContext;
 import lrstudios.games.ego.lib.ui.GtpBoardActivity;
 
 public final class PachiEngine_Stub extends net.lrstudios.android.pachi.PachiEngine implements sapphire.common.AppObjectStub {
@@ -12,11 +13,7 @@ public final class PachiEngine_Stub extends net.lrstudios.android.pachi.PachiEng
     sapphire.policy.SapphirePolicy.SapphireClientPolicy $__client = null;
     boolean $__directInvocation = false;
 
-    public PachiEngine_Stub (android.content.Context $param_Context_1) {
-        super($param_Context_1);
-    }
-
-    public PachiEngine_Stub (GtpBoardActivity $param_Context_1) {
+    public PachiEngine_Stub (EngineContext $param_Context_1) {
         super($param_Context_1);
     }
 

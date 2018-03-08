@@ -12,7 +12,7 @@ import sapphire.runtime.Sapphire;
  */
 
 public class GtpEngineManager implements SapphireObject{
-    public GtpEngine getEngine(Class<?> botClass, Context context) {
+    public GtpEngine getEngine(Class<?> botClass, EngineContext context) {
         try {
             return (GtpEngine) Sapphire.new_(botClass, context);
         } catch (Exception e) {

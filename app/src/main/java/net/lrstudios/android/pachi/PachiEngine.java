@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import lrstudios.games.ego.lib.EngineContext;
 import lrstudios.games.ego.lib.ExternalGtpEngine;
 import lrstudios.games.ego.lib.Utils;
 import lrstudios.util.android.AndroidUtils;
@@ -31,9 +33,11 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
     private int _maxTreeSize = 256;
 
 
-    public PachiEngine(Context context) {
+    public PachiEngine(EngineContext context) {
         super(context);
-        long totalRam = AndroidUtils.getTotalRam(context);
+
+        long totalRam = context.getMemoryLimit();
+
         // The amount of RAM used by pachi (adjustable with max_tree_size) should not
         // be too high compared to the total RAM available, because Android can kill a
         // process at any time if it uses too much memory.
@@ -60,9 +64,11 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
 
     @Override
     protected File getEngineFile() {
-        File dir = _context.getDir("engines", Context.MODE_PRIVATE);
-        File file = new File(dir, "pachi");
+        File dir = new File(_context.getDir());
 
+        File file = new File(dir, "pachi");
+// todo: enable the engine file update
+/*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
         int version = prefs.getInt(PREF_KEY_VERSION, 0);
         if (version < EXE_VERSION) {
@@ -101,10 +107,10 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
                 Utils.closeObject(outputStream);
             }
         }
-
+*/
         return file;
     }
-
+/*
     private void extractRawResToFile(int resID, File dir, String fileName) throws IOException {
         File f = new File(dir, fileName);
         OutputStream o = new BufferedOutputStream(new FileOutputStream(f), 4096);
@@ -113,7 +119,7 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
         i.close();
         o.close();
     }
-
+*/
     @Override
     public String getName() {
         return ENGINE_NAME;

@@ -39,6 +39,7 @@ import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -51,6 +52,7 @@ import java.util.Properties;
 
 import lrstudios.games.ego.lib.BoardView;
 import lrstudios.games.ego.lib.Coords;
+import lrstudios.games.ego.lib.EngineContext;
 import lrstudios.games.ego.lib.GameInfo;
 import lrstudios.games.ego.lib.GameNode;
 import lrstudios.games.ego.lib.GoBoard;
@@ -70,23 +72,23 @@ import sapphire.oms.GlobalKernelObjectManager;
 import sapphire.oms.OMSServer;
 import sapphire.runtime.Sapphire;
 
-public class GtpBoardActivity extends BaseBoardActivity implements BoardView.BoardListener {
-    private static final String TAG = "GtpBoardActivity";
+public class GtpBoardActivity extends NAActivity implements BoardView.BoardListener, Serializable {
+    private transient static final String TAG = "GtpBoardActivity";
 
-    public static final int
+    public transient static final int
             MSG_GTP_MOVE = 2,
             MSG_FINAL_SCORE = 3;
 
-    public static final String
+    public transient static final String
             INTENT_PLAY_RESTORE = "lrstudios.games.ego.PLAY_RESTORE",
             INTENT_GTP_BOT_CLASS = "lrstudios.games.ego.BOT_CLASS";
 
-    private static GtpThread _gtpThread;
+    private transient static GtpThread _gtpThread;
 
-    private ScoreView _scoreView;
-    private ActivityHandler _handler = new ActivityHandler();
-    private GtpEngine _engine;
-    private ProgressDialog _waitingScoreDialog;
+    private transient ScoreView _scoreView;
+    private transient ActivityHandler _handler = new ActivityHandler();
+    private transient GtpEngine _engine;
+    private transient ProgressDialog _waitingScoreDialog;
 
 
     @Override
@@ -131,7 +133,7 @@ public class GtpBoardActivity extends BaseBoardActivity implements BoardView.Boa
             Object ae = server.startApp("lrstudios.games.ego.lib.DCAPStart");
             GtpEngineManager engineManager = (GtpEngineManager)ae;
 
-            _engine = engineManager.getEngine(botClass, this);
+            _engine = engineManager.getEngine(botClass, new EngineContext()); //this);
         }
         catch (Exception e) {
             e.printStackTrace();
