@@ -39,6 +39,9 @@ import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -59,6 +62,12 @@ import lrstudios.games.ego.lib.IntentGameInfo;
 import lrstudios.games.ego.lib.R;
 import lrstudios.games.ego.lib.ScoreView;
 import lrstudios.games.ego.lib.Utils;
+import sapphire.kernel.common.GlobalKernelReferences;
+import sapphire.kernel.server.KernelServer;
+import sapphire.kernel.server.KernelServerImpl;
+import sapphire.oms.GlobalKernelObjectManager;
+import sapphire.oms.OMSServer;
+import sapphire.runtime.Sapphire;
 
 public class GtpBoardActivity extends BaseBoardActivity implements BoardView.BoardListener {
     private static final String TAG = "GtpBoardActivity";
@@ -112,7 +121,15 @@ public class GtpBoardActivity extends BaseBoardActivity implements BoardView.Boa
 
         Class<?> botClass = (Class<?>) extras.getSerializable(INTENT_GTP_BOT_CLASS);
         try {
-            _engine = new GtpEngineManager().getEngine(botClass, this);
+            OMSServer oms = GlobalKernelReferences.nodeServer.oms;
+
+            InetSocketAddress host = oms.getServers().get(0);
+            Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
+            KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
+            Object ae = server.startApp("lrstudios.games.ego.lib.DCAPStart");
+            GtpEngineManager engineManager = (GtpEngineManager)ae;
+
+            _engine = engineManager.getEngine(botClass, this);
         }
         catch (Exception e) {
             e.printStackTrace();
