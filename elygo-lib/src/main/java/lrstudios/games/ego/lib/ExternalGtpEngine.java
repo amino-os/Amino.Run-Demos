@@ -61,7 +61,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                 _isRunning = true;
             }
             else {
-                Log.d(TAG, "Called init() again");
+                //Log.d(TAG, "Called init() again");
             }
         }
         catch (IOException e) {
@@ -83,7 +83,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                 try {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        Log.e(TAG, "[Err] " + line);
+                        //Log.e(TAG, "[Err] " + line);
                         if (Thread.currentThread().isInterrupted())
                             return;
                     }
@@ -104,7 +104,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                     if (ep != null)
                         ep.waitFor();
                     _isRunning = false;
-                    Log.w(TAG, "##### Engine process has exited with code " + (ep != null ? ep.exitValue() : "[null]"));
+                    //Log.w(TAG, "##### Engine process has exited with code " + (ep != null ? ep.exitValue() : "[null]"));
                 }
                 catch (InterruptedException ignored) {
                 }
@@ -159,20 +159,20 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                     return _intSendGtpCommand(command);
                 }
                 catch (IOException e2) {
-                    Log.e(TAG, "[sendGtpCommand] Unable to restart the engine : cannot replay moves");
+                    //Log.e(TAG, "[sendGtpCommand] Unable to restart the engine : cannot replay moves");
                     e2.printStackTrace();
                     return null;
                 }
             }
             else {
-                Log.e(TAG, "[sendGtpCommand] Unable to restart the engine : init() failed");
+                //Log.e(TAG, "[sendGtpCommand] Unable to restart the engine : init() failed");
                 return null;
             }
         }
     }
 
     private String _intSendGtpCommand(String command) throws IOException {
-        Log.v(TAG, "Send: " + command);
+        //Log.v(TAG, "Send: " + command);
         _writer.write(command + "\n");
         _writer.flush();
         String res;
@@ -188,7 +188,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                     res += line + "\n";
                 res += "\n";
             }*/
-            Log.v(TAG, " >> " + res);
+            //Log.v(TAG, " >> " + res);
             ch = res.length() > 0 ? res.charAt(0) : 0;
         } while (ch != '=' && ch != '?');
         return res;
