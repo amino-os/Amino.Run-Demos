@@ -13,11 +13,16 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
-
     compile 'com.google.firebase:firebase-core:9.6.1'
     compile 'com.google.firebase:firebase-ads:9.6.1'
-
     compile 'ch.acra:acra:4.6.2'
-
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    compile fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation project(':sapphire-core')
 }
+
+android {
+      lintOptions {
+          abortOnError false
+      }
+}
+

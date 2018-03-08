@@ -190,7 +190,9 @@ public class Sapphire {
 		Field[] fields = obj.getClass().getSuperclass().getFields();
 		for (Field f : fields) {
 			f.setAccessible(true);
-			f.set(obj, null);
+			try {
+				f.set(obj, null);
+			}catch (Exception e){}
 		}
 
 		// Replace the values in stub with new values - is this necessary?

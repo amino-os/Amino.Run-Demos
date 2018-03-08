@@ -7,12 +7,13 @@ import android.util.Log;
 import lrstudios.games.ego.lib.ExternalGtpEngine;
 import lrstudios.games.ego.lib.Utils;
 import lrstudios.util.android.AndroidUtils;
+import sapphire.app.SapphireObject;
 
 import java.io.*;
 import java.util.Properties;
 
 
-public class PachiEngine extends ExternalGtpEngine {
+public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
     private static final String TAG = "PachiEngine";
 
     /**
