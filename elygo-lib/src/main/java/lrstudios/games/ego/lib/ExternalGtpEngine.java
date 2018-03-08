@@ -54,9 +54,9 @@ public abstract class ExternalGtpEngine extends GtpEngine {
                 System.arraycopy(processArgs, 0, args, 1, len);
                 //_engineProcess = new ProcessBuilder(args).start();
                 ProcessBuilder pb = new ProcessBuilder(args);
-                pb.directory(new File("/data/data/net.lrstudios.android.pachi/app_engines/"));
+                pb.directory(getEngineFile().getParentFile());
                 Map<String, String> env = pb.environment();
-                env.put("LD_LIBRARY_PATH", "/data/data/net.lrstudios.android.pachi/app_engines/");
+                env.put("LD_LIBRARY_PATH", getEngineFile().getParent());
                 _engineProcess = pb.start();
                 _isRunning = true;
             }
