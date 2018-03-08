@@ -16,7 +16,7 @@ javac -Xlint:unchecked src/org/openalpr/json/*.java src/org/openalpr/*.java  src
 javah -classpath src org.openalpr.Alpr
 
 # Compile/link native interface
-g++ -Wall -L${OPENALPR_LIB_DIR} -I${JAVA_PATH}/include/ -I${OPENALPR_INCLUDE_DIR} -shared -fPIC -o libopenalpr-native.so openalprjni.cpp -lopenalpr
+g++ -Wall -L${OPENALPR_LIB_DIR} -I${JAVA_PATH}/include/ -I${OPENALPR_INCLUDE_DIR} -shared -fPIC -o libopenalpr-native.so openalpr-native.cpp -lopenalpr
 
 # Test
 java -classpath src Main

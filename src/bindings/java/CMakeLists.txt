@@ -13,19 +13,19 @@ if (${JNI_FOUND} MATCHES "TRUE")
 
 
   set(jni_source_files
-   openalprjni.cpp
+   openalpr-native.cpp
   )
 
 
-  add_library(openalprjni SHARED ${jni_source_files})
+  add_library(openalpr-native SHARED ${jni_source_files})
 
-  set_target_properties(openalprjni PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
+  set_target_properties(openalpr-native PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
-  TARGET_LINK_LIBRARIES(openalprjni openalpr)
+  TARGET_LINK_LIBRARIES(openalpr-native openalpr)
 
 
-  install (TARGETS openalprjni   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)
+  install (TARGETS openalpr-native   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)
 else()
-  MESSAGE("JAVA JNI library not found, skipping openalprjni compilation")
+  MESSAGE("JAVA JNI library not found, skipping openalpr-native compilation")
 
 endif()
