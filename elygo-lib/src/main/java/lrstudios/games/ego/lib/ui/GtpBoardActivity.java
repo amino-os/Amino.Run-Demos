@@ -47,6 +47,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -162,9 +163,15 @@ public class GtpBoardActivity extends NAActivity implements BoardView.BoardListe
         }
 
         // Initialize the engine
+        /*
         Properties props = new Properties();
         props.setProperty("level", Integer.toString(gameInfo.botLevel));
         props.setProperty("boardsize", Integer.toString(boardSize));
+        */
+        Hashtable<String, String> props = new Hashtable<>();
+        props.put("level", Integer.toString(gameInfo.botLevel));
+        props.put("boardsize", Integer.toString(boardSize));
+
         if (!_engine.init(props)) {
             showToast(getString(R.string.err_cannot_start_engine, _engine.getName()));
             finish();

@@ -1,6 +1,5 @@
 package lrstudios.games.ego.lib;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -10,8 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Properties;
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -28,7 +28,7 @@ public abstract class ExternalGtpEngine extends GtpEngine {
     private OutputStreamWriter _writer;
     private BufferedReader _reader;
     private boolean _isRunning;
-    private Properties _properties;
+    private Hashtable<String, String> _properties;
 
 
     /**
@@ -42,11 +42,11 @@ public abstract class ExternalGtpEngine extends GtpEngine {
     }
 
     @Override
-    public boolean init(Properties properties) {
+    public boolean init(Hashtable<String, String> properties) {
         _properties = properties;
         try {
             if (!_isRunning) {
-                String propArgs = properties.getProperty("process_args");
+                String propArgs = properties.get("process_args");
                 String[] processArgs = (propArgs == null) ? getProcessArgs() : propArgs.split(" ");
                 int len = processArgs.length;
                 String[] args = new String[len + 1];

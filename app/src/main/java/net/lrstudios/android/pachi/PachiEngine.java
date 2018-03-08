@@ -12,6 +12,7 @@ import lrstudios.util.android.AndroidUtils;
 import sapphire.app.SapphireObject;
 
 import java.io.*;
+import java.util.Hashtable;
 import java.util.Properties;
 
 
@@ -46,9 +47,9 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
     }
 
     @Override
-    public boolean init(Properties properties) {
-        int level = Utils.tryParseInt(properties.getProperty("level"), 5);
-        int boardsize = Utils.tryParseInt(properties.getProperty("boardsize"), 9);
+    public boolean init(Hashtable<String, String> properties) {
+        int level = Utils.tryParseInt(properties.get("level"), 5);
+        int boardsize = Utils.tryParseInt(properties.get("boardsize"), 9);
 
         _time = (int) Math.round((boardsize * 1.5) * (0.5 + level / 10.0));
         return super.init(properties);
@@ -56,8 +57,6 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
 
     @Override
     protected String[] getProcessArgs() {
-        Log.v(TAG, "Set max_tree_size = " + _maxTreeSize);
-        Log.v(TAG, "Set time = " + _time);
         return new String[]{"-t", "" + _time, "max_tree_size=" + _maxTreeSize};
     }
 

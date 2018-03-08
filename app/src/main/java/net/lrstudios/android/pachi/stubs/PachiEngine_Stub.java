@@ -32,14 +32,14 @@ public final class PachiEngine_Stub extends net.lrstudios.android.pachi.PachiEng
 
 
     // Implementation of init(Properties)
-    public boolean init(java.util.Properties $param_Properties_1) {
+    public boolean init(java.util.Hashtable<java.lang.String, java.lang.String> $param_Properties_1) {
         java.lang.Object $__result = null;
         try {
             if ($__directInvocation)
                 $__result = super.init( $param_Properties_1);
             else {
                 java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public boolean net.lrstudios.android.pachi.PachiEngine.init(java.util.Properties)";
+                String $__method = "public boolean net.lrstudios.android.pachi.PachiEngine.init(java.util.Hashtable<java.lang.String, java.lang.String>)";
                 $__params.add($param_Properties_1);
                 $__result = $__client.onRPC($__method, $__params);
             }

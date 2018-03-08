@@ -18,10 +18,10 @@
 
 package lrstudios.games.ego.lib;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.Properties;
 
 
@@ -44,7 +44,7 @@ public abstract class GtpEngine implements Serializable {
     /**
      * Initializes the engine with the specified set of properties. Returns false if there was an error.
      */
-    public abstract boolean init(Properties properties);
+    public abstract boolean init(Hashtable<String, String> properties);
 
     /**
      * Sends a GTP command to the engine.
