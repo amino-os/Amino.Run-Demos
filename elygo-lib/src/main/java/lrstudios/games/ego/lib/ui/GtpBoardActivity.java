@@ -52,12 +52,12 @@ import lrstudios.games.ego.lib.GoBoard;
 import lrstudios.games.ego.lib.GoGame;
 import lrstudios.games.ego.lib.GoGameResult;
 import lrstudios.games.ego.lib.GtpEngine;
+import lrstudios.games.ego.lib.GtpEngineManager;
 import lrstudios.games.ego.lib.GtpThread;
 import lrstudios.games.ego.lib.IntentGameInfo;
 import lrstudios.games.ego.lib.R;
 import lrstudios.games.ego.lib.ScoreView;
 import lrstudios.games.ego.lib.Utils;
-
 
 public class GtpBoardActivity extends BaseBoardActivity implements BoardView.BoardListener {
     private static final String TAG = "GtpBoardActivity";
@@ -108,7 +108,7 @@ public class GtpBoardActivity extends BaseBoardActivity implements BoardView.Boa
 
         Class<?> botClass = (Class<?>) extras.getSerializable(INTENT_GTP_BOT_CLASS);
         try {
-            _engine = (GtpEngine) botClass.getConstructor(Context.class).newInstance(this);
+            _engine = new GtpEngineManager().getEngine(botClass, this);
         }
         catch (Exception e) {
             e.printStackTrace();
