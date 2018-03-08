@@ -43,6 +43,7 @@ import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -123,7 +124,8 @@ public class GtpBoardActivity extends BaseBoardActivity implements BoardView.Boa
         try {
             OMSServer oms = GlobalKernelReferences.nodeServer.oms;
 
-            InetSocketAddress host = oms.getServers().get(0);
+            ArrayList<InetSocketAddress> kernelServers = oms.getServers();
+            InetSocketAddress host = kernelServers.get(0);
             Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
             KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
             Object ae = server.startApp("lrstudios.games.ego.lib.DCAPStart");

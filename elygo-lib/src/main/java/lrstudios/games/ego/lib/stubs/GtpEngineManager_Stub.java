@@ -31,7 +31,8 @@ public final class GtpEngineManager_Stub extends lrstudios.games.ego.lib.GtpEngi
 
     // Implementation of getEngine(Class, Context)
     public lrstudios.games.ego.lib.GtpEngine getEngine(java.lang.Class $param_Class_1, android.content.Context $param_Context_2)
-            throws java.lang.NoSuchMethodException, java.lang.InstantiationException, java.lang.IllegalAccessException, java.lang.reflect.InvocationTargetException {
+//            throws java.lang.NoSuchMethodException, java.lang.InstantiationException, java.lang.IllegalAccessException, java.lang.reflect.InvocationTargetException {
+    {
         java.lang.Object $__result = null;
         try {
             if ($__directInvocation)
