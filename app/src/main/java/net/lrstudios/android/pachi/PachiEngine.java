@@ -65,6 +65,10 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
     @Override
     protected File getEngineFile() {
         File dir = new File(_context.getDir());
+        if (!dir.exists()){
+            // todo : handle failure
+            dir.mkdirs();
+        }
 
         File file = new File(dir, "pachi");
 
