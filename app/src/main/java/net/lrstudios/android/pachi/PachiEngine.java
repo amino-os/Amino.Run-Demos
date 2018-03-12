@@ -73,43 +73,44 @@ public class PachiEngine extends ExternalGtpEngine implements SapphireObject {
         File file = new File(dir, "pachi");
 
         Context _context = GtpBoardActivity.actionContext;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
-        int version = prefs.getInt(PREF_KEY_VERSION, 0);
-        if (version < EXE_VERSION) {
-            if (file.exists())
-                file.delete();
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                outputStream = new BufferedOutputStream(new FileOutputStream(file), 4096);
-                inputStream = new BufferedInputStream(_context.getResources().openRawResource(R.raw.pachi), 4096);
-                Utils.copyStream(inputStream, outputStream, 4096);
 
-                extractRawResToFile(R.raw.libcaffe, dir,"libcaffe.so");
-                extractRawResToFile(R.raw.golast19, dir,"golast19.prototxt");
-                extractRawResToFile(R.raw.golast, dir, "golast.trained");
-
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
+            int version = prefs.getInt(PREF_KEY_VERSION, 0);
+            if (version < EXE_VERSION) {
+                if (file.exists())
+                    file.delete();
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
                 try {
-                    //file.setExecutable(true); TODO test this instead of chmod
-                    new ProcessBuilder("chmod", "744", file.getAbsolutePath()).start().waitFor();
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putInt(PREF_KEY_VERSION, EXE_VERSION);
-                    editor.commit();
-                }
-                catch (IOException e) {
+                    outputStream = new BufferedOutputStream(new FileOutputStream(file), 4096);
+                    inputStream = new BufferedInputStream(_context.getResources().openRawResource(R.raw.pachi), 4096);
+                    Utils.copyStream(inputStream, outputStream, 4096);
+
+                    extractRawResToFile(R.raw.libcaffe, dir, "libcaffe.so");
+                    extractRawResToFile(R.raw.golast19, dir, "golast19.prototxt");
+                    extractRawResToFile(R.raw.golast, dir, "golast.trained");
+
+                    try {
+                        //file.setExecutable(true); TODO test this instead of chmod
+                        new ProcessBuilder("chmod", "744", file.getAbsolutePath()).start().waitFor();
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putInt(PREF_KEY_VERSION, EXE_VERSION);
+                        editor.commit();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    Utils.closeObject(inputStream);
+                    Utils.closeObject(outputStream);
                 }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
-            catch (IOException e) { // TODO handle file extracting errors
-                e.printStackTrace();
-            }
-            finally {
-                Utils.closeObject(inputStream);
-                Utils.closeObject(outputStream);
-            }
+        } catch (RuntimeException e){
+            // fine to continue with the pre-installed engine bits on the cloud node
         }
 
         return file;

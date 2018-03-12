@@ -30,13 +30,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import lrstudios.games.ego.lib.GoBoard;
 import lrstudios.games.ego.lib.IntentGameInfo;
 import lrstudios.games.ego.lib.R;
 import lrstudios.games.ego.lib.UpdatePrefsTask;
 import lrstudios.util.android.ui.BetterFragmentActivity;
 
+import sapphire.kernel.common.GlobalKernelReferences;
 import sapphire.kernel.server.KernelServerImpl;
+import sapphire.oms.OMSServer;
 
 /**
  * Allows to start a game against a bot.
@@ -145,6 +149,14 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
             String ipLocal = getWifiIPAddress();
 
             KernelServerImpl.main(new String[]{ipLocal, "22344", omsHost, "22343"});
+            OMSServer oms = GlobalKernelReferences.nodeServer.oms;
+            if (oms == null) {
+                Toast.makeText(
+                        this,
+                        "Cannot connect to OMS. Please check your network connectivity and ensure OMS is available, and try again.",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
 
             intent = new Intent(NewGameActivity.this, GtpBoardActivity.class);
             intent.putExtra(GtpBoardActivity.INTENT_GTP_BOT_CLASS, getBotClass());
@@ -163,6 +175,14 @@ public abstract class NewGameActivity extends BetterFragmentActivity implements 
             String ipLocal = getWifiIPAddress();
 
             KernelServerImpl.main(new String[]{ipLocal, "22344", omsHost, "22343"});
+            OMSServer oms = GlobalKernelReferences.nodeServer.oms;
+            if (oms == null) {
+                Toast.makeText(
+                        this,
+                        "Cannot connect to OMS. Please check your network connectivity and ensure OMS is available, and try again.",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
 
             intent = new Intent(NewGameActivity.this, GtpBoardActivity.class);
             intent.putExtra(GtpBoardActivity.INTENT_PLAY_RESTORE, true);
