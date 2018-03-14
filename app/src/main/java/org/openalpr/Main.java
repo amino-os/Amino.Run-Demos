@@ -1,11 +1,9 @@
 package org.openalpr;
 
-import com.openalpr.jni.Alpr;
-import com.openalpr.jni.AlprPlate;
-import com.openalpr.jni.AlprPlateResult;
-import com.openalpr.jni.AlprResults;
 import java.io.RandomAccessFile;
 import java.io.File;
+
+import sapphire.common.Configuration;
 
 /**
  * Open ALPR Sapphire wrapper.
@@ -14,12 +12,10 @@ public class Main {
     final String country = "us";
 
     private void execOnDefault(String fileName) {
-        String configfile = Constants.OPEN_ALPR_CONF_FILE_LINUX;
-        String runtimeDataDir = Constants.RUNTIME_ASSET_DIR_LINUX;
 
-        Alpr alpr = new Alpr(country, configfile, runtimeDataDir);
+        AlprJNIWrapper alpr = new AlprJNIWrapper();
 
-        alpr.setTopN(10);
+        alpr.setTopN(50);
         alpr.setDefaultRegion("");
 
         // Read an image into a byte array and send it to OpenALPR

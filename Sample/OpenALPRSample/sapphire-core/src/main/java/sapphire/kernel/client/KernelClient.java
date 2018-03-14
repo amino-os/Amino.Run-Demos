@@ -1,5 +1,6 @@
 package sapphire.kernel.client;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -17,6 +18,7 @@ import sapphire.kernel.common.KernelObjectNotFoundException;
 import sapphire.kernel.common.KernelObjectStub;
 import sapphire.kernel.common.KernelRPC;
 import sapphire.kernel.common.KernelRPCException;
+import sapphire.kernel.common.KernelUtility;
 import sapphire.kernel.server.KernelObject;
 import sapphire.kernel.server.KernelServer;
 import sapphire.oms.OMSServer;
@@ -47,8 +49,8 @@ public class KernelClient {
 		logger.addHandler(handler);
 
 		try {
-			logger.info("Getting the registry for host. Host: " + host.getHostName() + ":" + host.getPort()+ " Address:" + host.getAddress());
-		    Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
+			logger.info("Getting the registry for host. Host name: " + KernelUtility.getHostName(host));
+			Registry registry = LocateRegistry.getRegistry(KernelUtility.getHostName(host), host.getPort());
 		    KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
 		    servers.put(host, server);
 		    return server;
@@ -60,6 +62,7 @@ public class KernelClient {
 	}
 	
 	private KernelServer getServer(InetSocketAddress host) {
+
 		KernelServer server = servers.get(host);
 		if (server == null) {
 			server = addHost(host);

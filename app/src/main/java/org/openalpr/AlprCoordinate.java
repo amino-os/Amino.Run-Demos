@@ -1,8 +1,8 @@
-package com.openalpr.jni;
+package org.openalpr;
 
 
-import com.openalpr.jni.json.JSONException;
-import com.openalpr.jni.json.JSONObject;
+import org.openalpr.json.JSONException;
+import org.openalpr.json.JSONObject;
 
 public class AlprCoordinate {
     private final int x;

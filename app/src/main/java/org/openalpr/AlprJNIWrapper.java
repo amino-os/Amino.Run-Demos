@@ -1,76 +1,124 @@
 package org.openalpr;
 
-/**
- * Open ALPR wrapper.
- */
-public class AlprJNIWrapper implements OpenALPR {
+import org.openalpr.json.JSONException;
 
+import java.io.File;
+
+import sapphire.common.Configuration;
+
+/**
+ * This Class loads Alpr for license plate recognition on a default machine (e.g., Linux/Windows).
+ * It does not work for Android (See org.openalpr for Android JNI) due to following reason:
+ * Native compiled with different APIs.
+ *
+ * TODO (2/16/2018, SMoon): If necessary, fix all 1)-3) and compile with same names and APIs so a single code can be used.
+ */
+public class AlprJNIWrapper {
     static {
         try {
-            System.out.println("Loading openalpr-native library.");
-//            System.loadLibrary("openalprjni");
+            System.out.println("Loading library.");
             System.loadLibrary("openalpr-native");
-            System.out.println("Successfully loaded.");
-        }
-        catch(Exception e) {
-            System.out.println("Exception loading openalpr-native library: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    // Added methods for Ubuntu server.
-    public String recognizeInServer(String country, String region, String configFilePath, String imgFilePath, String runtimeDir, int topN) {
-        try {
-            System.out.println("[recognizeInServer] initialize");
-
-            initialize(country, configFilePath, runtimeDir);
-            System.out.println("[recognizeInServer] set_top_n");
-            set_top_n(topN);
-            System.out.println("[recognizeInServer] set_default_region");
-            set_default_region(country);
-            System.out.println("[recognizeInServer] native_recognize");
-            String result = native_recognize(imgFilePath);
-            System.out.println("[recognizeInServer] Received result : " + result);
-
-            return result;
+            System.out.println("Loaded library.");
         } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
             e.printStackTrace();
+            System.out.println(e.toString());
         }
-        return "Error";
     }
 
-    public native void initialize(String country, String configFile, String runtimeDir);
-    public native void initialize(String country, String configFile);
-    public native String native_recognize(String imageFile);
-    public native void set_default_region(String region);
-    public native void set_top_n(int topN);
-    // End of added methods for Ubuntu server.
+    private native void initialize(String country, String configFile, String runtimeDir);
+    private native void dispose();
 
-    /* (non-Javadoc)
-     * @see org.openalpr.Alpr#recognize(java.lang.String, int)
-     */
-    @Override
-    public native String recognize(String imgFilePath, int topN);
+    private native boolean is_loaded();
+    private native String native_recognize(String imageFile);
+    private native String native_recognize(byte[] imageBytes);
+    private native String native_recognize(long imageData, int bytesPerPixel, int imgWidth, int imgHeight);
 
-    /* (non-Javadoc)
-     * @see org.openalpr.Alpr#recognizeWithCountryNRegion(java.lang.String, java.lang.String, java.lang.String, int)
-     */
-    @Override
-    public native String recognizeWithCountryNRegion(String country, String region,
-                                                     String imgFilePath, int topN);
+    private native void set_default_region(String region);
+    private native void detect_region(boolean detectRegion);
+    private native void set_top_n(int topN);
+    private native String get_version();
 
-    /* (non-Javadoc)
-     * @see org.openalpr.Alpr#recognizeWithCountryRegionNConfig(java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
-     */
-    @Override
+    // For Android access
     public native String recognizeWithCountryRegionNConfig(String country,
                                                            String region, String imgFilePath, String configFilePath, int topN);
 
-    /*
-     * (non-Javadoc)
-     * @see org.openalpr.Alpr#version()
-     */
-    @Override
-    public native String version();
+
+    public AlprJNIWrapper() {}
+
+    public void unload()
+    {
+        dispose();
+    }
+
+    public boolean isLoaded()
+    {
+        return is_loaded();
+    }
+
+    public String recognize(String imageFilePath, String fileName, Configuration.ProcessEntity processEntity, String country, String region, String openAlprConfFile, int MAX_NUM_OF_PLATES) throws AlprException
+    {
+        System.out.println("Processing image file: " + fileName);
+        String json;
+
+        if (processEntity == Configuration.ProcessEntity.SERVER) {
+            initialize(country, openAlprConfFile, Constants.RUNTIME_ASSET_DIR_LINUX);
+            setTopN(MAX_NUM_OF_PLATES);
+            setDefaultRegion(region);
+            json = native_recognize(fileName);
+        } else {
+            try {
+                json = recognizeWithCountryRegionNConfig(country, region, imageFilePath, openAlprConfFile, MAX_NUM_OF_PLATES);
+            }catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        System.out.println("Finished processing image file. Result json size: " + json.length());
+        return json;
+    }
+
+    public AlprResults recognize(byte[] imageBytes) throws AlprException
+    {
+        try {
+            String json = native_recognize(imageBytes);
+            System.out.println(json);
+            return new AlprResults(json);
+        } catch (JSONException e)
+        {
+            throw new AlprException("Unable to parse ALPR results");
+        }
+    }
+
+
+    public AlprResults recognize(long imageData, int bytesPerPixel, int imgWidth, int imgHeight) throws AlprException
+    {
+        try {
+            String json = native_recognize(imageData, bytesPerPixel, imgWidth, imgHeight);
+            return new AlprResults(json);
+        } catch (JSONException e)
+        {
+            throw new AlprException("Unable to parse ALPR results");
+        }
+    }
+
+
+    public void setTopN(int topN)
+    {
+        set_top_n(topN);
+    }
+
+    public void setDefaultRegion(String region)
+    {
+        set_default_region(region);
+    }
+
+    public void setDetectRegion(boolean detectRegion)
+    {
+        detect_region(detectRegion);
+    }
+
+    public String getVersion()
+    {
+        return get_version();
+    }
 }

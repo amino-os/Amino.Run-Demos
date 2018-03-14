@@ -11,6 +11,7 @@ import sapphire.kernel.common.KernelObjectNotFoundException;
 import sapphire.kernel.common.KernelRPCException;
 
 import sapphire.kernel.common.KernelRPC;
+import sapphire.kernel.common.KernelUtility;
 import sapphire.oms.OMSServer;
 
 import java.io.Serializable;
@@ -55,8 +56,8 @@ public class KernelServerImpl implements KernelServer{
 		objectManager = new KernelObjectManager();
 	    Registry registry;
 		try {
-			logger.info("OMS : " + omsHost.getHostName() + ":" + omsHost.getPort());
-			registry = LocateRegistry.getRegistry(omsHost.getHostName(), omsHost.getPort());
+			logger.info("OMS : " + omsHost.getAddress() + ":" + omsHost.getPort());
+			registry = LocateRegistry.getRegistry(KernelUtility.getHostName(omsHost), omsHost.getPort());
 			oms = (OMSServer) registry.lookup("SapphireOMS");
 		} catch (Exception e) {
 			logger.severe("Could not find OMS: " + e.toString());
@@ -259,10 +260,8 @@ public class KernelServerImpl implements KernelServer{
 			return;
 		}
 
-		logger.info("java.rmi.server.hostname" + host.getAddress().getHostAddress());
-		//System.setProperty("java.rmi.server.hostname", host.getAddress().getHostAddress());
-		logger.info("Revised java.rmi.server.hostname" + host.getAddress().getHostAddress());
-		System.setProperty("java.rmi.server.hostname", host.getHostName());
+		logger.info("java.rmi.server.hostname" + KernelUtility.getHostName(host));
+		System.setProperty("java.rmi.server.hostname", KernelUtility.getHostName(host));
 
 		try {
 			KernelServerImpl server = new KernelServerImpl(host, omsHost);

@@ -8,6 +8,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -76,11 +78,26 @@ public class KernelServerManager {
 	}
 
     public ArrayList<InetSocketAddress> getServers() {
-        return new ArrayList<InetSocketAddress>(servers.keySet());
+		// servers.keySet() is only available > Android API 24. Therefore, below implementation replaces it.
+		ArrayList<InetSocketAddress> serverKeys = new ArrayList<InetSocketAddress>();
+		for (Map.Entry<InetSocketAddress, KernelServer> entry : servers.entrySet()) {
+			serverKeys.add(entry.getKey());
+		}
+		return serverKeys;
+//        return new ArrayList<InetSocketAddress>(servers.keySet());
     }
 
     public ArrayList<String> getRegions() {
-    	return new ArrayList<String>(regions.keySet());
+		// servers.keySet() is only available > Android API 24. Therefore, below implementation replaces it.
+		ArrayList<String> regionsKeys = new ArrayList<String>();
+		logger.info("getRegions: ");
+
+    	for (Map.Entry<String, ArrayList<InetSocketAddress>> entry : regions.entrySet()) {
+    		regionsKeys.add(entry.getKey());
+		}
+		logger.info("Number of region keys: " + regionsKeys);
+		return regionsKeys;
+//		return new ArrayList<String>(regions.keySet());
     }
 
     public KernelServer getServer(InetSocketAddress address) {

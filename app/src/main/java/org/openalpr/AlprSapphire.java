@@ -1,12 +1,11 @@
 package org.openalpr;
 
-import com.openalpr.jni.Alpr;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 
 import sapphire.app.SapphireObject;
+import sapphire.common.Configuration;
 import sapphire.policy.ShiftPolicy;
 
 /**
@@ -22,14 +21,6 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 
     public String recognizeWithCountryNRegion(String country, String region, String imgFilePath, int topN) {
         return "";
-    }
-
-    public boolean isOpenALPRNull() {
-        return OpenALPR.Factory.isOpenALPRNull();
-    }
-
-    public void create() {
-        OpenALPR.Factory.create();
     }
 
     public boolean saveImage(String fileName, byte[] bytes, int len) {
@@ -59,41 +50,29 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
      * @param MAX_NUM_OF_PLATES
      * @return
      */
-    public String recognizeImageOnDefault(String country, String region, String openAlprConfFile, String fileName, int MAX_NUM_OF_PLATES) {
+    public String recognizeImage(
+            String country,
+            String region,
+            String openAlprConfFile,
+            String imageFilePath,
+            String fileName,
+            int MAX_NUM_OF_PLATES,
+            Configuration.ProcessEntity processEntity) {
 
-        Alpr alpr;
+        AlprJNIWrapper alpr;
         try {
-            alpr = new Alpr(country, openAlprConfFile, Constants.RUNTIME_ASSET_DIR_LINUX);
-            alpr.setTopN(MAX_NUM_OF_PLATES);
-            alpr.setDefaultRegion("");
-
+            alpr = new AlprJNIWrapper();
         } catch (Exception e) {
             e.printStackTrace();
             return "Error: " + e.toString();
         }
 
-        // Read an image into a byte array and send it to OpenALPR
-        byte[] imageData;
-
         try {
-            RandomAccessFile f = new RandomAccessFile(fileName, "r");
-            imageData = new byte[(int)f.length()];
-            f.readFully(imageData);        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.toString();
-        }
+            String results;
 
-        try {
-            String results = alpr.recognizeImageOnDefault(imageData);
+            results = alpr.recognize(imageFilePath, fileName, processEntity, country, region, openAlprConfFile, MAX_NUM_OF_PLATES);
 
             return results;
-//
-//            System.out.println("OpenALPR Version: " + alpr.getVersion());
-//            System.out.println("Image Size: " + results.getImgWidth() + "x" + results.getImgHeight());
-//            System.out.println("Processing Time: " + results.getTotalProcessingTimeMs() + " ms");
-//            System.out.println("Found " + results.getPlates().size() + " results");
-
         } catch (Exception e) {
             e.printStackTrace();
             return "Error at recognizeImageOnDefault: " + e.getMessage();
