@@ -8,10 +8,7 @@ import sapphire.common.Configuration;
 
 /**
  * This Class loads Alpr for license plate recognition on a default machine (e.g., Linux/Windows).
- * It does not work for Android (See org.openalpr for Android JNI) due to following reason:
- * Native compiled with different APIs.
- *
- * TODO (2/16/2018, SMoon): If necessary, fix all 1)-3) and compile with same names and APIs so a single code can be used.
+ * It works both for Android and server machines but these two entities use different underlying C++ code.
  */
 public class AlprJNIWrapper {
     static {
@@ -42,7 +39,6 @@ public class AlprJNIWrapper {
     public native String recognizeWithCountryRegionNConfig(String country,
                                                            String region, String imgFilePath, String configFilePath, int topN);
 
-
     public AlprJNIWrapper() {}
 
     public void unload()
@@ -55,11 +51,26 @@ public class AlprJNIWrapper {
         return is_loaded();
     }
 
+    /**
+     * Process the imagefile to recognize license plates.
+     * It calls different native methods for server side vs Android.
+     * @param imageFilePath
+     * @param fileName
+     * @param processEntity
+     * @param country
+     * @param region
+     * @param openAlprConfFile
+     * @param MAX_NUM_OF_PLATES
+     * @return JSON result string.
+     * @throws AlprException
+     */
     public String recognize(String imageFilePath, String fileName, Configuration.ProcessEntity processEntity, String country, String region, String openAlprConfFile, int MAX_NUM_OF_PLATES) throws AlprException
     {
         System.out.println("Processing image file: " + fileName);
         String json;
 
+        // Currently, C++ code has different methods on the server and Android side.
+        // TODO (SMoon, 3/16/2018): Add recognizeWithCountryRegionNConfig to Openalpr C++ header so the same C++ code can be used.
         if (processEntity == Configuration.ProcessEntity.SERVER) {
             initialize(country, openAlprConfFile, Constants.RUNTIME_ASSET_DIR_LINUX);
             setTopN(MAX_NUM_OF_PLATES);
@@ -77,6 +88,10 @@ public class AlprJNIWrapper {
         return json;
     }
 
+    /**
+     * This method is used by Main method for testing image recognition on the server.
+     * It is unused for usual scenario.
+     */
     public AlprResults recognize(byte[] imageBytes) throws AlprException
     {
         try {
@@ -88,7 +103,6 @@ public class AlprJNIWrapper {
             throw new AlprException("Unable to parse ALPR results");
         }
     }
-
 
     public AlprResults recognize(long imageData, int bytesPerPixel, int imgWidth, int imgHeight) throws AlprException
     {

@@ -26,7 +26,8 @@ public interface OMSServer extends Remote {
        InetSocketAddress getServerInRegion(String region) throws RemoteException;
        
        void registerKernelServer(InetSocketAddress host) throws RemoteException, NotBoundException;
-       
+       void registerKernelServer(InetSocketAddress host, String region) throws RemoteException, NotBoundException;
+
        SapphireObjectID registerSapphireObject(EventHandler dispatcher) throws RemoteException;
        SapphireReplicaID registerSapphireReplica(SapphireObjectID oid, EventHandler dispatcher) throws RemoteException, SapphireObjectNotFoundException;
        EventHandler getSapphireObjectDispatcher(SapphireObjectID oid) throws RemoteException, SapphireObjectNotFoundException;
@@ -34,5 +35,6 @@ public interface OMSServer extends Remote {
        
        /* Called by the client */
        public AppObjectStub getAppEntryPoint() throws RemoteException;
+       public AppObjectStub getAppEntryPoint(String region) throws RemoteException;
 }
 

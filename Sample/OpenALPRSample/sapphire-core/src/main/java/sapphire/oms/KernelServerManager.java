@@ -63,6 +63,10 @@ public class KernelServerManager {
 	 */
 	public void registerKernelServer(InetSocketAddress address, String region) throws RemoteException, NotBoundException {
 	    ArrayList<InetSocketAddress> addresses;
+	    if (region == null || region.length() == 0) {
+	    	logger.warning("Region parameter is null or empty. Converting region to address: " + address.toString());
+	    	region = address.toString();
+		}
 	    logger.info("New kernel server: " + address.toString() + " Region: " + region);
 
 	    addresses = regions.containsKey(region)? regions.get(region): new ArrayList<InetSocketAddress>();
@@ -71,10 +75,6 @@ public class KernelServerManager {
 		    addresses.add(address);
 		    regions.put(region, addresses);
         }
-
-        // TODO (smoon, 1/12/2018): Server is registered when getServer is called; therefore, register to servers is not needed now.
-        // However, this can change. Leaving the server object addition code in case this changes in the future.
-        // servers.putIfAbsent(address, null);
 	}
 
     public ArrayList<InetSocketAddress> getServers() {

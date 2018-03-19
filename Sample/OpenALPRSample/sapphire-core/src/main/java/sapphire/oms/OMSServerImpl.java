@@ -90,7 +90,11 @@ public class OMSServerImpl implements OMSServer{
     	   serverManager.registerKernelServer(host);   		
        }
 
-       
+       @Override
+       public void registerKernelServer(InetSocketAddress host, String region) throws RemoteException, NotBoundException {
+    	   serverManager.registerKernelServer(host, region);
+       }
+
 	   /**
 	    * Gets the list servers in the system
 	    * 
@@ -151,6 +155,27 @@ public class OMSServerImpl implements OMSServer{
 				}
     		   	return appEntryPoint;
     	   }
+       }
+
+       /**
+        * Starts the app on one of the servers in the region and returns the App Object Stub
+        * @throws RemoteException
+        */
+       @Override
+       public AppObjectStub getAppEntryPoint(String region) throws RemoteException {
+			try {
+				InetSocketAddress host = serverManager.getServerInRegion(region);
+				KernelServer server = serverManager.getServer(host);
+				logger.info("Starting app at the server in region (" + region + ") : " + host.getHostString());
+				logger.info(" appEntryClassName: " + appEntryClassName);
+
+				appEntryPoint = server.startApp(appEntryClassName);
+				logger.info(" Successfully started " + appEntryClassName);
+			} catch(Exception e) {
+				e.printStackTrace();
+				logger.severe(e.toString());
+			}
+			return appEntryPoint;
        }
 //
 //       /**

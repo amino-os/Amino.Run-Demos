@@ -15,14 +15,6 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
 
     public AlprSapphire() {}
 
-    public String recognize(String imgFilePath, int topN) {
-        return "";
-    }
-
-    public String recognizeWithCountryNRegion(String country, String region, String imgFilePath, int topN) {
-        return "";
-    }
-
     public boolean saveImage(String fileName, byte[] bytes, int len) {
         try {
             String filePath = Constants.SERVER_DIRECTORY + fileName;

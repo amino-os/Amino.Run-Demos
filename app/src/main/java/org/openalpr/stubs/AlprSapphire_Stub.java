@@ -49,27 +49,6 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
         return ((java.lang.Boolean) $__result).booleanValue();
     }
 
-    // Implementation of recognizeWithCountryNRegion(String, String, String, int)
-    public java.lang.String recognizeWithCountryNRegion(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, int $param_int_4) {
-        java.lang.Object $__result = null;
-        try {
-            if ($__directInvocation)
-                $__result = super.recognizeWithCountryNRegion( $param_String_1,  $param_String_2,  $param_String_3,  $param_int_4);
-            else {
-                java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public java.lang.String org.openalpr.AlprSapphire.recognizeWithCountryNRegion(java.lang.String,java.lang.String,java.lang.String,int)";
-                $__params.add($param_String_1);
-                $__params.add($param_String_2);
-                $__params.add($param_String_3);
-                $__params.add($param_int_4);
-                $__result = $__client.onRPC($__method, $__params);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ((java.lang.String) $__result);
-    }
-
     // Implementation of recognizeImage(String, String, String, String, String, int, Configuration.ProcessEntity)
     public java.lang.String recognizeImage(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, java.lang.String $param_String_5, int $param_int_6, sapphire.common.Configuration.ProcessEntity $param_Configuration$ProcessEntity_7) {
         java.lang.Object $__result = null;
@@ -86,25 +65,6 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
                 $__params.add($param_String_5);
                 $__params.add($param_int_6);
                 $__params.add($param_Configuration$ProcessEntity_7);
-                $__result = $__client.onRPC($__method, $__params);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ((java.lang.String) $__result);
-    }
-
-    // Implementation of recognize(String, int)
-    public java.lang.String recognize(java.lang.String $param_String_1, int $param_int_2) {
-        java.lang.Object $__result = null;
-        try {
-            if ($__directInvocation)
-                $__result = super.recognize( $param_String_1,  $param_int_2);
-            else {
-                java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public java.lang.String org.openalpr.AlprSapphire.recognize(java.lang.String,int)";
-                $__params.add($param_String_1);
-                $__params.add($param_int_2);
                 $__result = $__client.onRPC($__method, $__params);
             }
         } catch (Exception e) {

@@ -31,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import org.openalpr.AlprJNIWrapper;
 import org.openalpr.Constants;
 import org.openalpr.Main;
+import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
 import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView resultTextView;
     private TextView whereToProcessTextView;
     private ImageView imageView;
+    private long resizeElapsedTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final long starTime = System.currentTimeMillis();
+        final long startTime = System.currentTimeMillis();
 
         if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
             try {
@@ -122,7 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
                             String imageFilePath = destination.getAbsolutePath();
+                            final long resizeStartTime =  System.currentTimeMillis();
                             resizeImageIfNecessary(imageFilePath);
+                            resizeElapsedTime = System.currentTimeMillis() - resizeStartTime;
+
                             Utils.copyAssetFolder
                                     (MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
 
@@ -142,14 +147,17 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
 
-                                    long elapsedTime = System.currentTimeMillis() - starTime;
+                                    long elapsedTime = System.currentTimeMillis() - startTime;
 
                                     if (results == null || results.getResults() == null || results.getResults().size() == 0) {
                                         Toast.makeText(MainActivity.this, "It was not possible to detect the licence plate.", Toast.LENGTH_LONG).show();
                                         resultTextView.setText("It was not possible to detect the licence plate.");
                                     } else {
-                                        String textToShow = " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds\n";
-                                        textToShow += "Total time: " + String.format("%.2f", ((elapsedTime/1000.0)%60)) + " seconds\n";
+                                        String textToShow = " Processing time within API: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds\n";
+                                        textToShow += "Total processing time: " + String.format("%.2f", ((elapsedTime/1000.0)%60)) + " seconds\n";
+                                        textToShow += "Image resize time: " + String.format("%.2f", ((resizeElapsedTime/1000.0)%60)) + " seconds\n";
+                                        textToShow += "File upload time: " + String.format("%.2f", ((SapphireAccess.fileUploadTime/1000.0)%60)) + " seconds\n";
+                                        textToShow += "Native function call time: " + String.format("%.2f", ((SapphireAccess.processingTime/1000.0)%60)) + " seconds\n";
                                         textToShow += "Number of plates found: " + results.getResults().size() +"\n";
 
                                         for (Result result : results.getResults()) {

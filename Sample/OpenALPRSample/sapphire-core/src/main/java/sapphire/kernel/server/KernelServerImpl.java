@@ -45,6 +45,9 @@ public class KernelServerImpl implements KernelServer{
 	public static OMSServer oms;
 	/** local kernel client for making RPCs */
 	private KernelClient client;
+
+	/** region information where this kernel server is running */
+	private static String region = null;
 	
 	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost) {
 		logger.setLevel(Level.ALL);
@@ -217,7 +220,7 @@ public class KernelServerImpl implements KernelServer{
 		public void run() {
 			while (true) {
 				try {
-					Thread.sleep(100000);
+					Thread.sleep(300000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -237,13 +240,23 @@ public class KernelServerImpl implements KernelServer{
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		boolean skipOmsRegistration = false;
+
 		logger.setLevel(Level.ALL);
 		ConsoleHandler handler = new ConsoleHandler();
 		handler.setLevel(Level.ALL);
 		handler.setFormatter(new SimpleFormatter());
 		logger.addHandler(handler);
 
-		if (args.length != 4) {
+		if (args.length >= 5) {
+			// There is a region (e.g., processing entity signature such as device or server).
+			region = args[4];
+			logger.info("Region information found. Kernel server region: " + region);
+			if (args.length == 6 && args[5].equalsIgnoreCase("skipOMS")) {
+				skipOmsRegistration = true;
+			}
+
+		} else if (args.length != 4) {
 			System.out.println("Incorrect arguments to the kernel server");
 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
 			return;
@@ -268,10 +281,13 @@ public class KernelServerImpl implements KernelServer{
 			KernelServer stub = (KernelServer) UnicastRemoteObject.exportObject(server, 0);
 			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[1]));
 			registry.rebind("SapphireKernelServer", stub);
+
+			if (!skipOmsRegistration) {
+				// Skips OMS registration when OMS already has server information and Kernel cannot reach OMS (e.g., OMS is running on internal networks).
+				oms.registerKernelServer(host, region);
+			}
 			
-			oms.registerKernelServer(host);
-			
-			logger.info("Server ready! Host: " + host.getHostString());
+			logger.info("Server ready! Host: " + host.getHostString() + " region: " + region);
 
 			/* Start a thread that print memory stats */
 			server.getMemoryStatThread().start();
