@@ -1,10 +1,9 @@
 package sapphire.policy.cache;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import sapphire.common.AppObject;
-import sapphire.policy.SapphirePolicy;
+import sapphire.policy.DefaultSapphirePolicy;
 
 /**
  * <code><WriteThroughCache</code> directs write operations onto cached object and through to
@@ -14,33 +13,19 @@ import sapphire.policy.SapphirePolicy;
  * State changes on remote object caused by one client will not automatically invalidate to
  * cached objects on other clients. Therefore <code>WriteThroughCache</code> may contain staled
  * object.
+ *
+ * @author terryz
  */
-public class WriteThroughCachePolicy extends SapphirePolicy {
+public class WriteThroughCachePolicy extends DefaultSapphirePolicy {
 
-    public static class WriteThroughCacheClientPolicy extends SapphireClientPolicy {
-        private WriteThroughCachePolicy.WriteThroughCacheServerPolicy server;
-        private WriteThroughCachePolicy.WriteThroughCacheGroupPolicy group;
+    public static class ClientPolicy extends DefaultClientPolicy {
+        private ServerPolicy server;
         // TODO: Add a timeout for cachedObject
         private AppObject cachedObject = null;
 
         @Override
-        public void onCreate(SapphireGroupPolicy group) {
-            this.group = (WriteThroughCachePolicy.WriteThroughCacheGroupPolicy) group;
-        }
-
-        @Override
-        public SapphireGroupPolicy getGroup() {
-            return group;
-        }
-
-        @Override
-        public SapphireServerPolicy getServer() {
-            return server;
-        }
-
-        @Override
         public void setServer(SapphireServerPolicy server) {
-            this.server = (WriteThroughCachePolicy.WriteThroughCacheServerPolicy) server;
+            this.server = (ServerPolicy) server;
         }
 
         @Override
@@ -64,66 +49,22 @@ public class WriteThroughCachePolicy extends SapphirePolicy {
         /**
          * Determines if the given method is immutable.
          *
-         * @param method
-         * @param params
+         * @param method method name
+         * @param params types of method parameters
          * @return <code>true</code> if the method is immutable; <code>false</code> otherwise
          */
         boolean isMethodMutable(String method, ArrayList<Object> params) {
-            // TODO: determine mutability of method based on annotation or other mechanism
+            // TODO: Need to determine based on annotations on methods
             return true;
         }
     }
 
-    public static class WriteThroughCacheServerPolicy extends SapphireServerPolicy {
-        static private Logger logger = Logger.getLogger("sapphire.policy.cache.WriteThroughCachePolicy.WriteThroughCacheServerPolicy");
-        private WriteThroughCachePolicy.WriteThroughCacheGroupPolicy group;
-
-        @Override
-        public void onCreate(SapphireGroupPolicy group) {
-            this.group = (WriteThroughCachePolicy.WriteThroughCacheGroupPolicy) group;
-        }
-
-        @Override
-        public SapphireGroupPolicy getGroup() {
-            return group;
-        }
-
-        @Override
-        public void onMembershipChange() {
-        }
-
+    public static class ServerPolicy extends DefaultServerPolicy {
         public AppObject getObject() {
             return sapphire_getAppObject();
         }
     }
 
-    public static class WriteThroughCacheGroupPolicy extends SapphireGroupPolicy {
-        WriteThroughCachePolicy.WriteThroughCacheServerPolicy server;
-
-        @Override
-        public void addServer(SapphireServerPolicy server) {
-            this.server = (WriteThroughCachePolicy.WriteThroughCacheServerPolicy) server;
-        }
-
-        @Override
-        public void onFailure(SapphireServerPolicy server) {
-
-        }
-
-        @Override
-        public SapphireServerPolicy onRefRequest() {
-            return server;
-        }
-
-        @Override
-        public ArrayList<SapphireServerPolicy> getServers() {
-            return null;
-        }
-
-        @Override
-        public void onCreate(SapphireServerPolicy server) {
-            addServer(server);
-        }
-    }
+    public static class GroupPolicy extends DefaultGroupPolicy {}
 }
 

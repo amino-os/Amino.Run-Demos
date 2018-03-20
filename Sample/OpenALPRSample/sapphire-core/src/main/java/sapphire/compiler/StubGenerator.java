@@ -25,7 +25,7 @@ public class StubGenerator {
 				s = new AppStub(c);
 			
 			String shortClassName = RMIUtil.getShortName(c);
-			String stubName = ".\\" + destFolder + File.separator + shortClassName + GlobalStubConstants.STUB_SUFFIX + ".java";
+			String stubName = destFolder + File.separator + shortClassName + GlobalStubConstants.STUB_SUFFIX + ".java";
 			File dest = new File(stubName);
 			dest.createNewFile();
 
@@ -60,9 +60,7 @@ public class StubGenerator {
 	}
 	
 	public static void generateStubs(String srcFolder, String packageName, String destFolder) {
-		System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		File directory = new File(srcFolder);
-		System.out.println(System.getProperty("user.dir"));
 		File[] fList = directory.listFiles();
 		for (File file : fList){
 			if (file.isFile() && file.getName().endsWith("AlprSapphire.class")) {
@@ -114,6 +112,13 @@ public class StubGenerator {
 	/* TODO: Support for multiple packages for app stubs; right now you must run this for each app package that contains a SapphireObject */
 	public static void main(String args[]) {
 		// TODO: Create destFolder if it doesn't exist or delete existing stubs
+		File dest = new File(args[2]);
+		if (! dest.exists()) {
+		    System.out.println(String.format("Creating dir %s.", dest.getPath()));
+			dest.mkdir();
+		}
+
 		generateStubs(args[0], args[1], args[2]);
+		System.exit(0);
 	}
 }
