@@ -62,8 +62,9 @@ public class StubGenerator {
 	public static void generateStubs(String srcFolder, String packageName, String destFolder) {
 		File directory = new File(srcFolder);
 		File[] fList = directory.listFiles();
+		String path = directory.getAbsolutePath();
 		for (File file : fList){
-			if (file.isFile() && file.getName().endsWith("AlprSapphire.class")) {
+			if (file.isFile() && ((packageName.contains("policy") && file.getName().endsWith(".class")) || (file.getName().endsWith("AlprSapphire.class")))) {
 				try {
 					Class<?> c = Class.forName(StubGenerator.removeExtension(packageName + "." + file.getName()));
 					

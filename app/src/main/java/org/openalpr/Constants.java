@@ -23,12 +23,12 @@ public class Constants
 
 
     // Kindle
-    public static String[] hostAddress = { "192.168.10.28", "22345" };
-    public static String[] kernelAddress = { "192.168.10.28", "55555" };
+//    public static String[] hostAddress = { "192.168.10.28", "22345" };
+//    public static String[] kernelAddress = { "192.168.10.28", "55555" };
 
     // Huawei phone
-//    public static String[] hostAddress = { "192.168.10.143", "22345" };
-//    public static String[] kernelAddress = { "192.168.10.143", "55555" };
+    public static String[] hostAddress = { "192.168.10.143", "22345" };
+    public static String[] kernelAddress = { "192.168.10.143", "55555" };
 
     // Max size of pixels to process either at width or height (original picture should be compressed to this max size).
     public static int maxSizeOfPictureToProcess = 1600;

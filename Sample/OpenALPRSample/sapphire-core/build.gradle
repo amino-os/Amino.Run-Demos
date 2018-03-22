@@ -6,6 +6,7 @@ dependencies {
     compile project(':dependencies:java.rmi')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.+'
+    compile 'junit:junit:4.12'
 }
 
 task deleteJar(type: Delete) {
