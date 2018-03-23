@@ -1,0 +1,530 @@
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/kernel/client/KernelClient.java b/sapphire/sapphire-core/src/main/java/sapphire/kernel/client/KernelClient.java
+index 20ff3ea..d80d9d4 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/kernel/client/KernelClient.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/kernel/client/KernelClient.java
+@@ -1,11 +1,15 @@
+ package sapphire.kernel.client;
+ 
++import java.net.InetAddress;
+ import java.net.InetSocketAddress;
+ import java.rmi.RemoteException;
+ import java.rmi.registry.LocateRegistry;
+ import java.rmi.registry.Registry;
+ import java.util.Hashtable;
++import java.util.logging.ConsoleHandler;
++import java.util.logging.Level;
+ import java.util.logging.Logger;
++import java.util.logging.SimpleFormatter;
+ 
+ import sapphire.kernel.common.GlobalKernelReferences;
+ import sapphire.kernel.common.KernelOID;
+@@ -14,6 +18,7 @@ import sapphire.kernel.common.KernelObjectNotFoundException;
+ import sapphire.kernel.common.KernelObjectStub;
+ import sapphire.kernel.common.KernelRPC;
+ import sapphire.kernel.common.KernelRPCException;
++import sapphire.kernel.common.KernelUtility;
+ import sapphire.kernel.server.KernelObject;
+ import sapphire.kernel.server.KernelServer;
+ import sapphire.oms.OMSServer;
+@@ -37,8 +42,15 @@ public class KernelClient {
+ 	 * @param hostname
+ 	 */
+ 	private KernelServer addHost(InetSocketAddress host) {
++		logger.setLevel(Level.ALL);
++		ConsoleHandler handler = new ConsoleHandler();
++		handler.setLevel(Level.ALL);
++		handler.setFormatter(new SimpleFormatter());
++		logger.addHandler(handler);
++
+ 		try {
+-		    Registry registry = LocateRegistry.getRegistry(host.getHostName(), host.getPort());
++			logger.info("Getting the registry for host. Host name: " + KernelUtility.getHostName(host));
++			Registry registry = LocateRegistry.getRegistry(KernelUtility.getHostName(host), host.getPort());
+ 		    KernelServer server = (KernelServer) registry.lookup("SapphireKernelServer");
+ 		    servers.put(host, server);
+ 		    return server;
+@@ -50,6 +62,7 @@ public class KernelClient {
+ 	}
+ 	
+ 	private KernelServer getServer(InetSocketAddress host) {
++
+ 		KernelServer server = servers.get(host);
+ 		if (server == null) {
+ 			server = addHost(host);
+@@ -72,6 +85,7 @@ public class KernelClient {
+ 			Thread.sleep(100);
+ 			throw new KernelObjectNotFoundException("Kernel object was migrating. Try again later.");
+ 		}
++
+ 		return ret;
+ 	}
+ 	
+@@ -105,13 +119,21 @@ public class KernelClient {
+ 	 */
+ 	public Object makeKernelRPC(KernelObjectStub stub, KernelRPC rpc) throws KernelObjectNotFoundException, Exception {
+ 		InetSocketAddress host = stub.$__getHostname();
++		logger.setLevel(Level.ALL);
++		ConsoleHandler handler = new ConsoleHandler();
++		handler.setLevel(Level.ALL);
++		handler.setFormatter(new SimpleFormatter());
++		logger.addHandler(handler);
++
+ 		logger.info("Making RPC to " + host.toString() + " RPC: " + rpc.toString());
+ 
+ 		// Check whether this object is local.
+ 		KernelServer server;
+ 		if (host.equals(GlobalKernelReferences.nodeServer.getLocalHost())) {
++			logger.info(("Object is local."));
+ 			server = GlobalKernelReferences.nodeServer;
+ 		} else {
++			logger.info("Object is in server. Host name: " + host.getHostName() + " Host address: "+ host.getAddress() + "Host port: " + host.getPort());
+ 			server = getServer(host);
+ 		}
+ 		
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/kernel/server/KernelServerImpl.java b/sapphire/sapphire-core/src/main/java/sapphire/kernel/server/KernelServerImpl.java
+index 39f085d..6dfea1b 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/kernel/server/KernelServerImpl.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/kernel/server/KernelServerImpl.java
+@@ -11,6 +11,7 @@ import sapphire.kernel.common.KernelObjectNotFoundException;
+ import sapphire.kernel.common.KernelRPCException;
+ 
+ import sapphire.kernel.common.KernelRPC;
++import sapphire.kernel.common.KernelUtility;
+ import sapphire.oms.OMSServer;
+ 
+ import java.io.Serializable;
+@@ -22,8 +23,10 @@ import java.rmi.registry.LocateRegistry;
+ import java.rmi.RemoteException;
+ import java.rmi.server.UnicastRemoteObject;
+ import java.util.ArrayList;
++import java.util.logging.ConsoleHandler;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++import java.util.logging.SimpleFormatter;
+ 
+ 
+ /** 
+@@ -42,12 +45,22 @@ public class KernelServerImpl implements KernelServer{
+ 	public static OMSServer oms;
+ 	/** local kernel client for making RPCs */
+ 	private KernelClient client;
++
++	/** region information where this kernel server is running */
++	private static String region = null;
+ 	
+ 	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost) {
++		logger.setLevel(Level.ALL);
++		ConsoleHandler handler = new ConsoleHandler();
++		handler.setLevel(Level.ALL);
++		handler.setFormatter(new SimpleFormatter());
++		logger.addHandler(handler);
++
+ 		objectManager = new KernelObjectManager();
+ 	    Registry registry;
+ 		try {
+-			registry = LocateRegistry.getRegistry(omsHost.getHostName(), omsHost.getPort());
++			logger.info("OMS : " + omsHost.getAddress() + ":" + omsHost.getPort());
++			registry = LocateRegistry.getRegistry(KernelUtility.getHostName(omsHost), omsHost.getPort());
+ 			oms = (OMSServer) registry.lookup("SapphireOMS");
+ 		} catch (Exception e) {
+ 			logger.severe("Could not find OMS: " + e.toString());
+@@ -175,20 +188,39 @@ public class KernelServerImpl implements KernelServer{
+ 	public AppObjectStub startApp(String className) throws RemoteException {
+ 		AppObjectStub appEntryPoint = null;
+ 		try {
++			logger.info("Starting APP: " + className);
+ 			AppEntryPoint entryPoint =  (AppEntryPoint) Class.forName(className).newInstance();
++
++			logger.info("Instance was created. Starting the entryPoint.");
+             appEntryPoint = entryPoint.start();
+ 		} catch (Exception e) {
+-			logger.severe("Could not start app");
++			logger.severe("Could not start app: " + e.toString());
+ 			e.printStackTrace();
+ 		}
+ 		return appEntryPoint;
+ 	}
++//
++//	/**
++//	 * Start the first server-side app object
++//	 */
++//	@Override
++//	public AppObjectStub startApp(String className, Object object) throws RemoteException {
++//		AppObjectStub appEntryPoint = null;
++//		try {
++//			AppEntryPoint entryPoint =  (AppEntryPoint) Class.forName(className).newInstance();
++//            appEntryPoint = entryPoint.start();
++//		} catch (Exception e) {
++//			logger.severe("Could not start app");
++//			e.printStackTrace();
++//		}
++//		return appEntryPoint;
++//	}
+ 
+ 	public class MemoryStatThread extends Thread {
+ 		public void run() {
+ 			while (true) {
+ 				try {
+-					Thread.sleep(100000);
++					Thread.sleep(300000);
+ 				} catch (InterruptedException e) {
+ 					e.printStackTrace();
+ 				}
+@@ -208,8 +240,23 @@ public class KernelServerImpl implements KernelServer{
+ 	 * @param args
+ 	 */
+ 	public static void main(String args[]) {
++		boolean skipOmsRegistration = false;
++
++		logger.setLevel(Level.ALL);
++		ConsoleHandler handler = new ConsoleHandler();
++		handler.setLevel(Level.ALL);
++		handler.setFormatter(new SimpleFormatter());
++		logger.addHandler(handler);
+ 
+-		if (args.length != 4) {
++		if (args.length >= 5) {
++			// There is a region (e.g., processing entity signature such as device or server).
++			region = args[4];
++			logger.info("Region information found. Kernel server region: " + region);
++			if (args.length == 6 && args[5].equalsIgnoreCase("skipOMS")) {
++				skipOmsRegistration = true;
++			}
++
++		} else if (args.length != 4) {
+ 			System.out.println("Incorrect arguments to the kernel server");
+ 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
+ 			return;
+@@ -225,20 +272,23 @@ public class KernelServerImpl implements KernelServer{
+ 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
+ 			return;
+ 		}
+-		
+-		System.setProperty("java.rmi.server.hostname", host.getAddress().getHostAddress());
++
++		logger.info("java.rmi.server.hostname" + KernelUtility.getHostName(host));
++		System.setProperty("java.rmi.server.hostname", KernelUtility.getHostName(host));
+ 
+ 		try {
+ 			KernelServerImpl server = new KernelServerImpl(host, omsHost);
+ 			KernelServer stub = (KernelServer) UnicastRemoteObject.exportObject(server, 0);
+ 			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[1]));
+ 			registry.rebind("SapphireKernelServer", stub);
++
++			if (!skipOmsRegistration) {
++				// Skips OMS registration when OMS already has server information and Kernel cannot reach OMS (e.g., OMS is running on internal networks).
++				oms.registerKernelServer(host, region);
++			}
+ 			
+-			oms.registerKernelServer(host);
+-			
+-			logger.info("Server ready!");
+-			System.out.println("Server ready!");
+-			
++			logger.info("Server ready! Host: " + host.getHostString() + " region: " + region);
++
+ 			/* Start a thread that print memory stats */
+ 			server.getMemoryStatThread().start();
+ 
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/oms/KernelServerManager.java b/sapphire/sapphire-core/src/main/java/sapphire/oms/KernelServerManager.java
+index e27b0d8..98f427a 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/oms/KernelServerManager.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/oms/KernelServerManager.java
+@@ -8,9 +8,13 @@ import java.rmi.RemoteException;
+ import java.rmi.registry.LocateRegistry;
+ import java.rmi.registry.Registry;
+ import java.util.ArrayList;
++import java.util.Enumeration;
++import java.util.Map;
+ import java.util.concurrent.ConcurrentHashMap;
++import java.util.logging.ConsoleHandler;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++import java.util.logging.SimpleFormatter;
+ 
+ import org.json.JSONException;
+ 
+@@ -19,46 +23,83 @@ import sapphire.kernel.server.KernelServer;
+ /**
+  * Manages Sapphire kernel servers. Tracks which servers are up, which regions each server belongs to, etc.
+  * @author iyzhang
+- *
++ * TODO (smoon, 1/12/2018): regions is not used in the current code path; therefore, region is defined by IP address instead. *
+  */
+ public class KernelServerManager {
+ 	Logger logger = Logger.getLogger("sapphire.oms.KernelServerManager");
+-	
++
+ 	private ConcurrentHashMap<InetSocketAddress, KernelServer> servers;
+ 	private ConcurrentHashMap<String, ArrayList<InetSocketAddress>> regions;
+ 
+ 	public KernelServerManager() throws IOException, NotBoundException, JSONException {
+ 		servers = new ConcurrentHashMap<InetSocketAddress, KernelServer>();
+ 		regions = new ConcurrentHashMap<String, ArrayList<InetSocketAddress>>();
++		logger.setLevel(Level.ALL);
++		ConsoleHandler handler = new ConsoleHandler();
++		handler.setLevel(Level.ALL);
++		handler.setFormatter(new SimpleFormatter());
++		logger.addHandler(handler);
+ 	}
+-	
++
++    /**
++     * Sets the address as a region.
++     * @author iyzhang, smoon
++     * @param address
++     * @throws RemoteException
++     * @throws NotBoundException
++     */
+ 	public void registerKernelServer(InetSocketAddress address) throws RemoteException, NotBoundException {
+-		//this.servers.putIfAbsent(address, null);
+-		logger.info("New kernel server: " + address.toString());
+-		// TODO For now, let each server be a region
+-		ArrayList<InetSocketAddress> region = new ArrayList<InetSocketAddress>();
+-		region.add(address);
+-		regions.put(address.toString(), region);
++	    // TODO (smoon, 1/12/2018): For now, put address as a region name when region name is null but this should be changed later.
++        this.registerKernelServer(address, address.toString());
+ 	}
+-	
++
+ 	/**
+-     */
+-    public ArrayList<InetSocketAddress> getServers() {
+-    	ArrayList<InetSocketAddress> nodes = new ArrayList<InetSocketAddress>();
++	 * Sets the address and region.
++     * @author smoon
++ 	 * @param address
++	 * @param region
++	 * @throws RemoteException
++	 * @throws NotBoundException
++	 */
++	public void registerKernelServer(InetSocketAddress address, String region) throws RemoteException, NotBoundException {
++	    ArrayList<InetSocketAddress> addresses;
++	    if (region == null || region.length() == 0) {
++	    	logger.warning("Region parameter is null or empty. Converting region to address: " + address.toString());
++	    	region = address.toString();
++		}
++	    logger.info("New kernel server: " + address.toString() + " Region: " + region);
+ 
+-    	for (ArrayList<InetSocketAddress> addresses : this.regions.values()) {
+-    	    for (InetSocketAddress address: addresses) {
+-                nodes.add(address);
+-            }
++	    addresses = regions.containsKey(region)? regions.get(region): new ArrayList<InetSocketAddress>();
++
++        if (!addresses.contains(address)) {
++		    addresses.add(address);
++		    regions.put(region, addresses);
+         }
++	}
+ 
+-        return nodes;
++    public ArrayList<InetSocketAddress> getServers() {
++		// servers.keySet() is only available > Android API 24. Therefore, below implementation replaces it.
++		ArrayList<InetSocketAddress> serverKeys = new ArrayList<InetSocketAddress>();
++		for (Map.Entry<InetSocketAddress, KernelServer> entry : servers.entrySet()) {
++			serverKeys.add(entry.getKey());
++		}
++		return serverKeys;
++//        return new ArrayList<InetSocketAddress>(servers.keySet());
+     }
+ 
+     public ArrayList<String> getRegions() {
+-    	return new ArrayList<String>(regions.keySet());
++		// servers.keySet() is only available > Android API 24. Therefore, below implementation replaces it.
++		ArrayList<String> regionsKeys = new ArrayList<String>();
++		logger.info("getRegions: ");
++
++    	for (Map.Entry<String, ArrayList<InetSocketAddress>> entry : regions.entrySet()) {
++    		regionsKeys.add(entry.getKey());
++		}
++		logger.info("Number of region keys: " + regionsKeys);
++		return regionsKeys;
++//		return new ArrayList<String>(regions.keySet());
+     }
+-    
++
+     public KernelServer getServer(InetSocketAddress address) {
+     	if (servers.containsKey(address)) {
+     		return servers.get(address);
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServer.java b/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServer.java
+index 6c600d8..823539c 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServer.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServer.java
+@@ -26,7 +26,8 @@ public interface OMSServer extends Remote {
+        InetSocketAddress getServerInRegion(String region) throws RemoteException;
+        
+        void registerKernelServer(InetSocketAddress host) throws RemoteException, NotBoundException;
+-       
++       void registerKernelServer(InetSocketAddress host, String region) throws RemoteException, NotBoundException;
++
+        SapphireObjectID registerSapphireObject(EventHandler dispatcher) throws RemoteException;
+        SapphireReplicaID registerSapphireReplica(SapphireObjectID oid, EventHandler dispatcher) throws RemoteException, SapphireObjectNotFoundException;
+        EventHandler getSapphireObjectDispatcher(SapphireObjectID oid) throws RemoteException, SapphireObjectNotFoundException;
+@@ -34,5 +35,6 @@ public interface OMSServer extends Remote {
+        
+        /* Called by the client */
+        public AppObjectStub getAppEntryPoint() throws RemoteException;
++       public AppObjectStub getAppEntryPoint(String region) throws RemoteException;
+ }
+ 
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServerImpl.java b/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServerImpl.java
+index 4ad71f9..e32a0b9 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServerImpl.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/oms/OMSServerImpl.java
+@@ -12,8 +12,10 @@ import java.util.ArrayList;
+ import java.util.Hashtable;
+ import java.util.Iterator;
+ import java.util.Random;
++import java.util.logging.ConsoleHandler;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++import java.util.logging.SimpleFormatter;
+ 
+ import sapphire.common.AppObjectStub;
+ import sapphire.common.SapphireObjectID;
+@@ -35,7 +37,7 @@ import org.json.JSONException;
+  */
+ public class OMSServerImpl implements OMSServer{
+ 	   private static Logger logger = Logger.getLogger("sapphire.oms.OMSServerImpl");
+-	
++
+ 	   private GlobalKernelObjectManager kernelObjectManager;
+ 	   private AppObjectStub appEntryPoint = null;
+ 	   private String appEntryClassName;
+@@ -49,6 +51,11 @@ public class OMSServerImpl implements OMSServer{
+     	   serverManager = new KernelServerManager();
+     	   objectManager = new SapphireObjectManager();
+     	   this.appEntryClassName = appEntryClassName;
++    	   logger.setLevel(Level.ALL);
++		   ConsoleHandler handler = new ConsoleHandler();
++		   handler.setLevel(Level.ALL);
++		   handler.setFormatter(new SimpleFormatter());
++		   logger.addHandler(handler);
+        }
+ 
+        /** KERNEL METHODS **/
+@@ -83,7 +90,11 @@ public class OMSServerImpl implements OMSServer{
+     	   serverManager.registerKernelServer(host);   		
+        }
+ 
+-       
++       @Override
++       public void registerKernelServer(InetSocketAddress host, String region) throws RemoteException, NotBoundException {
++    	   serverManager.registerKernelServer(host, region);
++       }
++
+ 	   /**
+ 	    * Gets the list servers in the system
+ 	    * 
+@@ -130,14 +141,61 @@ public class OMSServerImpl implements OMSServer{
+     	   if (appEntryPoint != null) {
+     		   return appEntryPoint;
+     	   } else {
+-    		   	InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
+-    		   	KernelServer server = serverManager.getServer(host); 
+-    		   	appEntryPoint = server.startApp(appEntryClassName);
++				try {
++					InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
++					KernelServer server = serverManager.getServer(host);
++					logger.info("Starting app at the server: " + host.getHostString());
++					logger.info(" appEntryClassName: " + appEntryClassName);
++
++					appEntryPoint = server.startApp(appEntryClassName);
++					logger.info(" Successfully started " + appEntryClassName);
++				} catch(Exception e) {
++					e.printStackTrace();
++					logger.severe(e.toString());
++				}
+     		   	return appEntryPoint;
+     	   }
+        }
+-       
++
++       /**
++        * Starts the app on one of the servers in the region and returns the App Object Stub
++        * @throws RemoteException
++        */
++       @Override
++       public AppObjectStub getAppEntryPoint(String region) throws RemoteException {
++			try {
++				InetSocketAddress host = serverManager.getServerInRegion(region);
++				KernelServer server = serverManager.getServer(host);
++				logger.info("Starting app at the server in region (" + region + ") : " + host.getHostString());
++				logger.info(" appEntryClassName: " + appEntryClassName);
++
++				appEntryPoint = server.startApp(appEntryClassName);
++				logger.info(" Successfully started " + appEntryClassName);
++			} catch(Exception e) {
++				e.printStackTrace();
++				logger.severe(e.toString());
++			}
++			return appEntryPoint;
++       }
++//
++//       /**
++//        * Starts the app on one of the servers and returns the App Object Stub
++//        * @throws RemoteException
++//        */
++//       @Override
++//       public AppObjectStub getAppEntryPoint(Object object ) throws RemoteException {
++//    	   if (appEntryPoint != null) {
++//    		   return appEntryPoint;
++//    	   } else {
++//    		   	InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
++//    		   	KernelServer server = serverManager.getServer(host);
++//    		   	appEntryPoint = server.startApp(appEntryClassName, object);
++//    		   	return appEntryPoint;
++//    	   }
++//       }
++
+        public static void main(String args[]) {
++
+     	   if (args.length != 3) {
+     		   System.out.println("Invalid arguments to OMS.");
+     		   System.out.println("[IP] [port] [AppClassName]");
+@@ -152,8 +210,9 @@ public class OMSServerImpl implements OMSServer{
+     		   System.out.println("[IP] [port] [AppClassName]");
+     		   return;
+     	   }
+- 
++
+     	   System.setProperty("java.rmi.server.hostname", args[0]);
++
+     	   try {
+     		   OMSServerImpl oms = new OMSServerImpl(args[2]);
+     		   OMSServer omsStub = (OMSServer) UnicastRemoteObject.exportObject(oms, 0);
+@@ -162,12 +221,16 @@ public class OMSServerImpl implements OMSServer{
+     		   logger.info("OMS ready");
+     	   	   for (Iterator<InetSocketAddress> it = oms.getServers().iterator(); it.hasNext();) {
+         		   InetSocketAddress address = it.next();
+-        		   logger.fine("   " + address.getHostName().toString() + ":" + address.getPort());
++				   System.out.println("   " + address.getHostName().toString() + ":" + address.getPort());
++//        		   logger.fine("   " + address.getHostName().toString() + ":" + address.getPort());
+         	   }
+     	   } catch (Exception e) {
++			   System.out.println("Server exception: " + e.toString());
++			   e.printStackTrace();
+     		   logger.severe("Server exception: " + e.toString());
+     		   e.printStackTrace();
+     	   }
++		   logger.info("OMS main method complete.");
+     }
+ 
+ 	@Override
+diff --git a/sapphire/sapphire-core/src/main/java/sapphire/runtime/Sapphire.java b/sapphire/sapphire-core/src/main/java/sapphire/runtime/Sapphire.java
+index 45c10d9..8d595b3 100644
+--- a/sapphire/sapphire-core/src/main/java/sapphire/runtime/Sapphire.java
++++ b/sapphire/sapphire-core/src/main/java/sapphire/runtime/Sapphire.java
+@@ -190,7 +190,9 @@ public class Sapphire {
+ 		Field[] fields = obj.getClass().getSuperclass().getFields();
+ 		for (Field f : fields) {
+ 			f.setAccessible(true);
+-			f.set(obj, null);
++			if (!f.getName().endsWith("serialVersionUID")) {
++				f.set(obj, null);
++			}
+ 		}
+ 
+ 		// Replace the values in stub with new values - is this necessary?

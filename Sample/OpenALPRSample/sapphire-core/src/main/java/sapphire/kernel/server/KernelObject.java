@@ -8,7 +8,7 @@ import sapphire.kernel.common.KernelObjectMigratingException;
 
 /**
  * A single Sapphire kernel object that can receive RPCs.
- * These are stored in the Sapphire kernel server. 
+ * These are stored in the Sapphire kernel server.
  * @author iyzhang
  *
  */
@@ -33,15 +33,8 @@ public class KernelObject extends ObjectHandler {
 		}
 
 		rpcCounter.acquire();
-
-		// Added try finally so that, when the super.invoke(...) throws exceptions,
-		// then we safely release the rpcCounter
-		try {
-			ret = super.invoke(method, params);
-		}
-		finally {
-			rpcCounter.release();
-		}
+		ret = super.invoke(method, params);
+		rpcCounter.release();
 
 		return ret;
 	}
