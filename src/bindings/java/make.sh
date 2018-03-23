@@ -13,7 +13,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.:${OPENALPR_LIB_DIR}
 javac -Xlint:unchecked src/org/openalpr/json/*.java src/org/openalpr/*.java  src/Main.java
 
 # Create native header from Alpr java file
-javah -classpath src org.openalpr.Alpr
+javah -classpath src org.openalpr.AlprJNIWrapper
 
 # Compile/link native interface
 g++ -Wall -L${OPENALPR_LIB_DIR} -I${JAVA_PATH}/include/ -I${OPENALPR_INCLUDE_DIR} -shared -fPIC -o libopenalpr-native.so openalpr-native.cpp -lopenalpr

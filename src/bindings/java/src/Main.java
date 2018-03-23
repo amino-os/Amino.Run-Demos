@@ -24,7 +24,7 @@ public class Main {
             System.exit(1);
         }
 
-        Alpr alpr = new Alpr(country, configfile, runtimeDataDir);
+        AlprJNIWrapper alpr = new AlprJNIWrapper(country, configfile, runtimeDataDir);
 
         alpr.setTopN(10);
         alpr.setDefaultRegion("wa");
