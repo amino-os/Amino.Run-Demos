@@ -10,6 +10,8 @@ public class Results {
 
     private final List<Result> results;
 
+    private List<Result> newResults;
+
     public Results(Double epoch_time, Double processing_time_ms, List<Result> results) {
         this.epoch_time = epoch_time;
         this.processing_time_ms = processing_time_ms;
@@ -28,4 +30,7 @@ public class Results {
         return results;
     }
 
+    public void setNewResults(List<Result> results) {
+        this.newResults = results;
+    }
 }

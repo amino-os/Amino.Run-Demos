@@ -1,5 +1,10 @@
 package org.openalpr;
 
+import android.graphics.Bitmap;
+import android.os.Handler;
+
+import org.openalpr.model.Results;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
@@ -12,13 +17,73 @@ import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
 
+
 public class SapphireAccess
 {
-    public static AlprSapphire lr;
+    public AlprSapphire lr;
     public static long fileUploadTime; // file upload time.
     public static long processingTime; // image recognition processing time.
-    private static boolean kernelStarted = false;
 
+    private static Configuration.ProcessEntity previousEntity = Configuration.ProcessEntity.UNDECIDED;
+    private static boolean kernelReady = false;
+
+    public void initialize() {
+
+        try {
+            String[] kernelArgs = new String[]{
+                    Constants.kernelAddress[0],
+                    Constants.kernelAddress[1],
+                    Constants.localOmsAddress[0],
+                    Constants.localOmsAddress[1],
+                    Configuration.ProcessEntity.DEVICE.toString(),
+                    Constants.remoteOmsAddress[0],
+                    Constants.remoteOmsAddress[1]
+            };
+
+            // Launch local Sapphire kernel server.
+            KernelServerImpl.main(kernelArgs);
+            kernelReady = true;
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
+        String omsAddress;
+        int omsPort;
+
+        try {
+            if (processEntity == Configuration.ProcessEntity.DEVICE) {
+                omsAddress = Constants.localOmsAddress[0];
+                omsPort = Integer.parseInt(Constants.localOmsAddress[1]);
+            } else {
+                omsAddress = Constants.remoteOmsAddress[0];
+                omsPort = Integer.parseInt(Constants.remoteOmsAddress[1]);
+            }
+
+            Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
+            OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+
+//            KernelServer nodeServer = new KernelServerImpl(
+//                    new InetSocketAddress(
+//                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
+//                    new InetSocketAddress(omsAddress, omsPort),
+//                    null);
+
+            while (!kernelReady) {}
+            lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
+            return lr;
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     /**
      * Get license plate recognition result for the given image file in the device.
@@ -29,40 +94,30 @@ public class SapphireAccess
      * @param processEntity
      * @return JSON string of the process result.
      */
-    public static String getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
-        String result = null, omsAddress = null;
-        int omsPort = 0;
+    public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
+        Results results = null;
+
+        if (previousEntity == Configuration.ProcessEntity.DEVICE && processEntity == Configuration.ProcessEntity.SERVER) {
+
+            // Migrate object from device to server.
+            // Object migration is one way only for now.
+            // TODO (4/2/2018, SungwookM): Use NAT to allow object migration between device and server.
+            lr.migrateObject(new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])));
+
+            KernelServer nodeServer = new KernelServerImpl(
+                    new InetSocketAddress(
+                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
+                    new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])),
+                    null);
+        }
+
+        if (previousEntity == Configuration.ProcessEntity.UNDECIDED || (previousEntity == Configuration.ProcessEntity.SERVER && processEntity == Configuration.ProcessEntity.DEVICE)) {
+            lr = getNewAppEntryPoint(processEntity);
+        }
 
         try {
-            if (processEntity == Configuration.ProcessEntity.DEVICE) {
-
-                if (!kernelStarted) {
-                    // Launch a Sapphire kernel server on the device.
-                    String[] kernelArgs = new String[]{
-                            Constants.kernelAddress[0], Constants.kernelAddress[1], Constants.localOmsAddress[0], Constants.localOmsAddress[1], processEntity.toString()
-                    };
-
-                    KernelServerImpl.main(kernelArgs);
-                    kernelStarted = true;
-                }
-                omsAddress = Constants.localOmsAddress[0];
-                omsPort = Integer.parseInt(Constants.localOmsAddress[1]);
-            } else {
-                // Skip launching Sapphire kernel server on the device as it will connect to the Sapphire kernel in the cloud.
-                omsAddress = Constants.remoteOmsAddress[0];
-                omsPort = Integer.parseInt(Constants.remoteOmsAddress[1]);
-            }
-
-            Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
-            OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
-
-            KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(
-                    Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
-                    new InetSocketAddress(omsAddress, omsPort));
-
-            lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
-
             File file = new File(imageFilePath);
+
             String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
 
             if (processEntity == Configuration.ProcessEntity.SERVER) {
@@ -76,16 +131,18 @@ public class SapphireAccess
             }
 
             final long startTime = System.currentTimeMillis();
-            result = lr.recognizeImage
+            results = lr.recognizeImage
                     (countryCode, region, openAlprConfFile, imageFilePath, file.getName(), Constants.MAX_NUM_OF_PLATES, processEntity);
+
             processingTime = System.currentTimeMillis() - startTime;
+            previousEntity = processEntity;
         }
         catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        return result;
+        return results;
     }
 
     /**
@@ -93,7 +150,7 @@ public class SapphireAccess
      * @param file
      * @return Image transfer time, -1 if it failed.
      */
-    private static long UploadFileToServer(File file) {
+    private long UploadFileToServer(File file) {
         final long startTime = System.currentTimeMillis();
 
         try {

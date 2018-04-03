@@ -74,7 +74,12 @@ public class KernelServerManager {
         if (!addresses.contains(address)) {
 		    addresses.add(address);
 		    regions.put(region, addresses);
-        }
+		    System.out.println("Current regions: ");
+
+			for (Map.Entry<String, ArrayList<InetSocketAddress>> entry : regions.entrySet()) {
+				System.out.println(entry.getKey() + entry.getValue().toString());
+			}
+		}
 	}
 
     public ArrayList<InetSocketAddress> getServers() {
@@ -116,7 +121,12 @@ public class KernelServerManager {
     	}
     }
     
-    public InetSocketAddress getServerInRegion(String region) {
-    	return regions.get(region).get(0);
+    public InetSocketAddress getHostNameInRegion(String region) {
+		System.out.println("getServerInRegion at " + region);
+		for (InetSocketAddress regionStr: regions.get(region)) {
+			System.out.println("Found:" +  regionStr);
+		}
+
+		return regions.get(region).get(0);
     }
 }

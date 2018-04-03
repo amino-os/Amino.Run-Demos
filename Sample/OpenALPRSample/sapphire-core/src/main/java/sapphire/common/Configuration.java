@@ -19,5 +19,5 @@ public class Configuration {
         return WhereToProcessPrefix + WhereToProcess.toString();
     }
 
-    public enum ProcessEntity { DEVICE, SERVER };
+    public enum ProcessEntity { DEVICE, SERVER, UNDECIDED };
 }

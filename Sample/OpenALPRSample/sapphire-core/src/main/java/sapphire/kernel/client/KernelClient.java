@@ -84,6 +84,9 @@ public class KernelClient {
 		} catch (KernelObjectMigratingException e) {
 			Thread.sleep(100);
 			throw new KernelObjectNotFoundException("Kernel object was migrating. Try again later.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
 		}
 
 		return ret;

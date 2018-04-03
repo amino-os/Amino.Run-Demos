@@ -23,6 +23,8 @@ public class Result {
 
     private final List<Candidate> candidates;
 
+    private int count;
+
     public Result(String plate, Double confidence, Double matches_template, String region, Double region_confidence, Double processing_time_ms, List<Coordinate> coordinates, List<Candidate> candidates) {
         this.plate = plate;
         this.confidence = confidence;
@@ -32,6 +34,24 @@ public class Result {
         this.processing_time_ms = processing_time_ms;
         this.coordinates = coordinates;
         this.candidates = candidates;
+    }
+
+    /**
+     * Sets the count: number of plates found so far.
+     * Note that this is not a value returned by the recognition algorithm.
+     * This is used to display the current count.
+     * @param count
+     */
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    /**
+     * Gets the count.
+     * @return the count.
+     */
+    public int getCount() {
+        return count;
     }
 
     /**

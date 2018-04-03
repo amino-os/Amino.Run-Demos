@@ -106,7 +106,7 @@ public class OMSServerImpl implements OMSServer{
        public ArrayList<InetSocketAddress> getServers() throws NumberFormatException, RemoteException, NotBoundException {
     	   return serverManager.getServers();
        }
-       
+
       /**
         * Gets the regions in the system
         * 
@@ -127,7 +127,7 @@ public class OMSServerImpl implements OMSServer{
         */
        @Override
        public InetSocketAddress getServerInRegion(String region) throws RemoteException {
-    	   return serverManager.getServerInRegion(region);
+    	   return serverManager.getHostNameInRegion(region);
        }
        
        /** APP METHODS **/
@@ -142,7 +142,7 @@ public class OMSServerImpl implements OMSServer{
     		   return appEntryPoint;
     	   } else {
 				try {
-					InetSocketAddress host = serverManager.getServerInRegion(serverManager.getRegions().get(0));
+					InetSocketAddress host = serverManager.getHostNameInRegion(serverManager.getRegions().get(0));
 					KernelServer server = serverManager.getServer(host);
 					logger.info("Starting app at the server: " + host.getHostString());
 					logger.info(" appEntryClassName: " + appEntryClassName);
@@ -164,7 +164,7 @@ public class OMSServerImpl implements OMSServer{
        @Override
        public AppObjectStub getAppEntryPoint(String region) throws RemoteException {
 			try {
-				InetSocketAddress host = serverManager.getServerInRegion(region);
+				InetSocketAddress host = serverManager.getHostNameInRegion(region);
 				KernelServer server = serverManager.getServer(host);
 				logger.info("Starting app at the server in region (" + region + ") : " + host.getHostString());
 				logger.info(" appEntryClassName: " + appEntryClassName);
@@ -201,7 +201,7 @@ public class OMSServerImpl implements OMSServer{
     		   System.out.println("[IP] [port] [AppClassName]");
     		   return;
     	   }
- 
+
            int port = 1099;
     	   try {
     		   port = Integer.parseInt(args[1]);
@@ -218,6 +218,7 @@ public class OMSServerImpl implements OMSServer{
     		   OMSServer omsStub = (OMSServer) UnicastRemoteObject.exportObject(oms, 0);
     		   Registry registry = LocateRegistry.createRegistry(port);
     		   registry.rebind("SapphireOMS", omsStub);
+
     		   logger.info("OMS ready");
     	   	   for (Iterator<InetSocketAddress> it = oms.getServers().iterator(); it.hasNext();) {
         		   InetSocketAddress address = it.next();

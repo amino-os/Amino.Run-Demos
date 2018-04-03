@@ -1,19 +1,41 @@
 package org.openalpr;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import org.openalpr.model.Result;
+import org.openalpr.model.Results;
+import org.openalpr.model.ResultsError;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import sapphire.app.SapphireObject;
 import sapphire.common.Configuration;
-import sapphire.policy.ShiftPolicy;
+import sapphire.policy.MigrationPolicy;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
-public class AlprSapphire implements SapphireObject<ShiftPolicy> {
+public class AlprSapphire implements SapphireObject<MigrationPolicy> {
+
+    private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
     public AlprSapphire() {}
+
+    /**
+     * Migrate object from device to cloud.
+     * @param inetSocketAddress
+     */
+    public void migrateObject(InetSocketAddress inetSocketAddress) {
+
+    }
 
     public boolean saveImage(String fileName, byte[] bytes, int len) {
         try {
@@ -42,7 +64,7 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
      * @param MAX_NUM_OF_PLATES
      * @return
      */
-    public String recognizeImage(
+    public Results recognizeImage(
             String country,
             String region,
             String openAlprConfFile,
@@ -52,22 +74,64 @@ public class AlprSapphire implements SapphireObject<ShiftPolicy> {
             Configuration.ProcessEntity processEntity) {
 
         AlprJNIWrapper alpr;
+        String resultJson;
+
         try {
             alpr = new AlprJNIWrapper();
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error: " + e.toString();
+            return GetExceptionResult("Failed to initialize: " + e.getMessage());
         }
 
         try {
-            String results;
-
-            results = alpr.recognize(imageFilePath, fileName, processEntity, country, region, openAlprConfFile, MAX_NUM_OF_PLATES);
-
-            return results;
+            resultJson = alpr.recognize(imageFilePath, fileName, processEntity, country, region, openAlprConfFile, MAX_NUM_OF_PLATES);
+        } catch (AlprException e) {
+            e.printStackTrace();
+            return GetExceptionResult(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error at recognizeImageOnDefault: " + e.getMessage();
+            return GetExceptionResult("Unexpected exception: " + e.getMessage());
         }
+
+        try {
+
+            Results results = (resultJson == null)? null: new Gson().fromJson(resultJson, Results.class);
+            Set<Result> newResults = new HashSet<>();
+
+            for (Result result : results.getResults()) {
+                String plate = result.getPlate();
+
+                if (licensePlatesMap.containsKey(plate)) {
+                    int updatedVal = licensePlatesMap.get(plate) + 1;
+                    licensePlatesMap.put(plate, updatedVal);
+                    result.setCount(updatedVal);
+                    newResults.add(result);
+                } else {
+                    licensePlatesMap.put(plate, 1);
+                    result.setCount(1);
+                    newResults.add(result);
+                }
+            }
+
+            results.setNewResults(new ArrayList<>(newResults));
+            return results;
+
+        } catch (JsonSyntaxException e) {
+            final ResultsError resultsError = new Gson().fromJson(resultJson, ResultsError.class);
+            e.printStackTrace();
+            return GetExceptionResult(resultsError.getMsg());
+        } catch (Exception e) {
+            final ResultsError resultsError = new Gson().fromJson(resultJson, ResultsError.class);
+            e.printStackTrace();
+            return GetExceptionResult("Unexpected exception: " + resultsError.getMsg());
+        }
+    }
+
+    private Results GetExceptionResult(String exceptionMsg) {
+        List<Result> resultException = new ArrayList<Result>(){};
+        resultException.add(
+                new Result (
+                        exceptionMsg, 0.0,0.0, null, 0.0,0.0, null, null) { });
+        return new Results(0.0, 0.0, resultException) {};
     }
 }
