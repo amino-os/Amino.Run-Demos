@@ -1,10 +1,5 @@
 package org.openalpr;
 
-import android.graphics.Bitmap;
-import android.os.Handler;
-
-import org.openalpr.model.Results;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
@@ -13,6 +8,7 @@ import java.rmi.registry.Registry;
 
 
 import sapphire.common.Configuration;
+import sapphire.kernel.common.GlobalKernelReferences;
 import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
@@ -51,7 +47,7 @@ public class SapphireAccess
         }
     }
 
-    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
+    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity, boolean startNewApp) {
         String omsAddress;
         int omsPort;
 
@@ -73,8 +69,12 @@ public class SapphireAccess
 //                    new InetSocketAddress(omsAddress, omsPort),
 //                    null);
 
-            while (!kernelReady) {}
-            lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
+            while (!kernelReady) {Thread.sleep(100);}
+            if (startNewApp) {
+                lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
+            } else {
+                //lr = (AlprSapphire) server.getExistingAppEntryPoint(processEntity.toString());
+            }
             return lr;
         }
         catch (Exception e) {
@@ -103,16 +103,18 @@ public class SapphireAccess
             // Object migration is one way only for now.
             // TODO (4/2/2018, SungwookM): Use NAT to allow object migration between device and server.
             lr.migrateObject(new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])));
-
-            KernelServer nodeServer = new KernelServerImpl(
-                    new InetSocketAddress(
-                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
-                    new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])),
-                    null);
+            GlobalKernelReferences.nodeServer.getKernelClient();
+//
+//            KernelServer nodeServer = new KernelServerImpl(
+//                    new InetSocketAddress(
+//                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
+//                    new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])),
+//                    null);
+            //lr = getNewAppEntryPoint(processEntity, false);
         }
 
         if (previousEntity == Configuration.ProcessEntity.UNDECIDED || (previousEntity == Configuration.ProcessEntity.SERVER && processEntity == Configuration.ProcessEntity.DEVICE)) {
-            lr = getNewAppEntryPoint(processEntity);
+            lr = getNewAppEntryPoint(processEntity, true);
         }
 
         try {

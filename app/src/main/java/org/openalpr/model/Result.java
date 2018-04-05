@@ -1,11 +1,12 @@
 package org.openalpr.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Result model.
  */
-public class Result {
+public class Result implements Serializable {
 
     private final String plate;
 

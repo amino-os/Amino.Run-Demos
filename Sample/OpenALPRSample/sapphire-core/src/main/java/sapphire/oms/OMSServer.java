@@ -19,6 +19,7 @@ import sapphire.kernel.common.KernelObjectNotFoundException;
 public interface OMSServer extends Remote {
        KernelOID registerKernelObject(InetSocketAddress host) throws RemoteException;
        void registerKernelObject(KernelOID oid, InetSocketAddress host) throws RemoteException, KernelObjectNotFoundException;
+       void registerNewKernelObject(KernelOID oid, InetSocketAddress host) throws RemoteException, KernelObjectNotFoundException;
        InetSocketAddress lookupKernelObject(KernelOID oid) throws RemoteException, KernelObjectNotFoundException;
        
        ArrayList<InetSocketAddress> getServers() throws NumberFormatException, RemoteException, NotBoundException;
@@ -36,5 +37,6 @@ public interface OMSServer extends Remote {
        /* Called by the client */
        public AppObjectStub getAppEntryPoint() throws RemoteException;
        public AppObjectStub getAppEntryPoint(String region) throws RemoteException;
+       public AppObjectStub getExistingAppEntryPoint(String region) throws RemoteException;
 }
 

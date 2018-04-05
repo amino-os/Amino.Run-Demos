@@ -53,7 +53,17 @@ public class GlobalKernelObjectManager {
         	kernelObjects.put(oid, host);    		
     	}
     }
-    
+
+    /**
+     * Move a kernel object by registering a new host for this object passed from different OMS.
+     * @param oid
+     * @param host
+     * @throws KernelObjectNotFoundException
+     */
+    public void registerNewObject(KernelOID oid, InetSocketAddress host) throws KernelObjectNotFoundException {
+        kernelObjects.put(oid, host);
+    }
+
     /**
      * Find the host for a kernel object 
      * @param oid

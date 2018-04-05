@@ -1,9 +1,11 @@
 package org.openalpr.model;
 
+import java.io.Serializable;
+
 /**
  * Candidate model.
  */
-public class Candidate {
+public class Candidate implements Serializable{
 
     private final String plate;
 

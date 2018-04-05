@@ -87,14 +87,38 @@ public class MigrationPolicy extends SapphirePolicy {
 			InetSocketAddress localAddress = localKernel.getLocalHost();
 
 			logger.info("Performing Explicit Migration of object from " + localAddress + " to " + destinationAddr);
+//
+//			if (!(servers.contains(destinationAddr))) {
+//				// Even if servers do not look to contain destinationAddr, it could be due to the difference in private IP.
+//				// For example, AWS has public and private IP addresses and this could result in a difference even though they
+//				// point to the same if destinationAddr only contains public IPs.
+//				boolean contains = false;
+//
+//				for (InetSocketAddress server: servers) {
+//					if (destinationAddr.getPort() == server.getPort()) {
+//						if (destinationAddr.getHostName() == server.getHostName() ||
+//								destinationAddr.getAddress() == server.getAddress()) {
+//							contains = true;
+//							break;
+//						}
+//					}
+//				}
+//
+//				if (!contains)
+//					throw new Exception("The destinations address passed is not present as one of the Kernel Servers" + destinationAddr);
+//			}
+//
+//			if (!localAddress.equals(destinationAddr)) {
+//				if (localAddress.getPort() != destinationAddr.getPort() || localAddress.getHostName() != destinationAddr.getHostName()) {
+//					localKernel.moveKernelObjectToServer(destinationAddr, this.oid);
+//				}
+//			}
 
-			if (!(servers.contains(destinationAddr))) {
-				throw new Exception("The destinations address passed is not present as one of the Kernel Servers" + destinationAddr);
+			if (servers == null || servers.size() == 0) {
+				logger.warning("No servers to migrate object to.");
 			}
-
-			if (!localAddress.equals(destinationAddr)) {
-				localKernel.moveKernelObjectToServer(destinationAddr, this.oid);
-			}
+			InetSocketAddress chosenAddress = servers.get(0);
+			localKernel.moveKernelObjectToRemoteServer(chosenAddress, this.oid);
 
 			logger.info("Successfully performed Explicit Migration of object from " + localAddress + " to " + destinationAddr);
 		}

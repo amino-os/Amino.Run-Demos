@@ -75,6 +75,14 @@ public class OMSServerImpl implements OMSServer{
     	   logger.info("Registering new host for " + oid.toString() + " on " + host.toString());
     	   kernelObjectManager.register(oid, host);
        }
+
+       /**
+        * Register a new host for this kernel object. Used to move a kernel object
+        */
+       public void registerNewKernelObject(KernelOID oid, InetSocketAddress host) throws RemoteException, KernelObjectNotFoundException {
+    	   logger.info("Registering new host from different OMS for " + oid.toString() + " on " + host.toString());
+    	   kernelObjectManager.registerNewObject(oid, host);
+       }
        
        /**
         * Find the host for a kernel object
@@ -158,6 +166,28 @@ public class OMSServerImpl implements OMSServer{
        }
 
        /**
+        * Returns the existing App Object Stub
+        * @throws RemoteException
+        */
+       @Override
+       public AppObjectStub getExistingAppEntryPoint(String region) throws RemoteException {
+			try {
+				InetSocketAddress host = serverManager.getHostNameInRegion(region);
+				KernelServer server = serverManager.getServer(host);
+				logger.info("Geting the entry point in region (" + region + ") : " + host.getHostString());
+				logger.info(" appEntryClassName: " + appEntryClassName);
+
+				appEntryPoint = server.getApp(appEntryClassName);
+				logger.info(" Successfully started " + appEntryClassName);
+			} catch(Exception e) {
+				e.printStackTrace();
+				logger.severe(e.toString());
+			}
+			return appEntryPoint;
+       }
+
+
+       /**
         * Starts the app on one of the servers in the region and returns the App Object Stub
         * @throws RemoteException
         */
@@ -177,6 +207,8 @@ public class OMSServerImpl implements OMSServer{
 			}
 			return appEntryPoint;
        }
+
+
 //
 //       /**
 //        * Starts the app on one of the servers and returns the App Object Stub

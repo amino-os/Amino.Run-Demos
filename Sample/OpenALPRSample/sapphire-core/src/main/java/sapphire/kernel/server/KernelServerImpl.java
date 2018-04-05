@@ -51,6 +51,8 @@ public class KernelServerImpl implements KernelServer{
 	/** region information where this kernel server is running */
 	private static String region = null;
 
+	private AppObjectStub appEntryPoint;
+
 	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost, InetSocketAddress cloudOmsHost) {
 		logger.setLevel(Level.ALL);
 		ConsoleHandler handler = new ConsoleHandler();
@@ -170,7 +172,42 @@ public class KernelServerImpl implements KernelServer{
 		
 		objectManager.removeObject(oid);
 	}
-	
+
+	/**
+	 * Move object from this server to host.
+	 * @param host
+	 * @param oid
+	 * @throws RemoteException
+	 * @throws KernelObjectNotFoundException
+	 */
+	public void moveKernelObjectToRemoteServer(InetSocketAddress host, KernelOID oid) throws RemoteException, KernelObjectNotFoundException {
+		if (host.equals(this.host)) {
+			return;
+		}
+
+		KernelObject object = objectManager.lookupObject(oid);
+		object.coalesce();
+
+		logger.fine("Moving object " + oid.toString() + " to " + host.toString());
+
+		try {
+			client.copyObjectToServer(host, oid, object);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			throw new RemoteException("Could not contact destination server.");
+		}
+
+		try {
+			cloudOms.registerNewKernelObject(oid, host);
+			oms = cloudOms;
+			client.updateOms(cloudOms);
+		} catch (RemoteException e) {
+			throw new RemoteException("Could not contact oms to update kernel object host.");
+		}
+
+		objectManager.removeObject(oid);
+	}
+
 	public Serializable getObject(KernelOID oid) throws KernelObjectNotFoundException {
 		KernelObject object = objectManager.lookupObject(oid);
 		return object.getObject();
@@ -197,7 +234,7 @@ public class KernelServerImpl implements KernelServer{
 	 */
 	@Override
 	public AppObjectStub startApp(String className) throws RemoteException {
-		AppObjectStub appEntryPoint = null;
+//		AppObjectStub appEntryPoint = null;
 		try {
 			logger.info("Starting APP: " + className);
 			AppEntryPoint entryPoint =  (AppEntryPoint) Class.forName(className).newInstance();
@@ -210,22 +247,23 @@ public class KernelServerImpl implements KernelServer{
 		}
 		return appEntryPoint;
 	}
-//
-//	/**
-//	 * Start the first server-side app object
-//	 */
-//	@Override
-//	public AppObjectStub startApp(String className, Object object) throws RemoteException {
-//		AppObjectStub appEntryPoint = null;
-//		try {
-//			AppEntryPoint entryPoint =  (AppEntryPoint) Class.forName(className).newInstance();
-//            appEntryPoint = entryPoint.start();
-//		} catch (Exception e) {
-//			logger.severe("Could not start app");
-//			e.printStackTrace();
-//		}
-//		return appEntryPoint;
-//	}
+
+	/**
+	 * Get the existing server-side app object
+	 */
+	@Override
+	public AppObjectStub getApp(String className) throws RemoteException {
+		AppObjectStub appEntryPoint = null;
+		try {
+			logger.info("Getting APP: " + className);
+
+		} catch (Exception e) {
+			logger.severe("Could not start app: " + e.toString());
+			e.printStackTrace();
+		}
+		return appEntryPoint;
+	}
+
 
 	public class MemoryStatThread extends Thread {
 		public void run() {

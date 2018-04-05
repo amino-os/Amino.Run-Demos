@@ -82,14 +82,19 @@ public class KernelServerManager {
 		}
 	}
 
+	/**
+	 * Get servers in all regions.
+	 * @return all servers.
+	 */
     public ArrayList<InetSocketAddress> getServers() {
-		// servers.keySet() is only available > Android API 24. Therefore, below implementation replaces it.
-		ArrayList<InetSocketAddress> serverKeys = new ArrayList<InetSocketAddress>();
-		for (Map.Entry<InetSocketAddress, KernelServer> entry : servers.entrySet()) {
-			serverKeys.add(entry.getKey());
+
+		ArrayList<InetSocketAddress> nodes = new ArrayList<InetSocketAddress>();
+		for (ArrayList<InetSocketAddress> addresses : regions.values()) {
+			for (InetSocketAddress address: addresses) {
+				nodes.add(address);
+			}
 		}
-		return serverKeys;
-//        return new ArrayList<InetSocketAddress>(servers.keySet());
+		return nodes;
     }
 
     public ArrayList<String> getRegions() {

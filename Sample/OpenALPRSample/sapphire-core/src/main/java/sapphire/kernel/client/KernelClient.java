@@ -74,6 +74,10 @@ public class KernelClient {
 		this.oms = oms;
 		servers = new Hashtable<InetSocketAddress,KernelServer>();
 	}
+
+	public void updateOms(OMSServer oms) {
+		this.oms = oms;
+	}
 	
 	private Object tryMakeKernelRPC(KernelServer server, KernelRPC rpc) throws KernelObjectNotFoundException, Exception {
 		Object ret = null;

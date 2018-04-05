@@ -50,14 +50,14 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
     }
 
     // Implementation of recognizeImage(String, String, String, String, String, int, Configuration.ProcessEntity)
-    public org.openalpr.model.Results recognizeImage(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, java.lang.String $param_String_5, int $param_int_6, sapphire.common.Configuration.ProcessEntity $param_Configuration$ProcessEntity_7) {
+    public org.openalpr.Results recognizeImage(java.lang.String $param_String_1, java.lang.String $param_String_2, java.lang.String $param_String_3, java.lang.String $param_String_4, java.lang.String $param_String_5, int $param_int_6, sapphire.common.Configuration.ProcessEntity $param_Configuration$ProcessEntity_7) {
         java.lang.Object $__result = null;
         try {
             if ($__directInvocation)
                 $__result = super.recognizeImage( $param_String_1,  $param_String_2,  $param_String_3,  $param_String_4,  $param_String_5,  $param_int_6,  $param_Configuration$ProcessEntity_7);
             else {
                 java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public org.openalpr.model.Results org.openalpr.AlprSapphire.recognizeImage(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,sapphire.common.Configuration$ProcessEntity)";
+                String $__method = "public org.openalpr.Results org.openalpr.AlprSapphire.recognizeImage(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,sapphire.common.Configuration$ProcessEntity)";
                 $__params.add($param_String_1);
                 $__params.add($param_String_2);
                 $__params.add($param_String_3);
@@ -70,7 +70,7 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ((org.openalpr.model.Results) $__result);
+        return ((org.openalpr.Results) $__result);
     }
 
     // Implementation of migrateObject(InetSocketAddress)

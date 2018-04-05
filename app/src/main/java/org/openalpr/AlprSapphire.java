@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import org.openalpr.model.Result;
-import org.openalpr.model.Results;
 import org.openalpr.model.ResultsError;
 
 import java.io.File;
@@ -12,9 +11,7 @@ import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import sapphire.app.SapphireObject;
 import sapphire.common.Configuration;
@@ -80,6 +77,7 @@ public class AlprSapphire implements SapphireObject<MigrationPolicy> {
             alpr = new AlprJNIWrapper();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e);
             return GetExceptionResult("Failed to initialize: " + e.getMessage());
         }
 
@@ -87,16 +85,18 @@ public class AlprSapphire implements SapphireObject<MigrationPolicy> {
             resultJson = alpr.recognize(imageFilePath, fileName, processEntity, country, region, openAlprConfFile, MAX_NUM_OF_PLATES);
         } catch (AlprException e) {
             e.printStackTrace();
+            System.out.println(e);
             return GetExceptionResult(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e);
             return GetExceptionResult("Unexpected exception: " + e.getMessage());
         }
 
         try {
 
             Results results = (resultJson == null)? null: new Gson().fromJson(resultJson, Results.class);
-            Set<Result> newResults = new HashSet<>();
+//            Set<Result> newResults = new HashSet<>();
 
             for (Result result : results.getResults()) {
                 String plate = result.getPlate();
@@ -105,24 +105,26 @@ public class AlprSapphire implements SapphireObject<MigrationPolicy> {
                     int updatedVal = licensePlatesMap.get(plate) + 1;
                     licensePlatesMap.put(plate, updatedVal);
                     result.setCount(updatedVal);
-                    newResults.add(result);
+//                    newResults.add(result);
                 } else {
                     licensePlatesMap.put(plate, 1);
                     result.setCount(1);
-                    newResults.add(result);
+//                    newResults.add(result);
                 }
             }
 
-            results.setNewResults(new ArrayList<>(newResults));
+//            results.setNewResults(new ArrayList<>(newResults));
             return results;
 
         } catch (JsonSyntaxException e) {
             final ResultsError resultsError = new Gson().fromJson(resultJson, ResultsError.class);
             e.printStackTrace();
+            System.out.println(e);
             return GetExceptionResult(resultsError.getMsg());
         } catch (Exception e) {
             final ResultsError resultsError = new Gson().fromJson(resultJson, ResultsError.class);
             e.printStackTrace();
+            System.out.println(e);
             return GetExceptionResult("Unexpected exception: " + resultsError.getMsg());
         }
     }

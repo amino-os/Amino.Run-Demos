@@ -1,9 +1,11 @@
 package org.openalpr.model;
 
+import java.io.Serializable;
+
 /**
  * Coordinate model.
  */
-public class Coordinate {
+public class Coordinate implements Serializable {
 
     private final Integer x;
 

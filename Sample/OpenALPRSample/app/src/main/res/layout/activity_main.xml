@@ -74,4 +74,12 @@
         </LinearLayout>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:freezesText="true"
+        android:textSize="15sp"
+        android:gravity="center_horizontal" />
+
 </LinearLayout>

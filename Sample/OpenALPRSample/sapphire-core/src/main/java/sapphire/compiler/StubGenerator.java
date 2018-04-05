@@ -64,7 +64,8 @@ public class StubGenerator {
 		File[] fList = directory.listFiles();
 		String path = directory.getAbsolutePath();
 		for (File file : fList){
-			if (file.isFile() && ((packageName.contains("policy") && file.getName().endsWith(".class")) || (file.getName().endsWith("AlprSapphire.class")))) {
+			if (file.isFile() && ((packageName.contains("policy") && file.getName().endsWith(".class")) ||
+					(file.getName().endsWith("AlprSapphire.class")) || file.getName().endsWith("Results.class"))) {
 				try {
 					Class<?> c = Class.forName(StubGenerator.removeExtension(packageName + "." + file.getName()));
 					

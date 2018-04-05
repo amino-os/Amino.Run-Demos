@@ -3,10 +3,9 @@ package com.sandro.openalprsample;
 import android.os.AsyncTask;
 
 import org.openalpr.SapphireAccess;
-import org.openalpr.model.Results;
+import org.openalpr.Results;
 
 import sapphire.common.Configuration;
-import sapphire.runtime.Sapphire;
 
 /**
  * Created by SMoon on 2/27/2018.

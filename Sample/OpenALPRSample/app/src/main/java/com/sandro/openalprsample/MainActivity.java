@@ -18,22 +18,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.openalpr.Constants;
 import org.openalpr.SapphireAccess;
 import org.openalpr.model.Result;
-import org.openalpr.model.Results;
-import org.openalpr.model.ResultsError;
+import org.openalpr.Results;
 import org.openalpr.util.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -51,10 +46,12 @@ import sapphire.common.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String pressButtonStr = "Press the button below to start a request.";
     private static final int REQUEST_IMAGE = 100;
     private static final int STORAGE=1;
     private String ANDROID_DATA_DIR;
     private static File destination;
+    private TextView infoTextView;
     private TextView resultTextView;
     private TextView whereToProcessTextView;
     private ImageView imageView;
@@ -68,22 +65,27 @@ public class MainActivity extends AppCompatActivity {
 
         ANDROID_DATA_DIR = this.getApplicationInfo().dataDir;
 
-        resultTextView = (TextView) findViewById(R.id.textView);
+        infoTextView = (TextView) findViewById(R.id.textView);
         whereToProcessTextView = (TextView) findViewById(R.id.textView_where_to_process);
         imageView = (ImageView) findViewById(R.id.imageView);
+        resultTextView = (TextView) findViewById(R.id.resultTextView);
 
         if (sa == null) {
             sa = new SapphireAccess();
         }
+        // Below is to execute kernel server on the device.
+        // Android limits network call to async operation in Main activity.
         new OpenAlprSapphireInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
         Utils.copyAssetFolder(MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
 
-        resultTextView.setText("Press the button below to start a request.");
+        infoTextView.setText(pressButtonStr);
         whereToProcessTextView.setText(Configuration.getWhereToProcess());
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                resultTextView.setText("");
                 checkPermission();
             }
         });
@@ -114,12 +116,12 @@ public class MainActivity extends AppCompatActivity {
                 final ProgressDialog progress
                         = ProgressDialog.show(this, "Loading", "Parsing result...", true);
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 4;
+                options.inSampleSize = 10;
 
                 // Picasso requires permission.WRITE_EXTERNAL_STORAGE
                 Picasso.with(MainActivity.this).load(destination).fit().centerCrop().into(imageView);
                 resultTextView.setMovementMethod(new ScrollingMovementMethod());
-                resultTextView.setText("Processing");
+                infoTextView.setText("Processing");
 
                 AsyncTask.execute(new Runnable() {
                     @Override
@@ -157,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "It was not possible to detect the licence plate.", Toast.LENGTH_LONG).show();
                                         resultTextView.setText("It was not possible to detect the licence plate.");
                                     } else {
-//                                        String textToShow = " Processing time within API: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds\n";
                                         String textToShow = "";
                                         textToShow += "Total processing time: " + String.format("%.2f", ((elapsedTime/1000.0)%60)) + " seconds\n";
                                         textToShow += "Image resize time: " + String.format("%.2f", ((resizeElapsedTime/1000.0)%60)) + " seconds\n";
@@ -166,12 +167,14 @@ public class MainActivity extends AppCompatActivity {
                                         textToShow += "Number of plates found: " + finalResults.getResults().size() +"\n\n";
 
                                         for (Result result : finalResults.getResults()) {
-                                            textToShow += "Plate: " + result.getPlate() + " Found:" + result.getCount() + "\n";
+                                            textToShow += "Plate: " + result.getPlate() + "  Found so far:" + result.getCount() + "\n";
                                                     //+ " Confidence: " + String.format("%.2f", result.getConfidence()) + "%\n";
                                         }
 
                                         resultTextView.setText(textToShow);
                                     }
+
+                                    infoTextView.setText(pressButtonStr);
                                 }
                             });
 
