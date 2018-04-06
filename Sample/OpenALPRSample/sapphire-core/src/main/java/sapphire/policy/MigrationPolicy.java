@@ -64,7 +64,7 @@ public class MigrationPolicy extends SapphirePolicy {
 		public Object onRPC(String method, ArrayList<Object> params) throws Exception {
 
 			if (isMigrateObject(method)) {
-				migrateObject((InetSocketAddress) params.get(0));
+				migrateObjectToDifferentOMS();
 				return null;
 			} else {
 				Object obj = super.onRPC(method, params);
@@ -77,16 +77,17 @@ public class MigrationPolicy extends SapphirePolicy {
 		 *
 		 * @throws Exception migrateObject migrates the object to the specified Kernel Server
 		 */
-		public void migrateObject(InetSocketAddress destinationAddr) throws Exception {
-			logger.info("Performing Explicit Migration of the object to Destination Kernel Server with address as " + destinationAddr);
+		public void migrateObjectToDifferentOMS() throws Exception {
+			logger.info("Performing Explicit Migration of the object to different OMS");
 //			OMSServer oms = GlobalKernelReferences.nodeServer.oms;
-			OMSServer oms = GlobalKernelReferences.nodeServer.cloudOms;
+			GlobalKernelReferences.nodeServer.oms = GlobalKernelReferences.nodeServer.cloudOms;
+			OMSServer oms = GlobalKernelReferences.nodeServer.oms;
 			ArrayList<InetSocketAddress> servers = oms.getServers();
 
 			KernelServerImpl localKernel = GlobalKernelReferences.nodeServer;
 			InetSocketAddress localAddress = localKernel.getLocalHost();
 
-			logger.info("Performing Explicit Migration of object from " + localAddress + " to " + destinationAddr);
+			logger.info("Performing Explicit Migration of object from " + localAddress);
 //
 //			if (!(servers.contains(destinationAddr))) {
 //				// Even if servers do not look to contain destinationAddr, it could be due to the difference in private IP.
@@ -118,14 +119,14 @@ public class MigrationPolicy extends SapphirePolicy {
 				logger.warning("No servers to migrate object to.");
 			}
 			InetSocketAddress chosenAddress = servers.get(0);
-			localKernel.moveKernelObjectToRemoteServer(chosenAddress, this.oid);
+			localKernel.moveKernelObjectToDifferentOMS(chosenAddress, this.oid, oms);
 
-			logger.info("Successfully performed Explicit Migration of object from " + localAddress + " to " + destinationAddr);
+			logger.info("Successfully performed Explicit Migration of object from " + localAddress + " to " + chosenAddress);
 		}
 
 		private Boolean isMigrateObject(String method) {
 			// TODO better check than simple base name
-			return method.contains(".migrateObject(");
+			return method.contains(".migrateObjectToDifferentOMS(");
 		}
 	}
 

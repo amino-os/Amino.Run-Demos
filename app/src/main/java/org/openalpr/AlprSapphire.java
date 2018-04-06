@@ -30,7 +30,7 @@ public class AlprSapphire implements SapphireObject<MigrationPolicy> {
      * Migrate object from device to cloud.
      * @param inetSocketAddress
      */
-    public void migrateObject(InetSocketAddress inetSocketAddress) {
+    public void migrateObjectToDifferentOMS() {
 
     }
 

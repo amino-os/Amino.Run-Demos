@@ -102,7 +102,7 @@ public class SapphireAccess
             // Migrate object from device to server.
             // Object migration is one way only for now.
             // TODO (4/2/2018, SungwookM): Use NAT to allow object migration between device and server.
-            lr.migrateObject(new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])));
+            lr.migrateObjectToDifferentOMS();
             GlobalKernelReferences.nodeServer.getKernelClient();
 //
 //            KernelServer nodeServer = new KernelServerImpl(

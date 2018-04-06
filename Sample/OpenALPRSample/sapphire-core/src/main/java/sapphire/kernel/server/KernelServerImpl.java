@@ -180,7 +180,7 @@ public class KernelServerImpl implements KernelServer{
 	 * @throws RemoteException
 	 * @throws KernelObjectNotFoundException
 	 */
-	public void moveKernelObjectToRemoteServer(InetSocketAddress host, KernelOID oid) throws RemoteException, KernelObjectNotFoundException {
+	public void moveKernelObjectToDifferentOMS(InetSocketAddress host, KernelOID oid, OMSServer targetOMS) throws RemoteException, KernelObjectNotFoundException {
 		if (host.equals(this.host)) {
 			return;
 		}
@@ -198,7 +198,7 @@ public class KernelServerImpl implements KernelServer{
 		}
 
 		try {
-			cloudOms.registerNewKernelObject(oid, host);
+			targetOMS.registerNewKernelObject(oid, host);
 			oms = cloudOms;
 			client.updateOms(cloudOms);
 		} catch (RemoteException e) {

@@ -73,16 +73,15 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
         return ((org.openalpr.Results) $__result);
     }
 
-    // Implementation of migrateObject(InetSocketAddress)
-    public void migrateObject(java.net.InetSocketAddress $param_InetSocketAddress_1) {
+    // Implementation of migrateObjectToDifferentOMS()
+    public void migrateObjectToDifferentOMS() {
         java.lang.Object $__result = null;
         try {
             if ($__directInvocation)
-                super.migrateObject( $param_InetSocketAddress_1);
+                super.migrateObjectToDifferentOMS();
             else {
                 java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-                String $__method = "public void org.openalpr.AlprSapphire.migrateObject(java.net.InetSocketAddress)";
-                $__params.add($param_InetSocketAddress_1);
+                String $__method = "public void org.openalpr.AlprSapphire.migrateObjectToDifferentOMS()";
                 $__result = $__client.onRPC($__method, $__params);
             }
         } catch (Exception e) {

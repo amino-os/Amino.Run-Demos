@@ -89,12 +89,11 @@ public final class MigrationPolicy$MigrationServerPolicy_Stub extends sapphire.p
         }
     }
 
-    // Implementation of migrateObject(InetSocketAddress)
-    public void migrateObject(java.net.InetSocketAddress $param_InetSocketAddress_1)
+    // Implementation of migrateObjectToDifferentOMS()
+    public void migrateObjectToDifferentOMS()
             throws java.lang.Exception {
         java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
-        String $__method = "public void sapphire.policy.MigrationPolicy$MigrationServerPolicy.migrateObject(java.net.InetSocketAddress) throws java.lang.Exception";
-        $__params.add($param_InetSocketAddress_1);
+        String $__method = "public void sapphire.policy.MigrationPolicy$MigrationServerPolicy.migrateObjectToDifferentOMS() throws java.lang.Exception";
         java.lang.Object $__result = null;
         try {
             $__result = $__makeKernelRPC($__method, $__params);
