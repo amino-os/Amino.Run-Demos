@@ -29,7 +29,6 @@ public class OpenAlprSapphire extends AsyncTask<Void, Void, Results> {
 
     @Override
     protected Results doInBackground(Void... params) {
-//        Results results = SapphireAccess.getResult(ANDROID_DATA_DIR, this.countryCode, this.region, this.imageFilePath, processEntity);
         Results results = sa.getResult(ANDROID_DATA_DIR, this.countryCode, this.region, this.imageFilePath, processEntity);
         return results;
     }

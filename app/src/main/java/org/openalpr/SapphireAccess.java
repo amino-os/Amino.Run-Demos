@@ -47,7 +47,7 @@ public class SapphireAccess
         }
     }
 
-    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity, boolean startNewApp) {
+    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
         String omsAddress;
         int omsPort;
 
@@ -63,18 +63,9 @@ public class SapphireAccess
             Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
             OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
 
-//            KernelServer nodeServer = new KernelServerImpl(
-//                    new InetSocketAddress(
-//                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
-//                    new InetSocketAddress(omsAddress, omsPort),
-//                    null);
-
             while (!kernelReady) {Thread.sleep(100);}
-            if (startNewApp) {
-                lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
-            } else {
-                //lr = (AlprSapphire) server.getExistingAppEntryPoint(processEntity.toString());
-            }
+            lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
+
             return lr;
         }
         catch (Exception e) {
@@ -97,24 +88,8 @@ public class SapphireAccess
     public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
         Results results = null;
 
-        if (previousEntity == Configuration.ProcessEntity.DEVICE && processEntity == Configuration.ProcessEntity.SERVER) {
-
-            // Migrate object from device to server.
-            // Object migration is one way only for now.
-            // TODO (4/2/2018, SungwookM): Use NAT to allow object migration between device and server.
-            lr.migrateObjectToDifferentOMS();
-            GlobalKernelReferences.nodeServer.getKernelClient();
-//
-//            KernelServer nodeServer = new KernelServerImpl(
-//                    new InetSocketAddress(
-//                            Constants.hostAddress[0], Integer.parseInt(Constants.hostAddress[1])),
-//                    new InetSocketAddress(Constants.remoteOmsAddress[0], Integer.parseInt(Constants.remoteOmsAddress[1])),
-//                    null);
-            //lr = getNewAppEntryPoint(processEntity, false);
-        }
-
-        if (previousEntity == Configuration.ProcessEntity.UNDECIDED || (previousEntity == Configuration.ProcessEntity.SERVER && processEntity == Configuration.ProcessEntity.DEVICE)) {
-            lr = getNewAppEntryPoint(processEntity, true);
+        if (previousEntity == Configuration.ProcessEntity.UNDECIDED || (previousEntity != processEntity)) {
+            lr = getNewAppEntryPoint(processEntity);
         }
 
         try {

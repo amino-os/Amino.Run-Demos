@@ -104,6 +104,17 @@ public class MainActivity extends AppCompatActivity {
                 whereToProcessTextView.setText(Configuration.getWhereToProcess());
             }
         });
+        findViewById(R.id.button_migrate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
+                if (Configuration.WhereToProcess != Configuration.ProcessEntity.SERVER) {
+                    resultTextView.setText("Please select to proces at SERVER first.");
+                } else {
+                    resultTextView.setText("Object will be migrated to a different server for processing.");
+                }
+            }
+        });
     }
 
     @Override

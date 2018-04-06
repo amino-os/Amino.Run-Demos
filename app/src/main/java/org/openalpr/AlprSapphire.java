@@ -16,11 +16,12 @@ import java.util.List;
 import sapphire.app.SapphireObject;
 import sapphire.common.Configuration;
 import sapphire.policy.MigrationPolicy;
+import sapphire.policy.mobility.explicitmigration.ExplicitMigrator;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
-public class AlprSapphire implements SapphireObject<MigrationPolicy> {
+public class AlprSapphire implements SapphireObject<ExplicitMigrator> {
 
     private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
@@ -30,7 +31,7 @@ public class AlprSapphire implements SapphireObject<MigrationPolicy> {
      * Migrate object from device to cloud.
      * @param inetSocketAddress
      */
-    public void migrateObjectToDifferentOMS() {
+    public void migrateObject(InetSocketAddress address) {
 
     }
 

@@ -17,7 +17,6 @@ public class OpenAlprSapphireInit extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        //SapphireAccess.initialize();
         sa.initialize();
         return null;
     }

@@ -43,8 +43,6 @@ public class KernelServerImpl implements KernelServer{
 	private KernelObjectManager objectManager;
 	/** stub for the OMS */
 	public static OMSServer oms;
-	/** stub for the OMS */
-	public static OMSServer cloudOms;
 	/** local kernel client for making RPCs */
 	private KernelClient client;
 
@@ -53,7 +51,7 @@ public class KernelServerImpl implements KernelServer{
 
 	private AppObjectStub appEntryPoint;
 
-	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost, InetSocketAddress cloudOmsHost) {
+	public KernelServerImpl(InetSocketAddress host, InetSocketAddress omsHost) {
 		logger.setLevel(Level.ALL);
 		ConsoleHandler handler = new ConsoleHandler();
 		handler.setLevel(Level.ALL);
@@ -70,15 +68,6 @@ public class KernelServerImpl implements KernelServer{
 			logger.severe("Could not find OMS: " + e.toString());
 		}
 
-		if (cloudOmsHost != null) {
-			try {
-				logger.info("Cloud OMS : " + cloudOmsHost.getAddress() + ":" + cloudOmsHost.getPort());
-				cloudRegistry = LocateRegistry.getRegistry(KernelUtility.getHostName(cloudOmsHost), cloudOmsHost.getPort());
-				cloudOms = (OMSServer) cloudRegistry.lookup("SapphireOMS");
-			} catch (Exception e) {
-				logger.severe("Could not find Cloud OMS: " + e.toString());
-			}
-		}
 		this.host = host;
 		client = new KernelClient(oms);
 		GlobalKernelReferences.nodeServer = this;
@@ -170,41 +159,6 @@ public class KernelServerImpl implements KernelServer{
 			throw new RemoteException("Could not contact oms to update kernel object host.");
 		}
 		
-		objectManager.removeObject(oid);
-	}
-
-	/**
-	 * Move object from this server to host.
-	 * @param host
-	 * @param oid
-	 * @throws RemoteException
-	 * @throws KernelObjectNotFoundException
-	 */
-	public void moveKernelObjectToDifferentOMS(InetSocketAddress host, KernelOID oid, OMSServer targetOMS) throws RemoteException, KernelObjectNotFoundException {
-		if (host.equals(this.host)) {
-			return;
-		}
-
-		KernelObject object = objectManager.lookupObject(oid);
-		object.coalesce();
-
-		logger.fine("Moving object " + oid.toString() + " to " + host.toString());
-
-		try {
-			client.copyObjectToServer(host, oid, object);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw new RemoteException("Could not contact destination server.");
-		}
-
-		try {
-			targetOMS.registerNewKernelObject(oid, host);
-			oms = cloudOms;
-			client.updateOms(cloudOms);
-		} catch (RemoteException e) {
-			throw new RemoteException("Could not contact oms to update kernel object host.");
-		}
-
 		objectManager.removeObject(oid);
 	}
 
@@ -305,9 +259,6 @@ public class KernelServerImpl implements KernelServer{
 			// There is a region (e.g., processing entity signature such as device or server).
 			region = args[4];
 			logger.info("Region information found. Kernel server region: " + region);
-//			if (args.length == 6 && args[5].equalsIgnoreCase("skipOMS")) {
-//				skipOmsRegistration = true;
-//			}
 		} else if (args.length != 4) {
 			System.out.println("Incorrect arguments to the kernel server");
 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
