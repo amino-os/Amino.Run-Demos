@@ -252,6 +252,9 @@ public class OMSServerImpl implements OMSServer{
     		   registry.rebind("SapphireOMS", omsStub);
 
     		   logger.info("OMS ready");
+    		   logger.info("Current canonical host: " + InetAddress.getLocalHost().getCanonicalHostName());
+    		   logger.info("Current host name: " + InetAddress.getLocalHost().getHostName());
+    		   logger.info("Current host address: " + InetAddress.getLocalHost().getHostAddress());
     	   	   for (Iterator<InetSocketAddress> it = oms.getServers().iterator(); it.hasNext();) {
         		   InetSocketAddress address = it.next();
 				   System.out.println("   " + address.getHostName().toString() + ":" + address.getPort());

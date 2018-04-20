@@ -24,6 +24,7 @@ public final class DefaultSapphirePolicy$DefaultServerPolicy_Stub extends sapphi
 
     public void $__updateHostname(java.net.InetSocketAddress hostname) {
         this.$__hostname = hostname;
+        System.out.println("Updated host name: " + hostname);
     }
 
     public Object $__makeKernelRPC(java.lang.String method, java.util.ArrayList<Object> params) throws java.rmi.RemoteException, java.lang.Exception {

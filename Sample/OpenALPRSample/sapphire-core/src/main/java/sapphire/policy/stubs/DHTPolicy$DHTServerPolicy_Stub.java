@@ -24,6 +24,7 @@ public final class DHTPolicy$DHTServerPolicy_Stub extends sapphire.policy.dht.DH
 
     public void $__updateHostname(java.net.InetSocketAddress hostname) {
         this.$__hostname = hostname;
+        System.out.println("Updated host name: " + hostname);
     }
 
     public Object $__makeKernelRPC(java.lang.String method, java.util.ArrayList<Object> params) throws java.rmi.RemoteException, java.lang.Exception {

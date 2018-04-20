@@ -78,8 +78,9 @@ public class PolicyStub extends Stub {
 
 		/* Implementation for updateHostname */
 		buffer.append(indenter.indent() + "public void $__updateHostname(java.net.InetSocketAddress hostname) {" + EOLN);
-		buffer.append(indenter.tIncrease() + "this.$__hostname = hostname;" + EOLN + indenter.indent() + "}" + EOLN + EOLN);
-		
+		buffer.append(indenter.tIncrease() + "this.$__hostname = hostname;" + EOLN);
+		buffer.append(indenter.tIncrease() + "System.out.println(\"Updated host name: \" + hostname);" + EOLN + indenter.indent() + "}" + EOLN + EOLN);
+
 		/* Implementation for makeRPC */
 		buffer.append(indenter.indent() + "public Object $__makeKernelRPC(java.lang.String method, java.util.ArrayList<Object> params) throws java.rmi.RemoteException, java.lang.Exception {" + EOLN);
 		buffer.append(indenter.tIncrease() + "sapphire.kernel.common.KernelRPC rpc = new sapphire.kernel.common.KernelRPC($__oid, method, params);" + EOLN);

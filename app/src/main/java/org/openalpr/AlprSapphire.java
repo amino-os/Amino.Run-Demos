@@ -15,13 +15,13 @@ import java.util.List;
 
 import sapphire.app.SapphireObject;
 import sapphire.common.Configuration;
-import sapphire.policy.MigrationPolicy;
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrator;
+
+import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
-public class AlprSapphire implements SapphireObject<ExplicitMigrator> {
+public class AlprSapphire implements SapphireObject<ExplicitMigrationPolicy> {
 
     private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
@@ -32,7 +32,7 @@ public class AlprSapphire implements SapphireObject<ExplicitMigrator> {
      * @param inetSocketAddress
      */
     public void migrateObject(InetSocketAddress address) {
-
+        System.out.println("Migrate object to: " + address.getHostName());
     }
 
     public boolean saveImage(String fileName, byte[] bytes, int len) {
@@ -97,7 +97,6 @@ public class AlprSapphire implements SapphireObject<ExplicitMigrator> {
         try {
 
             Results results = (resultJson == null)? null: new Gson().fromJson(resultJson, Results.class);
-//            Set<Result> newResults = new HashSet<>();
 
             for (Result result : results.getResults()) {
                 String plate = result.getPlate();
@@ -106,15 +105,12 @@ public class AlprSapphire implements SapphireObject<ExplicitMigrator> {
                     int updatedVal = licensePlatesMap.get(plate) + 1;
                     licensePlatesMap.put(plate, updatedVal);
                     result.setCount(updatedVal);
-//                    newResults.add(result);
                 } else {
                     licensePlatesMap.put(plate, 1);
                     result.setCount(1);
-//                    newResults.add(result);
                 }
             }
 
-//            results.setNewResults(new ArrayList<>(newResults));
             return results;
 
         } catch (JsonSyntaxException e) {

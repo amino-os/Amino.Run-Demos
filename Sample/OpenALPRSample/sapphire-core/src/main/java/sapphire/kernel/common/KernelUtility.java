@@ -23,6 +23,7 @@ public class KernelUtility {
 	public static String getHostName(InetSocketAddress host) {
 
 		if (Configuration.useIpAddress) {
+			System.out.println("(useIpAddress is on) KernelUtil will return: " + host.getAddress().getHostAddress());
 			return host.getAddress().getHostAddress();
 		} else {
 			return host.getHostName();

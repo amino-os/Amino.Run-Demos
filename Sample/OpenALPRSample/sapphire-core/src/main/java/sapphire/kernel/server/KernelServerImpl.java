@@ -59,7 +59,7 @@ public class KernelServerImpl implements KernelServer{
 		logger.addHandler(handler);
 
 		objectManager = new KernelObjectManager();
-	    Registry registry, cloudRegistry;
+	    Registry registry;
 		try {
 			logger.info("OMS : " + omsHost.getAddress() + ":" + omsHost.getPort());
 			registry = LocateRegistry.getRegistry(KernelUtility.getHostName(omsHost), omsHost.getPort());
@@ -172,6 +172,7 @@ public class KernelServerImpl implements KernelServer{
 	 * @return IP address of host that this server is running on
 	 */
 	public InetSocketAddress getLocalHost() {
+		System.out.println("getLocalHost() from kernelServer: " + host);
 		return host;
 	}
 	
@@ -188,7 +189,6 @@ public class KernelServerImpl implements KernelServer{
 	 */
 	@Override
 	public AppObjectStub startApp(String className) throws RemoteException {
-//		AppObjectStub appEntryPoint = null;
 		try {
 			logger.info("Starting APP: " + className);
 			AppEntryPoint entryPoint =  (AppEntryPoint) Class.forName(className).newInstance();
@@ -223,7 +223,7 @@ public class KernelServerImpl implements KernelServer{
 		public void run() {
 			while (true) {
 				try {
-					Thread.sleep(300000);
+					Thread.sleep(3000000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -243,19 +243,13 @@ public class KernelServerImpl implements KernelServer{
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		boolean skipOmsRegistration = false;
-
 		logger.setLevel(Level.ALL);
 		ConsoleHandler handler = new ConsoleHandler();
 		handler.setLevel(Level.ALL);
 		handler.setFormatter(new SimpleFormatter());
 		logger.addHandler(handler);
 
-		if (args.length >= 7) {
-			region = args[4];
-			logger.info("Region information found. Kernel server region: " + region);
-			logger.info("Cloud OMS found: " + args[5] + ":"+ args[6]);
-		} else if (args.length >= 5) {
+		if (args.length >= 5) {
 			// There is a region (e.g., processing entity signature such as device or server).
 			region = args[4];
 			logger.info("Region information found. Kernel server region: " + region);
@@ -265,18 +259,11 @@ public class KernelServerImpl implements KernelServer{
 			return;
 		}
 		
-		InetSocketAddress host, omsHost, cloudOmsHost;
+		InetSocketAddress host, omsHost;
 		
 		try {
 			host = new InetSocketAddress(args[0], Integer.parseInt(args[1]));
 			omsHost = new InetSocketAddress(args[2], Integer.parseInt(args[3]));
-
-			if (args.length >= 7) {
-				cloudOmsHost = new InetSocketAddress(args[5], Integer.parseInt(args[6]));
-			} else {
-				cloudOmsHost = null;
-			}
-
 		} catch (NumberFormatException e) {
 			System.out.println("Incorrect arguments to the kernel server");
 			System.out.println("[host ip] [host port] [oms ip] [oms port]");
@@ -287,15 +274,12 @@ public class KernelServerImpl implements KernelServer{
 		System.setProperty("java.rmi.server.hostname", KernelUtility.getHostName(host));
 
 		try {
-			KernelServerImpl server = new KernelServerImpl(host, omsHost, cloudOmsHost);
+			KernelServerImpl server = new KernelServerImpl(host, omsHost);
 			KernelServer stub = (KernelServer) UnicastRemoteObject.exportObject(server, 0);
 			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[1]));
 			registry.rebind("SapphireKernelServer", stub);
 
-			if (!skipOmsRegistration) {
-				// Skips OMS registration when OMS already has server information and Kernel cannot reach OMS (e.g., OMS is running on internal networks).
-				oms.registerKernelServer(host, region);
-			}
+			oms.registerKernelServer(host, region);
 
 			logger.info("Server ready! Host: " + host.getHostString() + " region: " + region);
 

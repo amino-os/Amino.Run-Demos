@@ -22,18 +22,17 @@ public class SapphireAccess
 
     private static Configuration.ProcessEntity previousEntity = Configuration.ProcessEntity.UNDECIDED;
     private static boolean kernelReady = false;
+    private OMSServer omsServer = null;
 
     public void initialize() {
 
         try {
             String[] kernelArgs = new String[]{
-                    Constants.kernelAddress[0],
-                    Constants.kernelAddress[1],
-                    Constants.localOmsAddress[0],
-                    Constants.localOmsAddress[1],
-                    Configuration.ProcessEntity.DEVICE.toString(),
-                    Constants.remoteOmsAddress[0],
-                    Constants.remoteOmsAddress[1]
+                    Constants.natDeviceKernelAddress[0],
+                    Constants.natDeviceKernelAddress[1],
+                    Constants.natOmsAddress[0],
+                    Constants.natOmsAddress[1],
+                    Configuration.ProcessEntity.DEVICE.toString()
             };
 
             // Launch local Sapphire kernel server.
@@ -52,19 +51,17 @@ public class SapphireAccess
         int omsPort;
 
         try {
-            if (processEntity == Configuration.ProcessEntity.DEVICE) {
-                omsAddress = Constants.localOmsAddress[0];
-                omsPort = Integer.parseInt(Constants.localOmsAddress[1]);
-            } else {
-                omsAddress = Constants.remoteOmsAddress[0];
-                omsPort = Integer.parseInt(Constants.remoteOmsAddress[1]);
+            while (!kernelReady) {Thread.sleep(100);}
+
+            if (omsServer == null) {
+                omsAddress = Constants.natOmsAddress[0];
+                omsPort = Integer.parseInt(Constants.natOmsAddress[1]);
+
+                Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
+                omsServer = (OMSServer) registry.lookup("SapphireOMS");
             }
 
-            Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
-            OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
-
-            while (!kernelReady) {Thread.sleep(100);}
-            lr = (AlprSapphire) server.getAppEntryPoint(processEntity.toString());
+            lr = (AlprSapphire) omsServer.getAppEntryPoint(processEntity.toString());
 
             return lr;
         }
@@ -88,8 +85,14 @@ public class SapphireAccess
     public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
         Results results = null;
 
-        if (previousEntity == Configuration.ProcessEntity.UNDECIDED || (previousEntity != processEntity)) {
+        if (previousEntity == Configuration.ProcessEntity.UNDECIDED) {
             lr = getNewAppEntryPoint(processEntity);
+        } else if (previousEntity != processEntity) {
+            if (processEntity == Configuration.ProcessEntity.SERVER) {
+                lr.migrateObject(Constants.getNatServerKernelAddress());
+            } else {
+                lr.migrateObject(Constants.getNatDeviceKernelAddress());
+            }
         }
 
         try {

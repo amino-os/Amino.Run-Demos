@@ -72,6 +72,7 @@ public class ExplicitMigrationPolicy extends DefaultSapphirePolicy {
 		 */
 		public void migrateObject(InetSocketAddress destinationAddr) throws Exception {
 			logger.info("Performing Explicit Migration of the object to Destination Kernel Server with address as " + destinationAddr);
+			System.out.println("Performing Explicit Migration of the object to Destination Kernel Server with address as " + destinationAddr);
 			OMSServer oms = GlobalKernelReferences.nodeServer.oms;
 			ArrayList<InetSocketAddress> servers = oms.getServers();
 
@@ -79,6 +80,7 @@ public class ExplicitMigrationPolicy extends DefaultSapphirePolicy {
 			InetSocketAddress localAddress = localKernel.getLocalHost();
 
 			logger.info("Performing Explicit Migration of object from " + localAddress + " to " + destinationAddr);
+			System.out.println("Performing Explicit Migration of object from " + localAddress + " to " + destinationAddr);
 
 			if (!(servers.contains(destinationAddr))) {
 				throw new NotFoundDestinationKernelServerException(destinationAddr, "The destinations address passed is not present as one of the Kernel Servers");
@@ -86,9 +88,12 @@ public class ExplicitMigrationPolicy extends DefaultSapphirePolicy {
 
 			if (!localAddress.equals(destinationAddr)) {
 				localKernel.moveKernelObjectToServer(destinationAddr, this.oid);
+			} else {
+				System.out.println("local addr is the same as destination addr: " + localAddress.getAddress());
 			}
 
 			logger.info("Successfully performed Explicit Migration of object from " + localAddress + " to " + destinationAddr);
+			System.out.println("Successfully performed Explicit Migration of object from " + localAddress + " to " + destinationAddr);
 		}
 
 		Boolean isMigrateObject(String method) {

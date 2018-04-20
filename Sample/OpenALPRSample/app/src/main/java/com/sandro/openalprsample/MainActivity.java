@@ -104,17 +104,19 @@ public class MainActivity extends AppCompatActivity {
                 whereToProcessTextView.setText(Configuration.getWhereToProcess());
             }
         });
-        findViewById(R.id.button_migrate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
-                if (Configuration.WhereToProcess != Configuration.ProcessEntity.SERVER) {
-                    resultTextView.setText("Please select to proces at SERVER first.");
-                } else {
-                    resultTextView.setText("Object will be migrated to a different server for processing.");
-                }
-            }
-        });
+//        findViewById(R.id.button_migrate).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
+//                if (Configuration.WhereToProcess == Configuration.ProcessEntity.DEVICE) {
+//                    resultTextView.setText("Please select to proces at SERVER first.");
+//                } else if (Configuration.WhereToProcess == Configuration.ProcessEntity.SERVER) {
+//                    resultTextView.setText("Object will be migrated to a different server for processing.");
+//                } else {
+//                    resultTextView.setText("Unsupported entity was selected.");
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -179,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
 
                                         for (Result result : finalResults.getResults()) {
                                             textToShow += "Plate: " + result.getPlate() + "  Found so far:" + result.getCount() + "\n";
-                                                    //+ " Confidence: " + String.format("%.2f", result.getConfidence()) + "%\n";
                                         }
 
                                         resultTextView.setText(textToShow);

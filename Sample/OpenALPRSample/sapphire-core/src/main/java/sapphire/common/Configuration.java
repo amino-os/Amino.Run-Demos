@@ -13,7 +13,7 @@ public class Configuration {
     // Whether to use IP address or DNS name for connecting to KernelServer.
     // For cloud computing environment, it should use public DNS name.
     // For internal network, it may need to use IP address.
-    public static boolean useIpAddress = false;
+    public static boolean useIpAddress = true;
 
     public static String getWhereToProcess() {
         return WhereToProcessPrefix + WhereToProcess.toString();
