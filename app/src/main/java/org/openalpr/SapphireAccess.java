@@ -12,6 +12,7 @@ import sapphire.kernel.common.GlobalKernelReferences;
 import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
+import sapphire.runtime.Sapphire;
 
 
 public class SapphireAccess
@@ -19,19 +20,19 @@ public class SapphireAccess
     public AlprSapphire lr;
     public static long fileUploadTime; // file upload time.
     public static long processingTime; // image recognition processing time.
+    public OMSServer omsServer = null;
 
     private static Configuration.ProcessEntity previousEntity = Configuration.ProcessEntity.UNDECIDED;
     private static boolean kernelReady = false;
-    private OMSServer omsServer = null;
 
     public void initialize() {
 
         try {
             String[] kernelArgs = new String[]{
-                    Constants.natDeviceKernelAddress[0],
-                    Constants.natDeviceKernelAddress[1],
-                    Constants.natOmsAddress[0],
-                    Constants.natOmsAddress[1],
+                    Configuration.natDeviceKernelAddress[0],
+                    Configuration.natDeviceKernelAddress[1],
+                    Configuration.natOmsAddress[0],
+                    Configuration.natOmsAddress[1],
                     Configuration.ProcessEntity.DEVICE.toString()
             };
 
@@ -46,21 +47,28 @@ public class SapphireAccess
         }
     }
 
-    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
-        String omsAddress;
-        int omsPort;
-
+    /**
+     * Gets the OMS server from existing configuration information.
+     * @return sapphire.oms.OMSServer
+     */
+    private sapphire.oms.OMSServer getOmsServer() {
         try {
-            while (!kernelReady) {Thread.sleep(100);}
+            String omsAddress = Configuration.natOmsAddress[0];
+            int omsPort = Integer.parseInt(Configuration.natOmsAddress[1]);
 
-            if (omsServer == null) {
-                omsAddress = Constants.natOmsAddress[0];
-                omsPort = Integer.parseInt(Constants.natOmsAddress[1]);
+            Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
+            omsServer = (OMSServer) registry.lookup("SapphireOMS");
 
-                Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
-                omsServer = (OMSServer) registry.lookup("SapphireOMS");
-            }
+            return omsServer;
+        } catch (Exception e) {
+            System.out.println("Failed to get OMS server: " + Configuration.natOmsAddress[0] + ":" + Configuration.natOmsAddress[1]);
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
+        try {
             lr = (AlprSapphire) omsServer.getAppEntryPoint(processEntity.toString());
 
             return lr;
@@ -84,14 +92,32 @@ public class SapphireAccess
      */
     public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
         Results results = null;
+        try {
+            while (!kernelReady) {Thread.sleep(100);}
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-        if (previousEntity == Configuration.ProcessEntity.UNDECIDED) {
+        if (omsServer == null) {
+            omsServer = getOmsServer();
+            if (omsServer == null) {
+                return null;
+            }
+        }
+
+        if (previousEntity == Configuration.ProcessEntity.UNDECIDED || lr == null) {
             lr = getNewAppEntryPoint(processEntity);
+            if (lr == null) {
+                System.out.println("Failed to get the app entry point.");
+                return null;
+            }
         } else if (previousEntity != processEntity) {
             if (processEntity == Configuration.ProcessEntity.SERVER) {
-                lr.migrateObject(Constants.getNatServerKernelAddress());
+                lr.migrateObject(Configuration.getNatServerKernelAddress());
             } else {
-                lr.migrateObject(Constants.getNatDeviceKernelAddress());
+                lr.migrateObject(Configuration.getNatDeviceKernelAddress());
             }
         }
 

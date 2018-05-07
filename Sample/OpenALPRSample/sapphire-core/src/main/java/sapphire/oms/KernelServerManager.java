@@ -18,6 +18,7 @@ import java.util.logging.SimpleFormatter;
 
 import org.json.JSONException;
 
+import sapphire.kernel.common.KernelUtility;
 import sapphire.kernel.server.KernelServer;
 
 /**
@@ -107,7 +108,6 @@ public class KernelServerManager {
 		}
 		logger.info("Number of region keys: " + regionsKeys);
 		return regionsKeys;
-//		return new ArrayList<String>(regions.keySet());
     }
 
     public KernelServer getServer(InetSocketAddress address) {
@@ -116,7 +116,7 @@ public class KernelServerManager {
     	} else {
     		KernelServer server = null;
     		try {
-    			Registry registry = LocateRegistry.getRegistry(address.getHostName(), address.getPort());
+    			Registry registry = LocateRegistry.getRegistry(KernelUtility.getHostName(address), address.getPort());
     			server = (KernelServer) registry.lookup("SapphireKernelServer");
     			servers.put(address, server);
     		} catch (Exception e) {
@@ -127,7 +127,7 @@ public class KernelServerManager {
     }
     
     public InetSocketAddress getHostNameInRegion(String region) {
-		System.out.println("getServerInRegion at " + region);
+		System.out.println("getHostNameInRegion at " + region);
 		for (InetSocketAddress regionStr: regions.get(region)) {
 			System.out.println("Found:" +  regionStr);
 		}

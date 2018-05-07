@@ -23,6 +23,7 @@ import sapphire.common.SapphireObjectNotFoundException;
 import sapphire.common.SapphireReplicaID;
 import sapphire.kernel.common.KernelOID;
 import sapphire.kernel.common.KernelObjectNotFoundException;
+import sapphire.kernel.common.KernelUtility;
 import sapphire.kernel.server.KernelServer;
 import sapphire.policy.SapphirePolicy.SapphireGroupPolicy;
 import sapphire.policy.SapphirePolicy.SapphireServerPolicy;
@@ -152,7 +153,7 @@ public class OMSServerImpl implements OMSServer{
 				try {
 					InetSocketAddress host = serverManager.getHostNameInRegion(serverManager.getRegions().get(0));
 					KernelServer server = serverManager.getServer(host);
-					logger.info("Starting app at the server: " + host.getHostString());
+					logger.info("Starting app at the server: " + KernelUtility.getHostName(host));
 					logger.info(" appEntryClassName: " + appEntryClassName);
 
 					appEntryPoint = server.startApp(appEntryClassName);
@@ -166,28 +167,6 @@ public class OMSServerImpl implements OMSServer{
        }
 
        /**
-        * Returns the existing App Object Stub
-        * @throws RemoteException
-        */
-       @Override
-       public AppObjectStub getExistingAppEntryPoint(String region) throws RemoteException {
-			try {
-				InetSocketAddress host = serverManager.getHostNameInRegion(region);
-				KernelServer server = serverManager.getServer(host);
-				logger.info("Geting the entry point in region (" + region + ") : " + host.getHostString());
-				logger.info(" appEntryClassName: " + appEntryClassName);
-
-				appEntryPoint = server.getApp(appEntryClassName);
-				logger.info(" Successfully started " + appEntryClassName);
-			} catch(Exception e) {
-				e.printStackTrace();
-				logger.severe(e.toString());
-			}
-			return appEntryPoint;
-       }
-
-
-       /**
         * Starts the app on one of the servers in the region and returns the App Object Stub
         * @throws RemoteException
         */
@@ -196,18 +175,18 @@ public class OMSServerImpl implements OMSServer{
 			try {
 				InetSocketAddress host = serverManager.getHostNameInRegion(region);
 				KernelServer server = serverManager.getServer(host);
-				logger.info("Starting app at the server in region (" + region + ") : " + host.getHostString());
+				logger.info("Starting app at the server in region (" + region + ") : " + KernelUtility.getHostName(host));
 				logger.info(" appEntryClassName: " + appEntryClassName);
 
 				appEntryPoint = server.startApp(appEntryClassName);
-				logger.info(" Successfully started " + appEntryClassName);
+				logger.info("Successfully started " + appEntryClassName + " at " + region + "(" + KernelUtility.getHostName(host) + ")");
 			} catch(Exception e) {
 				e.printStackTrace();
+				System.out.println();
 				logger.severe(e.toString());
 			}
 			return appEntryPoint;
        }
-
 
 //
 //       /**

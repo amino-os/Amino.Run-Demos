@@ -18,7 +18,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +49,7 @@ import sapphire.common.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String pressButtonStr = "Press the button below to start a request.";
+    private static final String infoTextStr = "License Plate Recognition";
     private static final int REQUEST_IMAGE = 100;
     private static final int STORAGE=1;
     private String ANDROID_DATA_DIR;
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView infoTextView;
     private TextView resultTextView;
     private TextView whereToProcessTextView;
+    private EditText omsEditText;
     private ImageView imageView;
     private long resizeElapsedTime;
     SapphireAccess sa = null;
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         whereToProcessTextView = (TextView) findViewById(R.id.textView_where_to_process);
         imageView = (ImageView) findViewById(R.id.imageView);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
+        omsEditText = (EditText) findViewById(R.id.editText_OMS_address);
 
         if (sa == null) {
             sa = new SapphireAccess();
@@ -78,9 +83,12 @@ public class MainActivity extends AppCompatActivity {
         new OpenAlprSapphireInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         Utils.copyAssetFolder(MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
+        infoTextView.setText(infoTextStr);
 
-        infoTextView.setText(pressButtonStr);
         whereToProcessTextView.setText(Configuration.getWhereToProcess());
+        omsEditText.setText(Configuration.getNatOmsString());
+        View view = this.getCurrentFocus();
+        closeSoftKeyboard(view);
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,19 +112,55 @@ public class MainActivity extends AppCompatActivity {
                 whereToProcessTextView.setText(Configuration.getWhereToProcess());
             }
         });
-//        findViewById(R.id.button_migrate).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
-//                if (Configuration.WhereToProcess == Configuration.ProcessEntity.DEVICE) {
-//                    resultTextView.setText("Please select to proces at SERVER first.");
-//                } else if (Configuration.WhereToProcess == Configuration.ProcessEntity.SERVER) {
-//                    resultTextView.setText("Object will be migrated to a different server for processing.");
-//                } else {
-//                    resultTextView.setText("Unsupported entity was selected.");
-//                }
-//            }
-//        });
+        findViewById(R.id.editText_OMS_address).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                omsEditText.setFocusable(true);
+                omsEditText.setFocusableInTouchMode(true);
+            }
+        });
+
+        findViewById(R.id.editText_OMS_address).setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (i == KeyEvent.KEYCODE_ENTER)) {
+                    String inputText = omsEditText.getText().toString();
+                    int splitterIdx = inputText.indexOf(':');
+                    if (splitterIdx != -1) {
+                        String address = inputText.substring(0, splitterIdx).trim();
+                        String port = inputText.substring(splitterIdx + 1).trim();
+
+                        try {
+                            Integer.parseInt(port);
+                        } catch (Exception e) {
+                            resultTextView.setText("Parsing port information failed.\n" + Configuration.omsUsage);
+                            closeSoftKeyboard(view);
+                            return false;
+                        }
+
+                        Configuration.natOmsAddress = new String [] { address, port};
+                        sa.omsServer = null;
+                        resultTextView.setText("OMS was successfully updated: " + Configuration.getNatOmsString());
+                        closeSoftKeyboard(view);
+                    } else {
+                        resultTextView.setText(": is missing.\n" + Configuration.omsUsage);
+                        closeSoftKeyboard(view);
+                        return false;
+                    }
+                    closeSoftKeyboard(view);
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void closeSoftKeyboard(View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -186,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                                         resultTextView.setText(textToShow);
                                     }
 
-                                    infoTextView.setText(pressButtonStr);
+                                    infoTextView.setText(infoTextStr);
                                 }
                             });
 
@@ -320,48 +364,6 @@ public class MainActivity extends AppCompatActivity {
         if (destination != null) {// Picasso does not seem to have an issue with a null value, but to be safe
             Picasso.with(MainActivity.this).load(destination).fit().centerCrop().into(imageView);
         }
-    }
-
-    private void restart() {
-        //super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ANDROID_DATA_DIR = this.getApplicationInfo().dataDir;
-
-        resultTextView = (TextView) findViewById(R.id.textView);
-        whereToProcessTextView = (TextView) findViewById(R.id.textView_where_to_process);
-        imageView = (ImageView) findViewById(R.id.imageView);
-
-        if (sa == null) {
-            sa = new SapphireAccess();
-        }
-        new OpenAlprSapphireInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        Utils.copyAssetFolder(MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
-
-        resultTextView.setText("Press the button below to start a request.");
-        whereToProcessTextView.setText(Configuration.getWhereToProcess());
-
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermission();
-            }
-        });
-
-        findViewById(R.id.button_device).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Configuration.WhereToProcess = Configuration.ProcessEntity.DEVICE;
-                whereToProcessTextView.setText(Configuration.getWhereToProcess());
-            }
-        });
-        findViewById(R.id.button_server).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Configuration.WhereToProcess = Configuration.ProcessEntity.SERVER;
-                whereToProcessTextView.setText(Configuration.getWhereToProcess());
-            }
-        });
     }
 
     private void createImageFile() {

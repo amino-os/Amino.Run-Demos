@@ -37,6 +37,5 @@ public interface OMSServer extends Remote {
        /* Called by the client */
        public AppObjectStub getAppEntryPoint() throws RemoteException;
        public AppObjectStub getAppEntryPoint(String region) throws RemoteException;
-       public AppObjectStub getExistingAppEntryPoint(String region) throws RemoteException;
 }
 
