@@ -14,11 +14,30 @@ buildscript {
          * https://github.com/requery/requery/issues/467
          */
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
+
+plugins {
+    id "de.undercouch.download" version "1.2"
+}
+
+apply plugin: 'de.undercouch.download'
+apply plugin: 'com.jfrog.bintray'
+
+import de.undercouch.gradle.tasks.download.Download
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3.3'
 }
+
+task downloadFile(type: Download) {
+    src 'https://dl.bintray.com/kshafiee/DCAP-Sapphire/sapphire-core.jar'
+    username 'kshafiee'
+    password '664fa17e8af1f95e2cd83449bf1ba2dc0ee794e5'
+    dest 'libs'
+}
+
 allprojects {
     repositories {
         jcenter()
