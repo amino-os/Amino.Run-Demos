@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import requests
 import json
+from detection import face_detection
 
 # Raspberry Pi camera module (requires picamera package)
 from camera_pi import Camera
@@ -138,7 +139,7 @@ def video_feed():
 @app.route('/face_detect')
 def face_detect():
     """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(face(Camera()),
+    return Response(face_detection(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
