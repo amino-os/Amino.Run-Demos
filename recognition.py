@@ -4,6 +4,7 @@ import face_recognition
 from pathlib import Path
 import pickle
 import os
+import base64
 
 
 font = cv2.FONT_HERSHEY_DUPLEX
@@ -22,10 +23,10 @@ def load_weights(encoding_file):
 
 def face_recognize():
     # Load a cascade file for detecting faces
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier('/home/root1/Desktop/EdgeCV/edgeCV/haarcascade_frontalface_default.xml')
 
     # Load an image
-    image = cv2.imread('images/obama.jpg', 1)
+    image = cv2.imread('/home/root1/Desktop/EdgeCV/edgeCV/images/obama.jpg', 1)
 
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -34,7 +35,7 @@ def face_recognize():
     faces = face_cascade.detectMultiScale(gray, 1.1, 5)
     if len(faces) > 0:
         # Call facial recognition
-        encoding_file = "known_face_encodings.p"
+        encoding_file = "/home/root1/Desktop/EdgeCV/edgeCV/known_face_encodings.p"
         cached_stamp, known_face_names, known_face_encodings = load_weights(encoding_file)
 
         face_locations = face_recognition.face_locations(image)
@@ -67,5 +68,9 @@ def face_recognize():
                 cv2.putText(image, name, (left, bottom - 4), font, 0.3, (255, 255, 255), 1)
 
     frame = cv2.imencode('.jpg', image)[1].tobytes()
-    return (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    frame_serialize = base64.b64encode(frame).decode("utf-8")
+    # return (b'--frame\r\n'
+    #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    print (frame_serialize)
+
+face_recognize()

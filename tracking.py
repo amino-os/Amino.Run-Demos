@@ -4,6 +4,7 @@ import face_recognition
 from pathlib import Path
 import pickle
 import os
+import base64
 
 
 video_capture = cv2.VideoCapture(0)
@@ -34,7 +35,7 @@ def face_tracking():
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_frame = frame[:, :, ::-1]
 
-        encoding_file = "known_face_encodings.p"
+        encoding_file = "/home/root1/Desktop/EdgeCV/edgeCV/known_face_encodings.p"
         cached_stamp, known_face_names, known_face_encodings = load_weights(encoding_file)
 
         face_locations = face_recognition.face_locations(rgb_frame)
@@ -67,5 +68,9 @@ def face_tracking():
             video_capture.release()
             break
 
-        yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        # yield (b'--frame\r\n'
+        #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        frame_serialize = base64.b64encode(frame).decode("utf-8")
+        print (frame_serialize)
+
+face_tracking()
