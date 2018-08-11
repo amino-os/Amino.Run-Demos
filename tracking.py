@@ -4,8 +4,11 @@ import face_recognition
 from pathlib import Path
 import pickle
 import os
+
 import base64
 
+from imutils.video import FPS
+import imutils
 
 video_capture = cv2.VideoCapture(0)
 
@@ -27,10 +30,12 @@ def load_weights(encoding_file):
 def face_tracking():
 
     refresh = 0
+    fps = FPS().start()
     # capture frames from the camera
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
+        (H, W) = frame.shape[:2]
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_frame = frame[:, :, ::-1]
@@ -60,6 +65,18 @@ def face_tracking():
             cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+        ## info to be displayed in the frame
+        fps.update()
+        fps.stop()
+        info = [
+            ("FPS", "{:.2f}".format(fps.fps()))
+        ]
+
+        ## loop over the info tuples and draw them on our frame
+        for (i, (k, v)) in enumerate(info):
+            text = "{}: {}".format(k, v)
+            cv2.putText(frame, text, (10, H - ((i*20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
 
