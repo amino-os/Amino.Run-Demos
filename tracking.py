@@ -86,7 +86,12 @@ def face_tracking():
         #     video_capture.release()
         #     break
 
+        ## get CPU percentage (average of all cores, but only one being used right now)
         print(psutil.cpu_percent(None,True))
+
+	## get network stats 
+        print(psutil.net_io_counters(True))
+
 
         # yield (b'--frame\r\n'
         #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
