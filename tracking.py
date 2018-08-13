@@ -9,6 +9,7 @@ import base64
 
 from imutils.video import FPS
 import imutils
+import psutil
 
 video_capture = cv2.VideoCapture(0)
 
@@ -80,10 +81,12 @@ def face_tracking():
 
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
 
-        refresh += 1
-        if refresh == 160:
-            video_capture.release()
-            break
+        # refresh += 1
+        # if refresh == 160:
+        #     video_capture.release()
+        #     break
+
+        print(psutil.cpu_percent(None,True))
 
         # yield (b'--frame\r\n'
         #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
