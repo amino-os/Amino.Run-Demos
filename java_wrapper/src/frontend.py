@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Response
 from detection import face_detection
 from recognition import face_tracking
-from frame_generator import feed
+from video_feed import feed
 
 # laptop camera module
 from camera_laptop import Camera
