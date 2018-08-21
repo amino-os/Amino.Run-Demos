@@ -3,24 +3,20 @@ from imutils.video import FPS
 import base64
 import io
 from imageio import imread
+import sys
 
 def face_detection():
     fps = FPS().start()
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
     # fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_detection.avi', fourcc, 20.0, (640, 480))
+    out = cv2.VideoWriter('/media/neeraj/output_detection.avi', fourcc, 20.0, (640, 480))
+    # out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_detection.avi', fourcc, 20.0, (640, 480))
 
     # Load a cascade file for detecting faces
     face_cascade = cv2.CascadeClassifier('/home/root1/code/edgeCV/java_wrapper/src/haarcascade_frontalface_default.xml')
 
     while True:
-        frame_ready = input()
-        if frame_ready == "ok":
-            # capture frames from the scratchfile
-            with open('/home/root1/code/edgeCV/java_wrapper/src/scratchpad.txt') as fp:
-                for line1 in fp:
-                    line = line1
-
+        line = input()
         image = imread(io.BytesIO(base64.b64decode(line)))
         # ret, frame = video_capture.read()
         frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -49,6 +45,7 @@ def face_detection():
             cv2.putText(frame, text, (10, H - ((i * 20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
         out.write(frame)
+        # cv2.imshow(frame)
         # frame = cv2.imencode('.jpg', frame)[1].tobytes()
         # frame_serialize = base64.b64encode(frame).decode("utf-8")
 

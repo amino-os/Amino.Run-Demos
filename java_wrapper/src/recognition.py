@@ -63,19 +63,20 @@ def face_tracking(tracking_flag=True):
     fps = FPS().start()
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
     # fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_recognition.avi', fourcc, 20.0, (640, 480))
+    out = cv2.VideoWriter('/media/neeraj/output_recognition.avi', fourcc, 20.0, (640, 480))
+    # out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_recognition.avi', fourcc, 20.0, (640, 480))
 
     # Load a cascade file for detecting faces
     face_cascade = cv2.CascadeClassifier('/home/root1/code/edgeCV/java_wrapper/src/haarcascade_frontalface_default.xml')
 
     while True:
-        frame_ready = input()
-        if frame_ready == "ok":
-            # capture frames from the scratchfile
-            with open('/home/root1/code/edgeCV/java_wrapper/src/scratchpad.txt') as fp:
-                for line1 in fp:
-                    line = line1
-
+        # frame_ready = input()
+        # if frame_ready == "ok":
+        #     # capture frames from the scratchfile
+        #     with open('/media/neeraj/scratchpad.txt') as fp:
+        #         for line1 in fp:
+        #             line = line1
+        line = input()
         image = imread(io.BytesIO(base64.b64decode(line)))
         # ret, frame = video_capture.read()
         frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -118,12 +119,13 @@ def face_tracking(tracking_flag=True):
                         # frame = camera.get_frame()
                         # image = cv2.imdecode(np.frombuffer(frame, np.uint8), 1)
                         print("next")
-                        frame_ready = input()
-                        if frame_ready == "ok":
-                            # capture frames from the scratchfile
-                            with open('/home/root1/code/edgeCV/java_wrapper/src/scratchpad.txt') as fp:
-                                for line1 in fp:
-                                    line = line1
+                        line = input()
+                        # frame_ready = input()
+                        # if frame_ready == "ok":
+                        #     # capture frames from the scratchfile
+                        #     with open('/media/neeraj/scratchpad.txt') as fp:
+                        #         for line1 in fp:
+                        #             line = line1
 
                         image = imread(io.BytesIO(base64.b64decode(line)))
                         frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
