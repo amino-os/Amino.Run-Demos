@@ -17,9 +17,9 @@ public class Main {
 
         OutputStream out2 = pr2.getOutputStream();
 
-        BufferedWriter bw;
-        FileWriter fw;
-        String fileName = "/home/root1/code/edgeCV/java_wrapper/src/scratchpad.txt";
+//        BufferedWriter bw;
+//        FileWriter fw;
+//        String fileName = "/media/neeraj/scratchpad.txt";
 
         BufferedReader in1 = new BufferedReader(new InputStreamReader(pr1.getInputStream()));
         BufferedReader in2 = new BufferedReader(new InputStreamReader(pr2.getInputStream()));
@@ -27,17 +27,12 @@ public class Main {
         String line1, line2;
 
         while ((line1 = in1.readLine()) != null) {
-            fw = new FileWriter(fileName);
-            bw = new BufferedWriter(fw);
-            bw.write(line1);
-            bw.close();
-            fw.close();
+            out2.write((line1+"\n").getBytes());
 //            System.out.println("Receiving from process pr1 and saving to file => " + line1);
-            out2.write(("ok\n").getBytes()); //write to file done and ok to proceed
             out2.flush();
-            line2 = in2.readLine();
+//            line2 = in2.readLine();
 //            System.out.println("Receiving the output from the other process pr2 => " + line2);
-//            if (line2 == "next") {
+//            if (line2 == "done") {
 //                continue;
 //            }
         }
