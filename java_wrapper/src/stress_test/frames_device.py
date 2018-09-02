@@ -5,8 +5,8 @@ def extractFrames(pathIn):
     addr = 'http://0.0.0.0:5000'
     # test_url = addr + '/fps_video/'
     # test_url = addr + '/fps_detection/'
-    test_url = addr + '/fps_recognition_tracking/'
-    # test_url = addr + '/fps_recognition/'
+    # test_url = addr + '/fps_recognition_tracking/'
+    test_url = addr + '/fps_recognition/'
 
     # prepare headers for http request
     content_type = 'image/jpeg'

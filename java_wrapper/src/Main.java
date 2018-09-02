@@ -3,7 +3,8 @@ import java.io.*;
 public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String cmd = "/home/root1/anaconda3/bin/python";
+//        String cmd = "/home/root1/anaconda3/bin/python";
+        String cmd = "/home/root1/.virtualenvs/cv/bin/python";
         String path = "/home/root1/code/edgeCV/java_wrapper/src/";
 
         ProcessBuilder ps1 = new ProcessBuilder(cmd, path + "frame_generator.py");
@@ -30,8 +31,8 @@ public class Main {
             out2.write((line1+"\n").getBytes());
 //            System.out.println("Receiving from process pr1 and saving to file => " + line1);
             out2.flush();
-//            line2 = in2.readLine();
-//            System.out.println("Receiving the output from the other process pr2 => " + line2);
+            line2 = in2.readLine();
+            System.out.println("Receiving the output from the other process pr2 => " + line2);
 //            if (line2 == "done") {
 //                continue;
 //            }
