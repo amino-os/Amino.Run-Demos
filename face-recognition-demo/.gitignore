@@ -1,0 +1,6 @@
+*.iml
+out/
+.idea/
+src/dependencies/
+src/libs/
+**/stubs/
