@@ -9,7 +9,7 @@ def face_detection():
     fps = FPS().start()
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
     # fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('/media/neeraj/output_detection.avi', fourcc, 20.0, (640, 480))
+    out = cv2.VideoWriter('/media/neeraj/sapphirized_faster_detection_fps.avi', fourcc, 20.0, (320, 240))
     # out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_detection.avi', fourcc, 20.0, (640, 480))
 
     # Load a cascade file for detecting faces

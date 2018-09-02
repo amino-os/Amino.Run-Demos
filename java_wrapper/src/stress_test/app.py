@@ -8,10 +8,18 @@ from imutils.video import FPS
 
 
 fourcc = cv2.VideoWriter_fourcc(*"XVID")
-# out = cv2.VideoWriter('/media/neeraj/output_video_fps.avi', fourcc, 20.0, (640, 480))
-out = cv2.VideoWriter('/media/neeraj/output_video_tracking_fps.avi', fourcc, 20.0, (640, 480))
-# out = cv2.VideoWriter('/media/neeraj/output_video_recognition_tracking_fps.avi', fourcc, 20.0, (640, 480))
-# out = cv2.VideoWriter('/media/neeraj/output_video_recognition_fps.avi', fourcc, 20.0, (640, 480))
+
+# FROM SERVER
+# out = cv2.VideoWriter('/media/neeraj/laptop_output_video_fps.avi', fourcc, 20.0, (640, 480))
+# out = cv2.VideoWriter('/media/neeraj/laptop_output_video_detection_fps.avi', fourcc, 20.0, (640, 480))
+# out = cv2.VideoWriter('/media/neeraj/laptop_output_video_recognition_tracking_fps.avi', fourcc, 20.0, (640, 480))
+out = cv2.VideoWriter('/media/neeraj/laptop_output_video_recognition_fps.avi', fourcc, 20.0, (640, 480))
+
+# FROM RPi
+# out = cv2.VideoWriter('/media/neeraj/RPi_output_video_fps.avi', fourcc, 20.0, (640, 480))
+# out = cv2.VideoWriter('/media/neeraj/RPi_output_video_tracking_fps.avi', fourcc, 20.0, (640, 480))
+# out = cv2.VideoWriter('/media/neeraj/RPi_output_video_recognition_tracking_fps.avi', fourcc, 20.0, (640, 480))
+# out = cv2.VideoWriter('/media/neeraj/RPi_output_video_recognition_fps.avi', fourcc, 20.0, (640, 480))
 
 # Load a cascade file for detecting faces
 face_cascade = cv2.CascadeClassifier('/home/root1/code/edgeCV/java_wrapper/src/haarcascade_frontalface_default.xml')
@@ -78,7 +86,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/fps_video', methods=['POST'])
+@app.route('/fps_video/', methods=['POST'])
 def fps_video():
     r = request
     # convert string of image data to uint8
@@ -109,7 +117,7 @@ def fps_video():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/fps_detection', methods=['POST'])
+@app.route('/fps_detection/', methods=['POST'])
 def fps_detection():
     r = request
     # convert string of image data to uint8

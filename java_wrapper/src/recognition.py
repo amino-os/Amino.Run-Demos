@@ -63,7 +63,8 @@ def face_tracking(tracking_flag=True):
     fps = FPS().start()
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
     # fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('/media/neeraj/output_recognition.avi', fourcc, 20.0, (640, 480))
+    out = cv2.VideoWriter('/media/neeraj/sapphirized_faster_tracking_fps.avi', fourcc, 20.0, (320, 240))
+    # out = cv2.VideoWriter('/media/neeraj/RPi_sapphirized_output_tracking.avi', fourcc, 20.0, (640, 480))
     # out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_recognition.avi', fourcc, 20.0, (640, 480))
 
     # Load a cascade file for detecting faces
@@ -97,6 +98,7 @@ def face_tracking(tracking_flag=True):
 
         if len(faces) > 0:
             bbox_list = face_recognize(image)
+            print(bbox_list)
             if len(bbox_list) > 0:
                 if tracking_flag:
                     tracker = cv2.MultiTracker_create()
@@ -194,4 +196,4 @@ def face_tracking(tracking_flag=True):
         print("done")
 
 
-face_tracking(tracking_flag=False)
+face_tracking(tracking_flag=True)
