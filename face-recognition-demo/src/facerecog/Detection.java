@@ -1,10 +1,5 @@
 package facerecog;
 
-//import sapphire.app.SapphireObject;
-//import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
-
-//import sapphire.app.SapphireObject;
-
 import java.io.IOException;
 import java.io.OutputStream;
 

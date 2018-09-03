@@ -1,15 +1,11 @@
 package facerecog;
 
-//import sapphire.app.SapphireObject;
-//import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
-
 import sapphire.app.SapphireObject;
 import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 import java.io.*;
 
 public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
-//public class Recognition {
     transient OutputStream out3;
     transient BufferedReader in3;
 

@@ -1,6 +1,5 @@
 package application;
 
-//import facerecog.FrameProcess;
 import facerecog.Recognition;
 import sapphire.app.AppEntryPoint;
 import sapphire.app.AppObjectNotCreatedException;
