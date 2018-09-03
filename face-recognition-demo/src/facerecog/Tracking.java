@@ -1,8 +1,5 @@
 package facerecog;
 
-//import sapphire.app.SapphireObject;
-////import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,26 +34,19 @@ public class Tracking  {
     public void processFrame(String frame) throws IOException, InterruptedException {
         out2.write((frame+"\n").getBytes()); //write to file done and ok to proceed
         out2.flush();
-//        System.out.println("got frame from generator: " + frame);
+        // System.out.println("got frame from generator: " + frame);
         line2 = in2.readLine();
-//        System.out.println("got frame for recog: " + line2);
+        // System.out.println("got frame for recog: " + line2);
 
         if ( !( line2.equals("done") || line2.equals("next") )) {
-//            System.out.println("Sending frame to recog module now");
-            bbox_list_str = recog.processFrame(line2);
-//            System.out.println("Got bbox_list_str: " + bbox_list_str);
+            // System.out.println("Sending frame to recog module now");
+            bbox_list_str = recog.processFrame(frame);
+            // System.out.println("Got bbox_list_str: " + bbox_list_str);
 
             // Maybe can't have multiple write to same output stream in same method call.
             out2.write((bbox_list_str+"\n").getBytes());
             out2.flush();
         }
 
-
-
-
-
-//        while ((frame = in2.readLine()) != null) {
-//            bbox_list_str = recog.processFrame(frame);
-//        }
     }
 }
