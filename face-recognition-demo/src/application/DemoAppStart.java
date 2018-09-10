@@ -1,5 +1,6 @@
 package application;
 
+import facerecog.FrameGenerator;
 import facerecog.Detection;
 import facerecog.Recognition;
 import facerecog.Tracking;
@@ -7,28 +8,22 @@ import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+
 public class DemoAppStart {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
-        String cmd = "/home/root1/.virtualenvs/cv/bin/python";
-        String path = "/home/root1/code/edgeCV/face-recognition-demo/src/facerecog/";
-
-        ProcessBuilder ps1 = new ProcessBuilder(cmd, path + "frame_generator.py");
-        ps1.redirectErrorStream(true);
-        Process pr1 = ps1.start();
-
-        BufferedReader in1 = new BufferedReader(new InputStreamReader(pr1.getInputStream()));
-        String frame;
-
+        String frame, resp;
         Registry registry;
+        String sourceType = "camera"; // "camera": for onboard camera, "video": for video file
+        FrameGenerator frameGenerator = new FrameGenerator(sourceType);
 
         try {
+
             // "192.168.42.140", "22346" - OMS
             registry = LocateRegistry.getRegistry("127.0.0.1", Integer.parseInt("22346"));
             OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
@@ -42,15 +37,32 @@ public class DemoAppStart {
                 if (args[0].equalsIgnoreCase("detection")) {
                     /* detection runs locally */
                     Detection detect = new Detection();
-                    while ((frame = in1.readLine()) != null) {
-                        detect.processFrame(frame);
+
+                    int i = 0;
+                    while ((frame = frameGenerator.getFrame()) != null) {
+                        // System.out.println("frame from generator: " + frame);
+                        /* ignore first few frames to allow for camera warm up */
+                        if (i < 3) {
+                            i++;
+                            continue;
+                        }
+                        resp = detect.processFrame(frame);
+                        // System.out.println("response from detection: " + resp);
                     }
                 }
                 else if (args[0].equalsIgnoreCase("tracking")) {
                     /* recog is a remote object that has handles to the iostream of recognition.py running on server */
                     Recognition recog = (Recognition)server.getAppEntryPoint();
                     Tracking track = new Tracking(recog);
-                    while ((frame = in1.readLine()) != null) {
+
+                    int i = 0;
+                    while ((frame = frameGenerator.getFrame()) != null) {
+                        // System.out.println("frame from generator: " + frame);
+                        /* ignore first few frames to allow for camera warm up */
+                        if (i < 3) {
+                            i++;
+                            continue;
+                        }
                         track.processFrame(frame);
                     }
                 }
@@ -58,12 +70,6 @@ public class DemoAppStart {
             } else {
                 System.err.println("Incorrect input: please input either detection or tracking");
             }
-
-//            in1.close();
-//            recog.in3.close();
-//            recog.out3.close();
-//            track.out2.close();
-//            track.in2.close();
 
         }
         catch (Exception e) {

@@ -25,6 +25,7 @@ def load_weights(encoding_file):
 
 
 def face_recognize():
+    cwd = os.getcwd()
     while True:
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         line = input()
@@ -32,7 +33,7 @@ def face_recognize():
         rgb_image = image[:, :, ::-1]
 
         # Call facial recognition
-        encoding_file = "/home/root1/code/edgeCV/face-recognition-demo/src/facerecog/known_face_encodings.p"
+        encoding_file = cwd + "/src/facerecog/known_face_encodings.p"
         cached_stamp, known_face_names, known_face_encodings = load_weights(encoding_file)
 
         face_locations = face_recognition.face_locations(rgb_image)
