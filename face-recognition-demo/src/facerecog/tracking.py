@@ -1,9 +1,6 @@
 import cv2
-import numpy as np
-import face_recognition
-from pathlib import Path
-import pickle
 import os
+import sys
 import io
 from imageio import imread
 import ast
@@ -11,37 +8,26 @@ import ast
 import base64
 
 from imutils.video import FPS
-# import imutils
-# import psutil
 
 
 font = cv2.FONT_HERSHEY_DUPLEX
 
 
-def face_tracking():
-    fps = FPS().start()
-    fourcc = cv2.VideoWriter_fourcc(*"XVID")
-    # fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('/media/neeraj/sapphirized_faster_tracking_fps.avi', fourcc, 20.0, (320, 240))
-    # out = cv2.VideoWriter('/media/neeraj/RPi_sapphirized_output_tracking.avi', fourcc, 20.0, (640, 480))
-    # out = cv2.VideoWriter('/home/root1/code/edgeCV/java_wrapper/src/output_recognition.avi', fourcc, 20.0, (640, 480))
+def face_tracking(outputType):
+    cwd = os.getcwd()
+    if outputType == "file":
+        fourcc = cv2.VideoWriter_fourcc(*"XVID")
+        out = cv2.VideoWriter(cwd + '/src/facerecog/sapphirized_tracking_fps.avi', fourcc, 20.0, (320, 240))
 
     # Load a cascade file for detecting faces
-    face_cascade = cv2.CascadeClassifier('/home/root1/code/edgeCV/face-recognition-demo/src/facerecog/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cwd + '/src/facerecog/haarcascade_frontalface_default.xml')
+    fps = FPS().start()
 
     while True:
         line = input()
         image = imread(io.BytesIO(base64.b64decode(line)))
-        # ret, frame = video_capture.read()
         frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        # frame = camera.get_frame()
-        # image = cv2.imdecode(np.frombuffer(frame, np.uint8), 1)
         (H, W) = frame.shape[:2]
-
-        # Grab a single frame of video
-        # frame = camera.get_frame()
-        # image = cv2.imdecode(np.frombuffer(frame, np.uint8), 1)
 
         # Convert to grayscale
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -52,12 +38,7 @@ def face_tracking():
 
         if len(faces) > 0:
             found_face = True
-            # # bbox_list = face_recognize(image)
-            # # send the image for recognition to java wrapper
-            # frame_serialize = base64.b64encode(cv2.imencode('.jpg', frame)[1].tobytes()).decode("utf-8")
-            # print(frame_serialize, flush=True)
-
-            # ask java layer to identify faces
+            # signal the java layer to identify faces
             print("identify", flush=True)
             # get the box list from the java layer
             bbox_list_str = input()
@@ -72,8 +53,6 @@ def face_tracking():
                 new_boxes = None
                 refresh = 0
                 while new_boxes is None or len(new_boxes) > 0:
-                    # frame = camera.get_frame()
-                    # image = cv2.imdecode(np.frombuffer(frame, np.uint8), 1)
                     line = input()
                     print("next", flush=True)
 
@@ -109,7 +88,14 @@ def face_tracking():
                         cv2.putText(frame, text, (10, H - ((i * 20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6,
                                     (0, 0, 255), 2)
 
-                    out.write(frame)
+                    if outputType == "file":
+                        out.write(frame)
+                    elif outputType == "display":
+                        cv2.imshow('image', frame)
+                        cv2.waitKey(1)
+                    else:
+                        print("incorrect outputType specified", flush=True)
+                        break
 
         # info to be displayed in the frame
         fps.update()
@@ -123,11 +109,19 @@ def face_tracking():
             text = "{}: {}".format(k, v)
             cv2.putText(frame, text, (10, H - ((i * 20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
-        out.write(frame)
+        if outputType == "file":
+            out.write(frame)
+        elif outputType == "display":
+            cv2.imshow('image', frame)
+            cv2.waitKey(1)
+        else:
+            print("incorrect outputType specified", flush=True)
+            break
 
         if found_face == False:
             print("done", flush=True)
-        # print("done", flush=True)
 
 
-face_tracking()
+if __name__ == "__main__":
+    outputType = sys.argv[1]
+    face_tracking(outputType)

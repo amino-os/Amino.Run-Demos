@@ -10,9 +10,10 @@ public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
     transient BufferedReader in3;
 
     public Recognition() {
-
-        String cmd = "/home/root1/.virtualenvs/cv/bin/python";
-        String path = "/home/root1/code/edgeCV/face-recognition-demo/src/facerecog/";
+        String cwd = System.getProperty("user.dir");
+        String home = System.getProperty("user.home");
+        String cmd = home + "/.virtualenvs/cv/bin/python";
+        String path = cwd + "/src/facerecog/";
 
         ProcessBuilder ps3 = new ProcessBuilder(cmd, path + "recognition.py");
         ps3.redirectErrorStream(true);
@@ -29,7 +30,7 @@ public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
 
     public String processFrame(String frame) throws IOException, InterruptedException {
         String bbox_list_str;
-        out3.write((frame+"\n").getBytes()); //write to file done and ok to proceed
+        out3.write((frame+"\n").getBytes());
         out3.flush();
         bbox_list_str = in3.readLine();
         return bbox_list_str;
