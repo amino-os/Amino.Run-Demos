@@ -42,16 +42,16 @@ The setup is similar to that described in
 Edit the Run/Debug Configurations in IntelliJ IDEA as follows:
 
 
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/appstub-compiler.png)
+![appstub-compiler](images/appstub-compiler.png)
 
 
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/OMS-facerecognition.png)
+![OMS-facerecognition](images/OMS-facerecognition.png)
 
 
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/KernelServer-facerecognition.png)
+![KernelServer-facerecognition](images/KernelServer-facerecognition.png)
 
 
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/DemoAppStart.png)
+![DemoAppStart](images/DemoAppStart.png)
 
  
 where {proj_path} is the root of the project tree.
@@ -66,10 +66,10 @@ Likewise, the processed video stream can be saved to a file or displayed in a wi
 field in the wrapper codes, `Detection` and `Tracker`.
 
 #### Detect faces in the video stream
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/detection.png)
+![detection](images/detection.png)
 
 #### Identify and track faces in the video stream
-![](https://github.com/neerajkc/edgeCV/tree/consolidation/face-recognition-demo/images/recognition.png)
+![recognition](images/recognition.png)
 
 
 
