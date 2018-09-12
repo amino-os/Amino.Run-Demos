@@ -4,6 +4,7 @@ import facerecog.FrameGenerator;
 import facerecog.Detection;
 import facerecog.Recognition;
 import facerecog.Tracking;
+import sapphire.common.SapphireObjectID;
 import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
@@ -52,7 +53,8 @@ public class DemoAppStart {
                 }
                 else if (args[0].equalsIgnoreCase("tracking")) {
                     /* recog is a remote object that has handles to the iostream of recognition.py running on server */
-                    Recognition recog = (Recognition)server.getAppEntryPoint();
+                    SapphireObjectID sapphireObjId = server.createSapphireObject("facerecog.Recognition");
+                    Recognition recog = (Recognition)server.acquireSapphireObjectStub(sapphireObjId);
                     Tracking track = new Tracking(recog);
 
                     int i = 0;
