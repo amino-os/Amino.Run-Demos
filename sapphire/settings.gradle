@@ -1,5 +1,0 @@
-// Example Apps
-include ':examples:hankstodo'
-include ':examples:example-minnietwitter'
-include ':examples:helloworld'
-
