@@ -10,10 +10,10 @@ def face_detection(outputType):
     cwd = os.getcwd()
     if outputType == "file":
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
-        out = cv2.VideoWriter(cwd + '/src/facerecog/sapphirized_detection_fps.avi', fourcc, 20.0, (320, 240))
+        out = cv2.VideoWriter(cwd + '/src/main/savedVideos/sapphirized_detection_fps.avi', fourcc, 20.0, (320, 240))
 
     # Load a cascade file for detecting faces
-    face_cascade = cv2.CascadeClassifier(cwd + '/src/facerecog/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cwd + '/src/main/resources/haarcascade_frontalface_default.xml')
     fps = FPS().start()
 
     while True:
