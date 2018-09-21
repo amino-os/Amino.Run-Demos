@@ -31,13 +31,6 @@ task genRecogStub(type: JavaExec) {
     args src, pkgName, dst
 }
 
-task done(type: JavaExec) {
-    doLast {
-        println "Done!"
-    }
-
-}
-
 genRecogStub.mustRunAfter compileJava
 compileRecogStub.dependsOn genRecogStub
 jar.dependsOn compileRecogStub
@@ -59,9 +52,11 @@ task runFaceRecognitionKernelServer(type: JavaExec) {
 
 
 // Task for running Face Recognition demo app
-// Usage: ./gradlew -Dorg.gradle.java.home={path/to/java/sdk} runDemoApp -PinferenceType={detection (default) or tracking}
+// Usage: ./gradlew -Dorg.gradle.java.home={/path/to/java/sdk} runDemoApp -PinferenceType={detection(default) or tracking}
 task runDemoApp(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "application.DemoAppStart"
-    args project.hasProperty('inferenceType') ? project.property('inferenceType') : "detection"
+    args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'),
+            project.property('kernelServerPort'), project.property('inferenceType'), project.property('sourceType'),
+            project.property('targetType')
 }
