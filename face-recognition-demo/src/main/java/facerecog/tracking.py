@@ -17,7 +17,10 @@ def face_tracking(outputType):
     cwd = os.getcwd()
     if outputType == "file":
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
-        out = cv2.VideoWriter(cwd + '/src/main/savedVideos/sapphirized_tracking_fps.avi', fourcc, 20.0, (320, 240))
+        outputPath = cwd + '/src/main/savedVideos'
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
+        out = cv2.VideoWriter(outputPath + '/sapphirized_tracking_fps.avi', fourcc, 20.0, (320, 240))
 
     # Load a cascade file for detecting faces
     face_cascade = cv2.CascadeClassifier(cwd + '/src/main/resources/haarcascade_frontalface_default.xml')

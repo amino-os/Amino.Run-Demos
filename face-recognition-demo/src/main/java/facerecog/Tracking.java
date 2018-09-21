@@ -12,15 +12,16 @@ public class Tracking  {
     private String line2;
     private String bbox_list_str;
 
-    public Tracking(Recognition recog) {
+    public Tracking(Recognition recog, String targetType) {
+        /* targetType =  "display": for screen, "file": write to file */
         String cwd = System.getProperty("user.dir");
         String home = System.getProperty("user.home");
         String cmd = home + "/.virtualenvs/cv/bin/python";
         String path = cwd + "/src/main/java/facerecog/";
 
-        String outputType = "display"; // "display": for screen, "file": write to file
+//        String outputType = "display"; // "display": for screen, "file": write to file
 
-        ProcessBuilder ps2 = new ProcessBuilder(cmd, path + "tracking.py", outputType);
+        ProcessBuilder ps2 = new ProcessBuilder(cmd, path + "tracking.py", targetType);
         ps2.redirectErrorStream(true);
         Process pr2 = null;
         try {
