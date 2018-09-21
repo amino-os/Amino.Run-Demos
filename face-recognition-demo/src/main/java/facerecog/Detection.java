@@ -13,9 +13,9 @@ public class Detection {
         String cwd = System.getProperty("user.dir");
         String home = System.getProperty("user.home");
         String cmd = home + "/.virtualenvs/cv/bin/python";
-        String path = cwd + "/src/facerecog/";
+        String path = cwd + "/src/main/java/facerecog/";
 
-        String outputType = "file"; // "display": for screen, "file": write to file
+        String outputType = "display"; // "display": for screen, "file": write to file
 
         ProcessBuilder ps2 = new ProcessBuilder(cmd, path + "detection.py", outputType);
         ps2.redirectErrorStream(true);

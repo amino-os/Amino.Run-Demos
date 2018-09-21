@@ -1,6 +1,6 @@
 *.iml
 out/
+build/
+.gradle/
 .idea/
-src/dependencies/
-src/libs/
 **/stubs/
