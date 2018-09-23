@@ -11,8 +11,9 @@ public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
 
     public Recognition() {
         String cwd = System.getProperty("user.dir");
-        String home = System.getProperty("user.home");
-        String cmd = home + "/.virtualenvs/cv/bin/python";
+//        String home = System.getProperty("user.home");
+//        String cmd = home + "/.virtualenvs/cv/bin/python";
+        String cmd = "/usr/local/bin/python";
         String path = cwd + "/src/main/java/facerecog/";
 
         ProcessBuilder ps3 = new ProcessBuilder(cmd, path + "recognition.py");
