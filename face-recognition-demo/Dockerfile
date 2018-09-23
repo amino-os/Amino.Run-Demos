@@ -1,8 +1,9 @@
 # To access the camera and X server of the host system (Ubuntu), run the image built from this dockerfile as:
 # >> xhost +
-# >> docker run -it -e DISPLAY=$DISPLAY \
+# >> docker run -it -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 JAVA_HOME=/root/jdk1.8.0_181 \
 #               --privileged --device /dev/video0 \
 #               --privileged -v /tmp/.X11-unix:/tmp/.X11-unix:ro yourImageName /bin/bash
+#
 # Upon completion, do the following:
 # >> xhost -
 
@@ -54,13 +55,12 @@ RUN cd ~ && \
     make -j4 && \
     make install && \
     ldconfig && \
-    cd /usr/local/bin/python3.6/site-packages/ && \
+    cd /usr/local/lib/python3.6/site-packages/ && \
     mv cv2.cpython-36m-x86_64-linux-gnu.so cv2.so && \
     cd ~ && \
     rm opencv.zip opencv_contrib.zip && \
     rm -rf opencv-3.4.2 && \
-    rm -rf opencv_contrib-3.4.2 && \
-    export NO_AT_BRIDGE=1	
+    rm -rf opencv_contrib-3.4.2	
 
 RUN git clone https://github.com/davisking/dlib.git && \
     cd dlib && \
@@ -76,8 +76,7 @@ RUN git clone https://github.com/davisking/dlib.git && \
 
 RUN cd ~ && \
     wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
-    tar -xzf jdk-8u181-linux-x64.tar.gz && \
-    export JAVA_HOME=~/jdk1.8.0_181/
+    tar -xzf jdk-8u181-linux-x64.tar.gz
 
 # Edit & uncomment the following once PR is merged
 # RUN git clone {project repo} && \
