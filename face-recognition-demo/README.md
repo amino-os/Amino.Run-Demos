@@ -20,50 +20,85 @@ It is logical to move the compute heavy face recognition task to a more capable 
 detection and tracking can run on a node with modest resources. This demo enables migrating face recognition by using
 ExplicitMigrationPolicy DM. To achieve this, corresponding Java wrappers are provided for each of the Python files.
 
-The processed output frames can either be saved into a video file or displayed in a window as a live stream.
+The Python files and the corresponding Java wrappers that implement the application logic are located in the 
+`src/main/java/facerecog` directory of the project. The main application is located in `src/main/java/application` 
+directory. The Haar Cascades file and the known encodings file are located in the `src/main/resources` directory along 
+with a sample video to process.
+
+The processed output frames can either be saved into a video file (in `src/main/savedVideos`) 
+or displayed in a window as a live stream.
 
 ## Installation
 
-Detailed instructions on setting up OpenCV and Python bindings on Ubuntu can be found 
-[here](https://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/). Instructions to setup 
+A `Dockerfile` has been provided to build a Docker image with all the dependencies (OpenCV, face_recognition, dlib, and
+jdk1.8.0_181) for this project to run. You may customize this file to suite your needs.
+
+More information on setting up OpenCV and Python bindings on Ubuntu can be found 
+[here](https://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/). Information to setup 
 `face_recognition`, `dlib` and some related helper modules used in this demo can be found
 [here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/). Make sure to 
-use appropriate cmake flags to enable multicore/GPU optimizations to improve performance.
+use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
 
-It is assumed that Sapphire has been setup and the Java wrapper code has access to the dependencies.
+To build the Docker image, type in the project root:
+```bash
+$ docker build .
+```
 
+You can now run three instances of the generated image as containers, one each for OMS, KernelServer and the DemoApp. To
+run these containers, type in three separate terminal windows:
+```bash
+$ xhost +
+$ docker run -it -e DISPLAY=$DISPLAY \
+                 -e NO_AT_BRIDGE=1 \
+                 -e JAVA_HOME=/root/jdk1.8.0_181 \
+                 --privileged --device /dev/video0 \
+                 --privileged -v /tmp/.X11-unix:/tmp/.X11-unix:ro yourImageName /bin/bash
+```
+Note that this use of flags is necessary in order to use a camera on your host system and display the processed live 
+video in a window on the host system's X server (tested on Ubuntu). This would be required only for the container 
+running the DemoApp.
 
 ## Usage
 
-The setup is similar to that described in 
-[development wiki](https://github.com/Huawei-PaaS/DCAP-Sapphire/blob/master/docs/Development.md).
+This Java project uses Gradle wrapper to automate the build and run. Each container is self-contained, but uses the 
+parameters specified in `gradle.properties` file to talk to other containers. So, make sure the parameters specified in
+ the corresponding `gradle.properties` file are identical for all the containers. You need to specify the ip and port 
+ for OMS and KernelServer.
+
+You can find the ip of the container by typing the following inside the container:
+```bash
+$ awk 'END{print $1}' /etc/hosts
+```
+
+You can also specify the `sourceType` for the input stream of frames to be a video file or a camera, and `targetType` to 
+be a file or a windowed display for the stream of processed frames. The type of processing desired, detection or 
+tracking, is specified via `inferenceType`.
+
+Finally, build the project in each container as:
+```bash
+$ ./gradlew build
+```
+followed by
+```bash
+$ ./gradlew runFaceRecognitionOMS
+```
+in the OMS container;
+```bash
+$ ./gradlew runFaceRecognitionKernelServer
+```
+in the KernelServer container; and
+```bash
+$ ./gradlew runDemoApp
+```
+in the DemoApp container.
 
 
-Edit the Run/Debug Configurations in IntelliJ IDEA as follows:
-
-
-![appstub-compiler](images/appstub-compiler.png)
-
-
-![OMS-facerecognition](images/OMS-facerecognition.png)
-
-
-![KernelServer-facerecognition](images/KernelServer-facerecognition.png)
-
-
-![DemoAppStart](images/DemoAppStart.png)
-
- 
-where {proj_path} is the root of the project tree.
-
-Run them sequentially.
-
+Once done and you exit the container, make sure to type:
+```bash
+$ xhost -
+```
 
 ## Features
-
-Video stream can be generated from a video file or a webcam, as specified by the `sourceType` field in `DemoAppStart`. 
-Likewise, the processed video stream can be saved to a file or displayed in a window, specified by the `outputType` 
-field in the wrapper codes, `Detection` and `Tracker`.
 
 #### Detect faces in the video stream
 ![detection](images/detection.png)
