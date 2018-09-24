@@ -1,6 +1,6 @@
 # To access the camera and X server of the host system (Ubuntu), run the image built from this dockerfile as:
 # >> xhost +
-# >> docker run -it -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 JAVA_HOME=/root/jdk1.8.0_181 \
+# >> docker run -it -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -e JAVA_HOME=/root/jdk1.8.0_181 \
 #               --privileged --device /dev/video0 \
 #               --privileged -v /tmp/.X11-unix:/tmp/.X11-unix:ro yourImageName /bin/bash
 #
