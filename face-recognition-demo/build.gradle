@@ -35,16 +35,16 @@ genRecogStub.mustRunAfter compileJava
 compileRecogStub.dependsOn genRecogStub
 jar.dependsOn compileRecogStub
 
-
-task runFaceRecognitionOMS(type: JavaExec) {
+// Task for running the OMS
+task runoms(type: JavaExec) {
     dependsOn jar
     classpath = sourceSets.main.runtimeClasspath
     main = 'sapphire.oms.OMSServerImpl'
     args project.property('omsIp'), project.property('omsPort')
 }
 
-
-task runFaceRecognitionKernelServer(type: JavaExec) {
+// Task for running the Kernel Server
+task runks(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'sapphire.kernel.server.KernelServerImpl'
     args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
@@ -52,8 +52,7 @@ task runFaceRecognitionKernelServer(type: JavaExec) {
 
 
 // Task for running Face Recognition demo app
-// Usage: ./gradlew -Dorg.gradle.java.home={/path/to/java/sdk} runDemoApp -PinferenceType={detection(default) or tracking}
-task runDemoApp(type: JavaExec) {
+task runapp(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "application.DemoAppStart"
     args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'),
