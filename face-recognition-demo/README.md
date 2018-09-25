@@ -39,12 +39,12 @@ More information on setting up OpenCV and Python bindings on Ubuntu can be found
 [here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/). Make sure to 
 use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
 
-To build the Docker image, type in the project root:
+To build the Docker image, clone this repo and type at the project root:
 ```bash
 $ docker build .
 ```
 
-You can now run three instances of the generated image as containers, one each for OMS, KernelServer and the DemoApp. To
+You can now run three instances of the generated image as containers, one each for the OMS, the KernelServer and the DemoApp. To
 run these containers, type in three separate terminal windows:
 ```bash
 $ xhost +
@@ -60,10 +60,11 @@ running the DemoApp.
 
 ## Usage
 
-This Java project uses Gradle wrapper to automate the build and run. Each container is self-contained, but uses the 
-parameters specified in `gradle.properties` file to talk to other containers. So, make sure the parameters specified in
- the corresponding `gradle.properties` file are identical for all the containers. You need to specify the ip and port 
- for OMS and KernelServer.
+This Java project uses Gradle wrapper to automate the build and run. Each container is self-contained and has the project
+directory located at `/home/face-recognition-demo/` folder as specified in the Dockerfile. Each container uses the 
+parameters specified in the `gradle.properties` file in that folder to talk to other containers. So, make sure that the
+ parameters specified in the corresponding `gradle.properties` file are identical for all the containers. You need to 
+ specify the ip and port for OMS and KernelServer.
 
 You can find the ip of the container by typing the following inside the container:
 ```bash
@@ -80,15 +81,15 @@ $ ./gradlew build
 ```
 followed by
 ```bash
-$ ./gradlew runFaceRecognitionOMS
+$ ./gradlew runoms
 ```
 in the OMS container;
 ```bash
-$ ./gradlew runFaceRecognitionKernelServer
+$ ./gradlew runks
 ```
 in the KernelServer container; and
 ```bash
-$ ./gradlew runDemoApp
+$ ./gradlew runapp
 ```
 in the DemoApp container.
 
