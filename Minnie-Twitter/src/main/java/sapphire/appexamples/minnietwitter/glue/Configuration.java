@@ -11,5 +11,5 @@ public class Configuration {
      * The first address: OMS host
      * The second address: this host
      */
-    public static String [] hostAddress = { "100.64.40.84", "22346", "10.0.2.15", "22345" };
+    public static String [] hostAddress = { "127.0.0.1", "22346", "10.0.2.15", "22345" };
 }
