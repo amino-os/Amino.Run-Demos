@@ -20,7 +20,6 @@ spec:
         ports:
         - containerPort: 22346
         command: ["/root/dcap/start-oms.sh"]
-        args: ["sapphire.appexamples.minnietwitter.cloud.MinnieTwitterStart"]
         securityContext:
           privileged: true # FOR DEBUG
           allowPrivilegeEscalation: true

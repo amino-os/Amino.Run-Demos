@@ -13,7 +13,7 @@ buildscript {
          * https://github.com/requery/requery/issues/467
          */
         classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.bmuschko:gradle-docker-plugin:2.6.5'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.7'
     }
 }
 
@@ -104,7 +104,7 @@ task dockerfile(type: Dockerfile) {
     from 'alpine:3.7'
     label(['maintainer': 'vinay.kulkarni@huawei.com'])
     runCommand  'apk --update add openjdk8-jre bind-tools'
-    copyFile './subprojects/build/libs/example-minnietwitter.jar', '/root/dcap/jars/'
+    copyFile './subprojects/build/libs/Minnie-Twitter.jar', '/root/dcap/jars/'
     copyFile './scripts/client.policy', '/root/dcap/'
     copyFile './scripts/common.inc', '/root/dcap/'
     copyFile './scripts/start-oms.sh', '/root/dcap/'
@@ -194,17 +194,17 @@ deployer {
 
 task deployOms(type: Exec){
     dependsOn pushImage
-    commandLine '../../gradlew', 'deploy',"--environmentId=oms"
+    commandLine './gradlew', 'deploy',"--environmentId=oms"
 }
 
 task deployKernelServer(type: Exec){
     dependsOn deployOms
-    commandLine '../../gradlew', 'deploy',"--environmentId=kernelserver"
+    commandLine './gradlew', 'deploy',"--environmentId=kernelserver"
 }
 
 task deployApp(type: Exec){
     dependsOn deployKernelServer
-    commandLine '../../gradlew', 'deploy',"--environmentId=app"
+    commandLine './gradlew', 'deploy',"--environmentId=app"
 }
 
 subprojects {
@@ -259,20 +259,20 @@ subprojects {
     compileMinnieTwitterStubs.dependsOn genMinnieTwitterStubs
     fatJar.dependsOn compileMinnieTwitterStubs
 
-    task runMinnieTwitterOms(type: JavaExec) {
+    task runOms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
         main = 'sapphire.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
-    task runMinnieTwitterKernelServer(type: JavaExec) {
+    task runKernelServer(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'sapphire.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
 
-    task runMinnieTwitterApp(type: JavaExec) {
+    task runApp(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'sapphire.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
         args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
