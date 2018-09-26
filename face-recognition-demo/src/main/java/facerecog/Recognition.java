@@ -1,11 +1,16 @@
 package facerecog;
 
 import sapphire.app.SapphireObject;
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
+import sapphire.policy.DefaultSapphirePolicy;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
-public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
+// TODO: Explicitly specify where to run this task based on some logic.
+//public class Recognition implements SapphireObject<ExplicitMigrationPolicy> {
+public class Recognition implements SapphireObject<DefaultSapphirePolicy> {
     transient OutputStream out3;
     transient BufferedReader in3;
 
