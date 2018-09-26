@@ -17,8 +17,8 @@ number of frames and the process repeats. The number of frames to track is a tra
 compute intensive than tracking but is also more robust.
 
 It is logical to move the compute heavy face recognition task to a more capable node, while the frame generation, 
-detection and tracking can run on a node with modest resources. This demo enables migrating face recognition by using
-ExplicitMigrationPolicy DM. To achieve this, corresponding Java wrappers are provided for each of the Python files.
+detection and tracking can run on a node with modest resources. This is achieved via 'Sapphirization' of the face 
+recognition task. Corresponding Java wrappers are provided for each of the Python files.
 
 The Python files and the corresponding Java wrappers that implement the application logic are located in the 
 `src/main/java/facerecog` directory of the project. The main application is located in `src/main/java/application` 
