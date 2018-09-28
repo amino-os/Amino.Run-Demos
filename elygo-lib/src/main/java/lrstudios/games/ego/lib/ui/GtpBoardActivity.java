@@ -100,11 +100,11 @@ public class GtpBoardActivity extends NAActivity implements BoardView.BoardListe
             kernelServers = oms.getServers();
             for (InetSocketAddress sockAddr : kernelServers) {
                 if (isLocal){
-                    if (sockAddr.getHostName().equals(localIp)){
+                    if (sockAddr.getAddress().getHostAddress().equals(localIp)){
                         return sockAddr;
                     }
                 } else {
-                    if (!sockAddr.getHostName().equals(localIp)) {
+                    if (!sockAddr.getAddress().getHostAddress().equals(localIp)) {
                         return sockAddr;
                     }
                 }
