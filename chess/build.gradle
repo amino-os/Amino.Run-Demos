@@ -64,6 +64,7 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
+    compile files('libs/snakeyaml-1.23-android.jar')
     }
 
 
@@ -78,8 +79,8 @@ subprojects {
 
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
-
-    }
+        compile files ('libs/graal-sdk.jar')
+        }
 
     task fatJar(type: Jar) {
         manifest {
