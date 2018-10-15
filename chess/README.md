@@ -1,5 +1,6 @@
 # Chess demo application
 
+
 Follow the following steps to build and run hanksTodo demo app.
 
 ### Add Android Properties
@@ -15,4 +16,24 @@ EOF
 ```
 $ cd DCAP-Sapphire-Examples/chess/
 $ ./gradlew build
+
+```
+
+## Local deployment
+
+### Run Oms
+```
+$ ./gradlew runOms
+```
+
+### Run KernelServer
+```
+$ ./gradlew runKernelServer1
+
+$ ./gralew runKernelServer2
+```
+### Run App
+```
+Run the App using Emulator 
+
 ```
