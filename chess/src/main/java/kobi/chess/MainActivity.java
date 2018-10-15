@@ -40,7 +40,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import chessmanager.ChessManager;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -62,8 +62,7 @@ public class MainActivity extends Activity {
 	private ChessEngine engine;
 	private int ply = 0;
 	private boolean moveEnabled = false;
-	private SamplePrint samplePrint;
-    private static int cnt = 0;
+	private static int cnt = 0;
 
 
 	private MyHandler mMyHandler = new MyHandler();
@@ -88,13 +87,13 @@ public class MainActivity extends Activity {
 			Registry registry;
 
 			// ToDo: DO not use direct String to configure, convert to a Configuration file and use the IPs
-			String[] hostAddress = {"127.0.0.1", "10000", "10.0.2.15", "10001"};
-			registry = LocateRegistry.getRegistry(hostAddress[0], Integer.parseInt(hostAddress[1]));
+			registry = LocateRegistry.getRegistry(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1]));
+
 			OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
 
-			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(hostAddress[2], Integer.parseInt(hostAddress[3])), new InetSocketAddress(hostAddress[0], Integer.parseInt(hostAddress[1])));
-			SapphireObjectID sapphireObjId = server.createSapphireObject("kobi.chess.NewChessManager");
-			NewChessManager newChessManager = (NewChessManager)server.acquireSapphireObjectStub(sapphireObjId);
+			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(Configuration.hostAddress[2], Integer.parseInt(Configuration.hostAddress[3])), new InetSocketAddress(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1])));
+			SapphireObjectID sapphireObjId = server.createSapphireObject("chessmanager.ChessManager");
+			ChessManager newChessManager = (ChessManager) server.acquireSapphireObjectStub(sapphireObjId);
 
 
 			/*SamplePrint samplePrint = newChessManager.getSamplePrintManager();
@@ -351,7 +350,14 @@ public class MainActivity extends Activity {
                  */
 
 				System.out.println("Migrating object with cnt as " + cnt);
-				InetSocketAddress ksInfo=new InetSocketAddress("127.0.0.1",10002);
+				InetSocketAddress ksInfo ;
+				 if (cnt%2==1){
+					  ksInfo=new InetSocketAddress(Configuration.kernelServerAddress[0],Integer.parseInt(Configuration.kernelServerAddress[1]));
+
+				 }else {
+					 ksInfo=new InetSocketAddress(Configuration.kernelServerAddress[2],Integer.parseInt(Configuration.kernelServerAddress[3]));
+
+				 }
 				((SimpleEngine) engine).migrateObject(ksInfo);
                 cnt++;
             } catch (Exception e) {

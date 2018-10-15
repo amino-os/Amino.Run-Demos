@@ -1,4 +1,4 @@
-package kobi.chess;
+package chessmanager;
 
 /**
  * Created by mbssaiakhil on 27/1/18.
@@ -9,18 +9,13 @@ import sapphire.app.SapphireObject;
 
 import static sapphire.runtime.Sapphire.new_;
 
-public class NewChessManager implements SapphireObject {
-    private SamplePrint samplePrint;
+public class ChessManager implements SapphireObject {
 
     private SimpleEngine simpleEngine;
 
-    public NewChessManager() {
-
-        samplePrint = (SamplePrint) new_(SamplePrint.class);
+    public ChessManager() {
         simpleEngine = (SimpleEngine) new_(SimpleEngine.class);
     }
-
-    public SamplePrint getSamplePrintManager() { return samplePrint; }
 
     public SimpleEngine getSimpleEngine() { return simpleEngine; }
 }

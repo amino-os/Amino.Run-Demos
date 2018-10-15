@@ -17,6 +17,12 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+
+repositories {
+    mavenCentral()
+}
+
+
 android {
     compileSdkVersion = 27
     buildToolsVersion = "27.0.2"
@@ -58,7 +64,8 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-}
+    }
+
 
 subprojects {
     apply plugin: 'java-library'
@@ -71,7 +78,20 @@ subprojects {
 
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
+
     }
+
+    task fatJar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': 'Gradle Chessjar',
+                    'Implementation-Version': '1.0',
+                    'Main-Class': 'kobi.chess.MainActivity'
+        }
+        baseName = project.parent.name
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
+    }
+    build.finalizedBy(fatJar)
 
     task copyClasses(type: Copy) {
         from "$projectDir.parent/build/intermediates/classes/debug/"
@@ -90,17 +110,44 @@ subprojects {
     task genChessStubs(type: JavaExec) {
         main = "sapphire.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-        def pkgName = 'kobi.chess'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/kobi/chess"
-        def dst = "$projectDir.parent/src/main/java/kobi/chess/stubs/"
+
+        def pkgName = 'chessmanager'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
+        def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
         args src, pkgName, dst
-        pkgName = 'sapphire.appexamples.chess.engine'
-         src = "$projectDir.parent/build/intermediates/classes/debug/engine"
-         dst = "$projectDir.parent/src/main/java/engine/stubs/"
-        args src, pkgName, dst
+
+        def pkgName1 = 'engine'
+       def src1 = "$projectDir.parent/build/intermediates/classes/debug/engine"
+        def dst1 = "$projectDir.parent/src/main/java/engine/stubs/"
+           args src1, pkgName1, dst1
+
     }
     genChessStubs.mustRunAfter compileJava
     genChessStubs.dependsOn copyClasses
-    compileChessStubs.dependsOn genHanksTodoStubs
-    jar.dependsOn compileChessStubs
+    compileChessStubs.dependsOn genChessStubs
+    fatJar.dependsOn compileChessStubs
+
+    task runOms(type: JavaExec) {
+        dependsOn fatJar
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'sapphire.oms.OMSServerImpl'
+        args project.property('omsIp'), project.property('omsPort')
+    }
+
+    task runKernelServer1(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'sapphire.kernel.server.KernelServerImpl'
+        args project.property('kernelServer1Ip'), project.property('kernelServer1Port'), project.property('omsIp'), project.property('omsPort')
+    }
+ task runKernelServer2 (type: JavaExec){
+     classpath = sourceSets.main.runtimeClasspath
+     main = 'sapphire.kernel.server.KernelServerImpl'
+     args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
+
+ }
+
 }
+    // Task for Stub generation
+
+// Start kernel server with "gradlew runks"
+
