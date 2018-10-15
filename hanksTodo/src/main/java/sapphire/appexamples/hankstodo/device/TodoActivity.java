@@ -13,6 +13,7 @@ import sapphire.oms.OMSServer;
 
 public class TodoActivity {
 	public static TodoList tl;
+	public static TodoListManager tlm;
 
 	public static void setObject(String[] args){
 		Registry registry;
@@ -23,14 +24,16 @@ public class TodoActivity {
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(args[2], Integer.parseInt(args[3])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
 			SapphireObjectID sapphireObjId = server.createSapphireObject("sapphire.appexamples.hankstodo.app.TodoListManager");
-			TodoListManager tlm = (TodoListManager)server.acquireSapphireObjectStub(sapphireObjId);
+			tlm = (TodoListManager)server.acquireSapphireObjectStub(sapphireObjId);
 			System.out.println("Received tlm: " + tlm);
-
-			tl = tlm.newTodoList("Hanks");
-			System.out.println("Received tl1: " + tl);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void createNewToDoList(String listName) {
+		tl = tlm.newTodoList(listName);
+		System.out.println("Received tl1: " + tl);
 	}
 
 	public static void addTaskItem(String item) {

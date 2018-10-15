@@ -7,7 +7,7 @@
     android:paddingBottom="5dp"
     android:paddingStart="5dp"
     android:paddingEnd="5dp"
-    tools:context="sapphire.appexamples.hankstodo.glue.MainActivity" >
+    tools:context="sapphire.appexamples.hankstodo.glue.ToDoItems" >
 
     <ListView
         android:id="@+id/lvItems"

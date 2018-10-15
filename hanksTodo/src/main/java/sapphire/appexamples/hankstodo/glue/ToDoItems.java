@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import sapphire.appexamples.hankstodo.device.TodoActivity;
 
-public class MainActivity extends Activity {
+public class ToDoItems extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.hankstodo.MESSAGE";
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
@@ -29,13 +29,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.todo_list);
 
         lvItems = (ListView) findViewById(R.id.lvItems);
         items = new ArrayList<String>();
         itemsAdapter = new ArrayAdapter<String>(this,
-                R.layout.my_text, items);
+                R.layout.fmt_text, items);
         lvItems.setAdapter(itemsAdapter);
+
+        Bundle b = getIntent().getExtras();
+        String todoListName = b.getString("todoname");
+        new CreateToDoList().execute(todoListName);
 
         setupListViewListener();
     }
@@ -64,6 +68,20 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            return response;
+        }
+        @Override
+        protected void onPostExecute(String response) {
+            if(response == null) {
+
+            }
+        }
+    }
+
+    private class CreateToDoList extends AsyncTask<String, Void, String>{
+        protected String doInBackground(String... params) {
+            String response = null;
+            TodoActivity.createNewToDoList(params[0]);
             return response;
         }
     }
