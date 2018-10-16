@@ -30,7 +30,7 @@ $ ./gradlew runOms
 ```
 $ ./gradlew runKernelServer1
 
-$ ./gralew runKernelServer2
+$ ./gradlew runKernelServer2
 ```
 ### Run App
 ```
