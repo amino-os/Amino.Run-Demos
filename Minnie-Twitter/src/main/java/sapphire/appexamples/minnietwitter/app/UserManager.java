@@ -7,11 +7,12 @@ import java.util.Map;
 
 import sapphire.app.SapphireObject;
 import static sapphire.runtime.Sapphire.*;
-import sapphire.policy.dht.DHTPolicy;
-import sapphire.policy.interfaces.dht.DHTInterface;
-import sapphire.policy.interfaces.dht.DHTKey;
 
-public class UserManager implements SapphireObject<DHTPolicy>, DHTInterface {
+import sapphire.policy.dht.DHTKey;
+import sapphire.runtime.SapphireConfiguration;
+
+@SapphireConfiguration(Policies = "sapphire.policy.dht.DHTPolicy")
+public class UserManager implements SapphireObject {
 	Map<DHTKey, User> users;
 	private TagManager tm;
 
@@ -76,8 +77,4 @@ public class UserManager implements SapphireObject<DHTPolicy>, DHTInterface {
 		return true;
 	}
 
-	@Override
-	public Map<DHTKey, ?> dhtGetData() {
-		return users;
-	}
 }

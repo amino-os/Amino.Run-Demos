@@ -6,6 +6,8 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
+import sapphire.app.Language;
+import sapphire.app.SapphireObjectSpec;
 import sapphire.appexamples.minnietwitter.app.TagManager;
 import sapphire.appexamples.minnietwitter.app.Timeline;
 import sapphire.appexamples.minnietwitter.app.Tweet;
@@ -29,8 +31,15 @@ public class TwitterWorldGenerator {
 
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(args[2], Integer.parseInt(args[3])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
-            /* Get Twitter and User Manager */
-			SapphireObjectID sapphireObjId = server.createSapphireObject("sapphire.appexamples.minnietwitter.app.TwitterManager");
+			/* Creating the Spec */
+
+			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+					.setLang(Language.java)
+					.setJavaClassName("sapphire.appexamples.minnietwitter.app.TwitterManager")
+					.create();
+
+			/* Get Twitter and User Manager */
+			SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
 			TwitterManager tm = (TwitterManager) server.acquireSapphireObjectStub(sapphireObjId);
 
 			/* To set a name to sapphire object. It is required to set the name if the object has to be shared */
