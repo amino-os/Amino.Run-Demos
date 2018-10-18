@@ -3,7 +3,12 @@ package sapphire.appexamples.minnietwitter.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import sapphire.app.DMSpec;
+import sapphire.app.Language;
 import sapphire.app.SapphireObject;
+import sapphire.app.SapphireObjectSpec;
+import sapphire.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
+
 import static sapphire.runtime.Sapphire.*;
 
 public class User implements SapphireObject {
@@ -21,7 +26,17 @@ public class User implements SapphireObject {
 	}
 
 	public void initialize(User u) {
-		timeline = (Timeline) new_(Timeline.class, u, tagManager);
+		SapphireObjectSpec timelineSpec;
+		timelineSpec = SapphireObjectSpec.newBuilder()
+				.setLang(Language.java)
+				.setJavaClassName(Timeline.class.getName())
+				.addDMSpec(
+						DMSpec.newBuilder()
+								.setName(AtLeastOnceRPCPolicy.class.getName())
+								.create())
+				.create();
+
+		timeline = (Timeline) new_(timelineSpec, u, tagManager);
 		timeline.initialize(timeline);
 	}
 

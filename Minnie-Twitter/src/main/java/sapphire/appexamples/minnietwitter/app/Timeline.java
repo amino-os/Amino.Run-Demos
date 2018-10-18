@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sapphire.app.SapphireObject;
-import sapphire.runtime.SapphireConfiguration;
 
-@SapphireConfiguration(Policies = "sapphire.policy.ShiftPolicy")
+
 public class Timeline implements SapphireObject {
 	//private User user;
 	private String userName;
