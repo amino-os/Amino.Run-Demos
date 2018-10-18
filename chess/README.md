@@ -28,7 +28,7 @@ $ ./gradlew runoms
 
 ### Run KernelServer
 ```
-$ ./gradlew runks1
+$ ./gradlew runks
 
 $ ./gradlew runks2
 ```
