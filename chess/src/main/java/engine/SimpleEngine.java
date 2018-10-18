@@ -24,7 +24,7 @@ import sapphire.runtime.SapphireConfiguration;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-		@SapphireConfiguration(Policies = "sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy")
+
 public class SimpleEngine implements ChessEngine, SapphireObject {
 	private Position position;
 	private boolean computerIsWhite;
