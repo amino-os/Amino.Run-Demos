@@ -120,9 +120,9 @@ subprojects {
         args src, pkgName, dst
 
         def pkgName1 = 'engine'
-       def src1 = "$projectDir.parent/build/intermediates/classes/debug/engine"
+        def src1 = "$projectDir.parent/build/intermediates/classes/debug/engine"
         def dst1 = "$projectDir.parent/src/main/java/engine/stubs/"
-           args src1, pkgName1, dst1
+        args src1, pkgName1, dst1
 
     }
     genChessStubs.mustRunAfter compileJava
@@ -130,19 +130,19 @@ subprojects {
     compileChessStubs.dependsOn genChessStubs
     fatJar.dependsOn compileChessStubs
 
-    task runOms(type: JavaExec) {
+    task runoms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
         main = 'sapphire.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
-    task runKernelServer1(type: JavaExec) {
+    task runks1(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'sapphire.kernel.server.KernelServerImpl'
         args project.property('kernelServer1Ip'), project.property('kernelServer1Port'), project.property('omsIp'), project.property('omsPort')
     }
- task runKernelServer2 (type: JavaExec){
+ task runks2 (type: JavaExec){
      classpath = sourceSets.main.runtimeClasspath
      main = 'sapphire.kernel.server.KernelServerImpl'
      args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')

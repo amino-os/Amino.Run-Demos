@@ -15,8 +15,6 @@ import chesspresso.*;
 import chesspresso.move.*;
 import chesspresso.position.*;
 import sapphire.app.SapphireObject;
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
-import sapphire.runtime.SapphireConfiguration;
 
 /**
  * @author Administrator

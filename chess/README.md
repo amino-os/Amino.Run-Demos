@@ -23,14 +23,14 @@ $ ./gradlew build
 
 ### Run Oms
 ```
-$ ./gradlew runOms
+$ ./gradlew runoms
 ```
 
 ### Run KernelServer
 ```
-$ ./gradlew runKernelServer1
+$ ./gradlew runks1
 
-$ ./gradlew runKernelServer2
+$ ./gradlew runks2
 ```
 ### Run App
 ```
