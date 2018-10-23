@@ -4,10 +4,14 @@ import facerecog.FrameGenerator;
 import facerecog.Detection;
 import facerecog.Recognition;
 import facerecog.Tracking;
+import sapphire.app.DMSpec;
 import sapphire.common.SapphireObjectID;
 import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
 import sapphire.oms.OMSServer;
+import sapphire.app.Language;
+import sapphire.app.SapphireObjectSpec;
+import sapphire.policy.DefaultSapphirePolicy;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -53,7 +57,15 @@ public class DemoAppStart {
                 }
                 else if (args[4].equalsIgnoreCase("tracking")) {
                     /* recog is a remote object that has handles to the iostream of recognition.py running on server */
-                    SapphireObjectID sapphireObjId = server.createSapphireObject("facerecog.Recognition");
+                    SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+                            .setLang(Language.java)
+                            .setJavaClassName("facerecog.Recognition").addDMSpec(
+                                    DMSpec.newBuilder()
+                                    .setName(DefaultSapphirePolicy.class.getName())
+                                    .create())
+                            .create();
+
+                    SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
                     Recognition recog = (Recognition)server.acquireSapphireObjectStub(sapphireObjId);
                     Tracking track = new Tracking(recog, args[6]);
 
