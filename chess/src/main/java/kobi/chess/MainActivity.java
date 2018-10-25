@@ -47,6 +47,8 @@ import java.rmi.registry.Registry;
 
 import engine.ChessEngine;
 import engine.SimpleEngine;
+import sapphire.app.Language;
+import sapphire.app.SapphireObjectSpec;
 import sapphire.common.SapphireObjectID;
 import sapphire.kernel.server.KernelServer;
 import sapphire.kernel.server.KernelServerImpl;
@@ -62,7 +64,8 @@ public class MainActivity extends Activity {
 	private ChessEngine engine;
 	private int ply = 0;
 	private boolean moveEnabled = false;
-	private static int cnt = 0;
+	private SamplePrint samplePrint;
+    private static int cnt = 0;
 
 
 	private MyHandler mMyHandler = new MyHandler();
@@ -87,12 +90,16 @@ public class MainActivity extends Activity {
 			Registry registry;
 
 			// ToDo: DO not use direct String to configure, convert to a Configuration file and use the IPs
+			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+					.setLang(Language.java)
+					.setJavaClassName("chessmanager.ChessManager")
+					.create();
 			registry = LocateRegistry.getRegistry(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1]));
 
 			OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
 
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(Configuration.hostAddress[2], Integer.parseInt(Configuration.hostAddress[3])), new InetSocketAddress(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1])));
-			SapphireObjectID sapphireObjId = server.createSapphireObject("chessmanager.ChessManager");
+			SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
 			ChessManager newChessManager = (ChessManager) server.acquireSapphireObjectStub(sapphireObjId);
 
 
@@ -350,14 +357,12 @@ public class MainActivity extends Activity {
                  */
 
 				System.out.println("Migrating object with cnt as " + cnt);
-				InetSocketAddress ksInfo ;
-				 if (cnt%2==1){
-					  ksInfo=new InetSocketAddress(Configuration.kernelServerAddress[0],Integer.parseInt(Configuration.kernelServerAddress[1]));
-
-				 }else {
-					 ksInfo=new InetSocketAddress(Configuration.kernelServerAddress[2],Integer.parseInt(Configuration.kernelServerAddress[3]));
-
-				 }
+               InetSocketAddress ksInfo;
+				if (cnt%2==1) {
+					ksInfo = new InetSocketAddress(Configuration.kernelServerAddress[0], Integer.parseInt(Configuration.kernelServerAddress[1]));
+				}else {
+					 ksInfo = new  InetSocketAddress(Configuration.kernelServerAddress[2], Integer.parseInt(Configuration.kernelServerAddress[3]));
+				}
 				((SimpleEngine) engine).migrateObject(ksInfo);
                 cnt++;
             } catch (Exception e) {

@@ -15,7 +15,6 @@ import chesspresso.*;
 import chesspresso.move.*;
 import chesspresso.position.*;
 import sapphire.app.SapphireObject;
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 /**
  * @author Administrator
@@ -23,7 +22,8 @@ import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class SimpleEngine implements ChessEngine, SapphireObject<ExplicitMigrationPolicy> {
+
+public class SimpleEngine implements ChessEngine, SapphireObject {
 	private Position position;
 	private boolean computerIsWhite;
 	private int ply;
