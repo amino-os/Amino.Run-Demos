@@ -1,17 +1,17 @@
 package sapphire.appexamples.minnietwitter.app;
 
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
+import sapphire.app.Language;
 import sapphire.app.SapphireObject;
 import static sapphire.runtime.Sapphire.*;
-import sapphire.policy.dht.DHTPolicy;
-import sapphire.policy.interfaces.dht.DHTInterface;
-import sapphire.policy.interfaces.dht.DHTKey;
 
-public class UserManager implements SapphireObject<DHTPolicy>, DHTInterface {
+import sapphire.app.SapphireObjectSpec;
+import sapphire.policy.dht.DHTKey;
+
+public class UserManager implements SapphireObject {
 	Map<DHTKey, User> users;
 	private TagManager tm;
 
@@ -22,7 +22,14 @@ public class UserManager implements SapphireObject<DHTPolicy>, DHTInterface {
 
 	public User addUser(String username, String passwd) {
 
-		User user = (User) new_(User.class, new UserInfo(username, passwd), tm);
+		SapphireObjectSpec userSpec;
+
+		userSpec = SapphireObjectSpec.newBuilder()
+				.setLang(Language.java)
+				.setJavaClassName(User.class.getName())
+				.create();
+
+		User user = (User) new_(userSpec, new UserInfo(username, passwd), tm);
 		user.initialize(user);
 		users.put(new DHTKey(username), user);
 
@@ -76,8 +83,4 @@ public class UserManager implements SapphireObject<DHTPolicy>, DHTInterface {
 		return true;
 	}
 
-	@Override
-	public Map<DHTKey, ?> dhtGetData() {
-		return users;
-	}
 }

@@ -34,15 +34,15 @@ $ sudo adb uninstall com.example.minnietwitter
 
 ### Run Oms
 ```
-$ ./gradlew runOms
+$ ./gradlew runoms
 ```
 
 ### Run KernelServer
 ```
-$ ./gradlew runKernelServer
+$ ./gradlew runks
 ```
 
 ### Run App
 ```
-$ ./gradlew runApp
+$ ./gradlew runapp
 ```
