@@ -74,8 +74,15 @@ RUN git clone https://github.com/davisking/dlib.git && \
     pip install imutils && \
     pip install imageio
 
-RUN cd ~ && \
-    wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
-    tar -xzf jdk-8u181-linux-x64.tar.gz
+# NOTE: Oracle regularly change the versions available for download - so update the below appropriately.
+#       See https://github.com/dockerfile/java/issues/36
+RUN \
+    JAVA_VERSION_MAJOR=8 \
+    JAVA_VERSION_MINOR=191 \
+    JAVA_VERSION_BUILD=12 \
+    JAVA_DOWNLOAD_HASH=2787e4a523244c269598db4e85c51e0c && \
+    cd ~ && \
+    wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_DOWNLOAD_HASH}/jdk-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz && \
+    tar -xzf jdk-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz
 
 COPY ./ /home/face-recognition-demo/
