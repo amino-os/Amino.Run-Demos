@@ -38,7 +38,7 @@ public class RegisterActivity extends Activity {
         EditText editText2 = (EditText) findViewById(R.id.reg_password);
         String password = editText2.getText().toString();
         if(username.matches("") || password.matches("")) {
-            Toast.makeText(this, "Above Fields cannot be empty!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Username, Password cannot be empty!!", Toast.LENGTH_SHORT).show();
         } else {
             new NewUser().execute(username, password);
         }
