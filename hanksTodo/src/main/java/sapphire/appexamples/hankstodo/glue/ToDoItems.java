@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import amino.run.common.MicroServiceCreationException;
 import sapphire.appexamples.hankstodo.device.TodoActivity;
 
 public class ToDoItems extends Activity {
@@ -75,7 +76,11 @@ public class ToDoItems extends Activity {
     private class CreateToDoList extends AsyncTask<String, Void, String>{
         protected String doInBackground(String... params) {
             String response = null;
-            TodoActivity.createNewToDoList(params[0]);
+            try {
+                TodoActivity.createNewToDoList(params[0]);
+            } catch (MicroServiceCreationException e) {
+                e.printStackTrace();
+            }
             return response;
         }
     }

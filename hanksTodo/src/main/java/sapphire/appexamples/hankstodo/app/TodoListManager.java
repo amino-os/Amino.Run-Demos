@@ -3,23 +3,24 @@ package sapphire.appexamples.hankstodo.app;
 import java.util.Hashtable;
 import java.util.Map;
 
-import sapphire.app.DMSpec;
-import sapphire.app.Language;
-import sapphire.app.SapphireObject;
-import static sapphire.runtime.Sapphire.*;
+import amino.run.app.DMSpec;
+import amino.run.app.Language;
+import amino.run.app.MicroServiceSpec;
+import amino.run.app.SapphireObject;
+import amino.run.common.MicroServiceCreationException;
+import amino.run.policy.cache.CacheLeasePolicy;
+import amino.run.policy.dht.DHTKey;
 
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.cache.CacheLeasePolicy;
-import sapphire.policy.dht.DHTKey;
+import static amino.run.runtime.Sapphire.new_;
 
-public class TodoListManager implements SapphireObject{
+public class TodoListManager implements SapphireObject {
     Map<DHTKey, TodoList> todoLists = new Hashtable<DHTKey, TodoList>();
 
-	public TodoList newTodoList(String name) {
+	public TodoList newTodoList(String name) throws MicroServiceCreationException {
 		TodoList t = todoLists.get(new DHTKey(name));
 		if (t == null) {
 
-			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+			MicroServiceSpec spec = MicroServiceSpec.newBuilder()
 					.setLang(Language.java)
 					.setJavaClassName(TodoList.class.getName()).addDMSpec(
 							DMSpec.newBuilder()
