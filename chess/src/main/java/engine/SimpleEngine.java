@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import amino.run.app.SapphireObject;
 import chesspresso.*;
 import chesspresso.move.*;
 import chesspresso.position.*;
-import sapphire.app.SapphireObject;
 
 /**
  * @author Administrator

@@ -40,19 +40,20 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import amino.run.app.Language;
+import amino.run.app.MicroServiceSpec;
+import amino.run.app.Registry;
+import amino.run.common.MicroServiceID;
+import amino.run.kernel.server.KernelServer;
+import amino.run.kernel.server.KernelServerImpl;
 import chessmanager.ChessManager;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 import engine.ChessEngine;
 import engine.SimpleEngine;
-import sapphire.app.Language;
-import sapphire.app.SapphireObjectSpec;
-import sapphire.common.SapphireObjectID;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
+
 
 public class MainActivity extends Activity {
 	public static final int ACITIVITY_OPTIONS = 1;
@@ -66,10 +67,8 @@ public class MainActivity extends Activity {
 	private boolean moveEnabled = false;
 	private static int cnt = 0;
 
-
 	private MyHandler mMyHandler = new MyHandler();
-	
-	
+
 	/**
 	 * Constructor class
 	 */
@@ -86,21 +85,19 @@ public class MainActivity extends Activity {
         StrictMode.setThreadPolicy(policy);
 
 		try {
-			Registry registry;
-
+			java.rmi.registry.Registry registry;
 			// ToDo: DO not use direct String to configure, convert to a Configuration file and use the IPs
-			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+			MicroServiceSpec spec = MicroServiceSpec.newBuilder()
 					.setLang(Language.java)
 					.setJavaClassName("chessmanager.ChessManager")
 					.create();
 			registry = LocateRegistry.getRegistry(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1]));
 
-			OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+			Registry server = (Registry) registry.lookup("SapphireOMS");
 
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(Configuration.hostAddress[2], Integer.parseInt(Configuration.hostAddress[3])), new InetSocketAddress(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1])));
-			SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
-			ChessManager newChessManager = (ChessManager) server.acquireSapphireObjectStub(sapphireObjId);
-
+			MicroServiceID microServiceId = server.create(spec.toString());
+			ChessManager newChessManager = (ChessManager) server.acquireStub(microServiceId);
 			engine = newChessManager.getSimpleEngine();
 
 		} catch (Exception e) {
@@ -116,9 +113,7 @@ public class MainActivity extends Activity {
         
         // sets textView
         txtStatus = (TextView)this.findViewById(R.id.txtStatus);
-        
-        
-        
+
         // sets view   
         final BoardView boardView = (BoardView)findViewById(R.id.BoardView);
         boardView.setFocusableInTouchMode(true);
@@ -129,9 +124,7 @@ public class MainActivity extends Activity {
         this.boardView.displayPieces(engine.getBoard(ply));
         
         boardView.setOnTouchListener(new OnTouchListener() {
-
 			public boolean onTouch(View v, MotionEvent event) {
-				
 				if (engine.isWhiteTurn())
 				{
 					switch (event.getAction())
@@ -170,15 +163,9 @@ public class MainActivity extends Activity {
 						break;
 					}
 				}
-				
 				return true;
 			}
-		
-			
-        
         });
-        
-        
     }
     
     private void PlayerMove(String move)
@@ -204,7 +191,6 @@ public class MainActivity extends Activity {
     		move = "O-O-O";
     	}
     	
-    	
     	String res = engine.makeMove(move);
     	System.out.println("Result of the first makeMove() is " + res);
     	if (res.startsWith("ERROR")) {
@@ -223,14 +209,12 @@ public class MainActivity extends Activity {
 				System.out.println("First else for makeComputerMove()");
     			makeComputerMove();
     		}
-    		
     	}
     	else 
     	{
 			System.out.println("Second else for makeComputerMove()");
     		makeComputerMove();
     	}
-    	
     	//return res;
     }
     
@@ -258,7 +242,6 @@ public class MainActivity extends Activity {
 	    	case 'g': x = 6; break;
 	    	case 'h': x = 7; break;
     	}
-    	
     	return getSelectedPiece(bitBoard, x, y);
     }
     
@@ -282,7 +265,6 @@ public class MainActivity extends Activity {
     	threadMove();
 		txtStatus.setText(R.string.activity_thinking);
     	//new ComputerMoveTask().execute();
-
     }
     
 	public void threadMove() {
@@ -301,11 +283,9 @@ public class MainActivity extends Activity {
 				computerMove();
 			}
 		});*/
-
 	}
 	
 	private class ComputerMoveTask extends AsyncTask<Void, Void, Void> {
-
 		@Override
 		protected Void doInBackground(Void... params) {
 			threadMove();
@@ -323,8 +303,6 @@ public class MainActivity extends Activity {
 			txtStatus.setText(R.string.activity_thinking);
 			super.onPreExecute();
 		}
-
-		
 	}
     
     /**
@@ -336,8 +314,6 @@ public class MainActivity extends Activity {
         System.out.println("Inside the computerMove() with count as " + cnt++);
         if (cnt % 5 == 0) {
             try {
-
-
                 /*TODO
                   OMS.getServer will be  used  and then a random server will be picked from List
                   Same will used in migration
@@ -505,8 +481,6 @@ public class MainActivity extends Activity {
     	    }
     	})
     	.show();
-    	
-    	
     }
 	
 	
@@ -527,5 +501,5 @@ public class MainActivity extends Activity {
 			this.sendMessageDelayed(obtainMessage(0), 1);
 		}
     	
-    };
+    }
 }
