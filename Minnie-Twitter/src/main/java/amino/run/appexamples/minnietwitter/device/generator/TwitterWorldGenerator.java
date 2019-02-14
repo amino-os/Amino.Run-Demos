@@ -2,7 +2,6 @@ package amino.run.appexamples.minnietwitter.device.generator;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,26 +23,38 @@ public class TwitterWorldGenerator {
 	public static UserManager userManager;
 
 	public static void setObject(String[] args){
-		Registry registry;
+		java.rmi.registry.Registry registry;
 		try {
 			registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-			OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+			Registry server = (Registry) registry.lookup("SapphireOMS");
 
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(args[2], Integer.parseInt(args[3])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
 			/* Creating the Spec */
 
-			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+			MicroServiceSpec spec = MicroServiceSpec.newBuilder()
 					.setLang(Language.java)
 					.setJavaClassName("amino.run.appexamples.minnietwitter.app.TwitterManager")
 					.create();
 
 			/* Get Twitter and User Manager */
-			SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
-			TwitterManager tm = (TwitterManager) server.acquireSapphireObjectStub(sapphireObjId);
+			MicroServiceID microServiceId = server.create(spec.toString());
+			TwitterManager tm = (TwitterManager) server.acquireStub(microServiceId);
 
 			/* To set a name to sapphire object. It is required to set the name if the object has to be shared */
-			server.setSapphireObjectName(sapphireObjId, "MyTwitterManager");
+			server.setName(microServiceId, "MyTwitterManager");
+
+                        /* Attach to sapphire object is to get reference to shared sapphire object. Generally it
+                        is not done in the same thread which creates sapphire object. In this example,
+                        Twitter manager sapphire object is created just above in same thread. Below attach call
+                        has no significance. It is just used to show the usage of API. */
+			TwitterManager tmAttached =
+					(TwitterManager) server.attachTo("MyTwitterManager");
+
+                        /* Detach from the shared sapphire object. It is necessary to explicitly call detach to
+                        un-reference the sapphire object. This call is not required here if attach call was not
+                        made above */
+			server.detachFrom("MyTwitterManager");
 
 			userManager = tm.getUserManager();
 			TagManager tagManager = tm.getTagManager();

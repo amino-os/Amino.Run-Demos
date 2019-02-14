@@ -11,6 +11,7 @@ import static amino.run.runtime.Sapphire.*;
 import amino.run.app.SapphireObjectSpec;
 import amino.run.policy.dht.DHTKey;
 
+@SapphireConfiguration(Policies = "amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy")
 public class UserManager implements SapphireObject {
 	Map<DHTKey, User> users;
 	private TagManager tm;
@@ -22,14 +23,18 @@ public class UserManager implements SapphireObject {
 
 	public User addUser(String username, String passwd) {
 
-		SapphireObjectSpec userSpec;
+		MicroServiceSpec userSpec;
+		User user = null;
 
-		userSpec = SapphireObjectSpec.newBuilder()
+		userSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(User.class.getName())
 				.create();
-
-		User user = (User) new_(userSpec, new UserInfo(username, passwd), tm);
+		try {
+			user = (User) new_(userSpec, new UserInfo(username, passwd), tm);
+		} catch (MicroServiceCreationException e) {
+			e.printStackTrace();
+		}
 		user.initialize(user);
 		users.put(new DHTKey(username), user);
 

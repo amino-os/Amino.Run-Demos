@@ -26,8 +26,8 @@ public class User implements SapphireObject {
 	}
 
 	public void initialize(User u) {
-		SapphireObjectSpec timelineSpec;
-		timelineSpec = SapphireObjectSpec.newBuilder()
+		MicroServiceSpec timelineSpec;
+		timelineSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(Timeline.class.getName())
 				.addDMSpec(
@@ -35,8 +35,11 @@ public class User implements SapphireObject {
 								.setName(AtLeastOnceRPCPolicy.class.getName())
 								.create())
 				.create();
-
-		timeline = (Timeline) new_(timelineSpec, u, tagManager);
+		try {
+			timeline = (Timeline) new_(timelineSpec, u, tagManager);
+		} catch (MicroServiceCreationException e) {
+			e.printStackTrace();
+		}
 		timeline.initialize(timeline);
 	}
 

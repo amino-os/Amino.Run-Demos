@@ -12,13 +12,13 @@ public class TwitterManager implements SapphireObject {
 	private TagManager tagManager;
 	
 	public TwitterManager() {
-		SapphireObjectSpec tagManagerSpec,userManagerSpec;
+		MicroServiceSpec tagManagerSpec,userManagerSpec;
 
-		tagManagerSpec = SapphireObjectSpec.newBuilder()
+		tagManagerSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(TagManager.class.getName())
 				.create();
-	    userManagerSpec = SapphireObjectSpec.newBuilder()
+	    userManagerSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(UserManager.class.getName())
 				.addDMSpec(
@@ -26,9 +26,12 @@ public class TwitterManager implements SapphireObject {
 								.setName(AtLeastOnceRPCPolicy.class.getName())
 								.create())
 				.create();
-
-		tagManager = (TagManager) new_(tagManagerSpec);
-		userManager = (UserManager) new_(userManagerSpec, tagManager);
+		try {
+			tagManager = (TagManager) new_(tagManagerSpec);
+			userManager = (UserManager) new_(userManagerSpec, tagManager);
+		} catch (MicroServiceCreationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public UserManager getUserManager() {

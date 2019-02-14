@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amino.run.app.SapphireObject;
+import amino.run.runtime.SapphireConfiguration;
 
-
+@SapphireConfiguration(Policies = "amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy")
 public class Timeline implements SapphireObject {
 	//private User user;
 	private String userName;
