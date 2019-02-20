@@ -253,9 +253,9 @@ subprojects {
     task genMinnieTwitterStubs(type: JavaExec) {
         main = "sapphire.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-        def pkgName = 'sapphire.appexamples.minnietwitter.app'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/sapphire/appexamples/minnietwitter/app/"
-        def dst = "$projectDir.parent/src/main/java/sapphire/appexamples/minnietwitter/app/stubs/"
+        def pkgName = 'amino.run.appexamples.minnietwitter.app'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/amino/run/appexamples/minnietwitter/app/"
+        def dst = "$projectDir.parent/src/main/java/amino/run/appexamples/minnietwitter/app/stubs/"
         args src, pkgName, dst
     }
     genMinnieTwitterStubs.mustRunAfter compileJava
@@ -278,7 +278,7 @@ subprojects {
 
     task runapp(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
+        main = 'amino.run.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
         args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
     }
 }

@@ -1,15 +1,15 @@
-package sapphire.appexamples.minnietwitter.app;
+package amino.run.appexamples.minnietwitter.app;
 
 import java.security.MessageDigest;
 import java.util.Hashtable;
 import java.util.Map;
 
-import sapphire.app.Language;
-import sapphire.app.SapphireObject;
-import static sapphire.runtime.Sapphire.*;
+import amino.run.app.Language;
+import amino.run.app.SapphireObject;
+import static amino.run.runtime.Sapphire.*;
 
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.dht.DHTKey;
+import amino.run.app.SapphireObjectSpec;
+import amino.run.policy.dht.DHTKey;
 
 public class UserManager implements SapphireObject {
 	Map<DHTKey, User> users;

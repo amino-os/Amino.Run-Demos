@@ -1,9 +1,9 @@
-package sapphire.appexamples.minnietwitter.app;
+package amino.run.appexamples.minnietwitter.app;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import sapphire.app.SapphireObject;
+import amino.run.app.SapphireObject;
 
 
 public class Timeline implements SapphireObject {
