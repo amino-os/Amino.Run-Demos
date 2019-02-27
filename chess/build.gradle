@@ -150,7 +150,4 @@ subprojects {
     }
 
 }
-    // Task for Stub generation
-
-// Start kernel server with "gradlew runks"
 

@@ -283,3 +283,4 @@ subprojects {
         args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
     }
 }
+
