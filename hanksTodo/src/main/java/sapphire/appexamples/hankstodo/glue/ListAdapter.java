@@ -14,14 +14,14 @@ import android.widget.TextView;
 import com.example.hankstodo.R;
 
 public class ListAdapter extends ArrayAdapter<String> {
-    customButtonListener customListner;
+    customButtonListener customListener;
 
     public interface customButtonListener {
         void onButtonClickListner(int position, String value);
     }
 
     public void setCustomButtonListner(customButtonListener listener) {
-        this.customListner = listener;
+        this.customListener = listener;
     }
 
     private Context context;
@@ -53,8 +53,8 @@ public class ListAdapter extends ArrayAdapter<String> {
         viewHolder.button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (customListner != null) {
-                    customListner.onButtonClickListner(position, temp);
+                if (customListener != null) {
+                    customListener.onButtonClickListner(position, temp);
                 }
 
             }

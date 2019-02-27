@@ -113,5 +113,6 @@ subprojects {
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
 
-    //Todo: Add gradle task for running app in emulator from command line.
+    // TODO: Add gradle task for running app in emulator from command line.
+    // Link for reference: https://developer.android.com/studio/run/emulator-commandline
 }

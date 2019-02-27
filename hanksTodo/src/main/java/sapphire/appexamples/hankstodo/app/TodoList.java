@@ -42,30 +42,40 @@ public class TodoList implements SapphireObject {
         return toDos.get(subject);
     }
 
-    public void completeToDo(String content) {}
-
-	public ArrayList<Object> getHighPriority() {
-		return new ArrayList<Object>();
-	}
-
-	public void removeToDo(String subject, String content) {
-		String oldContent = toDos.get(subject);
+    /**
+     * Remove a to do item from to do list.
+     *
+     * @param subject
+     * @param content
+     * @return
+     */
+    public void removeToDo(String subject, String content) {
+        String oldContent = toDos.get(subject);
         String[] items = oldContent.split(", ");
         List<String> list = new ArrayList<String>(Arrays.asList(items));
         list.remove(content);
         items = list.toArray(new String[0]);
-        String newContent = convertStringArrayToString(items, ", ");
-		toDos.put(subject, newContent);
-		System.out.println("ToDo item removed.");
-	}
+        if (items.length != 0) {
+            String newContent = convertStringArrayToString(items, ", ");
+            toDos.put(subject, newContent);
+        } else {
+            toDos.put(subject, "");
+        }
+        System.out.println("ToDo item removed.");
+    }
 
+    /**
+     * Convert from string array to string.
+     *
+     * @param strArr
+     * @param delimiter
+     * @return
+     */
     private static String convertStringArrayToString(String[] strArr, String delimiter) {
         StringBuilder sb = new StringBuilder();
-        for (String str : strArr)
+        for (String str : strArr) {
             sb.append(str).append(delimiter);
-        if(sb.length() >= delimiter.length()) {
-            return sb.substring(0, sb.length() - delimiter.length());
         }
-        return sb.substring(0, sb.length());
+        return sb.substring(0, sb.length() - delimiter.length());
     }
 }

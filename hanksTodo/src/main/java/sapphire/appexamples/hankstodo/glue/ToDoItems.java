@@ -19,7 +19,7 @@ import sapphire.appexamples.hankstodo.device.TodoActivity;
 import sapphire.appexamples.hankstodo.glue.ListAdapter.customButtonListener;
 
 public class ToDoItems extends Activity implements customButtonListener {
-	public final static String EXTRA_MESSAGE = "com.example.hankstodo.MESSAGE";
+    public final static String EXTRA_MESSAGE = "com.example.hankstodo.MESSAGE";
     private ArrayList<String> items;
     private ListAdapter adapter;
     private ListView lvItems;
