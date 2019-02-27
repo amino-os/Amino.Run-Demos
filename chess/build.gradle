@@ -102,14 +102,6 @@ subprojects {
         into 'build/classes/java/main/'
     }
 
-    // Task for Stub compilation
-    task compileChessStubs(type: JavaCompile) {
-        source = sourceSets.main.java.srcDirs
-        classpath = sourceSets.main.compileClasspath
-        destinationDir = sourceSets.main.output.classesDir
-        options.incremental = true
-    }
-
     // Task for Stub generation
     task genChessStubs(type: JavaExec) {
         main = "sapphire.compiler.StubGenerator"
@@ -119,16 +111,34 @@ subprojects {
         def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
         def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
         args src, pkgName, dst
-
-        def pkgName1 = 'engine'
-        def src1 = "$projectDir.parent/build/intermediates/classes/debug/engine"
-        def dst1 = "$projectDir.parent/src/main/java/engine/stubs/"
-        args src1, pkgName1, dst1
-
     }
+
+    // Task for Stub generation
+    task genEngineStubs(type: JavaExec){
+        dependsOn genChessStubs
+        main = "sapphire.compiler.StubGenerator"
+        classpath = sourceSets.main.runtimeClasspath
+        def pkgName = 'engine'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/engine"
+        def dst = "$projectDir.parent/src/main/java/engine/stubs/"
+        outputs.dir dst
+        args src, pkgName, dst
+    }
+
+    // Task for Stub compilation
+    task compileChessStubs(type: JavaCompile) {
+        source = sourceSets.main.java.srcDirs
+        classpath = sourceSets.main.compileClasspath
+        destinationDir = sourceSets.main.output.classesDir
+        options.incremental = true
+    }
+
     genChessStubs.mustRunAfter compileJava
     genChessStubs.dependsOn copyClasses
     compileChessStubs.dependsOn genChessStubs
+    genEngineStubs.mustRunAfter compileJava
+    genEngineStubs.dependsOn copyClasses
+    compileChessStubs.dependsOn genEngineStubs
     fatJar.dependsOn compileChessStubs
 
     task runoms(type: JavaExec) {
@@ -143,10 +153,11 @@ subprojects {
         main = 'sapphire.kernel.server.KernelServerImpl'
         args project.property('kernelServer1Ip'), project.property('kernelServer1Port'), project.property('omsIp'), project.property('omsPort')
     }
+
     task runks2 (type: JavaExec){
-     classpath = sourceSets.main.runtimeClasspath
-     main = 'sapphire.kernel.server.KernelServerImpl'
-     args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'sapphire.kernel.server.KernelServerImpl'
+        args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
     }
 
 }
