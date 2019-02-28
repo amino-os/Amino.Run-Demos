@@ -12,7 +12,6 @@ dependencies {
     implementation 'com.huawei.paas:apache.harmony:1.0.0'
 }
 
-
 // Task for Stub compilation
 task compileRecogStub(type: JavaCompile) {
     source = sourceSets.main.java.srcDirs
@@ -23,7 +22,7 @@ task compileRecogStub(type: JavaCompile) {
 
 // Task for Stub generation
 task genRecogStub(type: JavaExec) {
-    main = "sapphire.compiler.StubGenerator"
+    main = "amino.run.compiler.StubGenerator"
     classpath = sourceSets.main.runtimeClasspath
     def pkgName = 'facerecog'
     def src = "$projectDir/build/classes/java/main/facerecog/"
@@ -39,14 +38,14 @@ jar.dependsOn compileRecogStub
 task runoms(type: JavaExec) {
     dependsOn jar
     classpath = sourceSets.main.runtimeClasspath
-    main = 'sapphire.oms.OMSServerImpl'
+    main = 'amino.run.oms.OMSServerImpl'
     args project.property('omsIp'), project.property('omsPort')
 }
 
 // Task for running the Kernel Server
 task runks(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'sapphire.kernel.server.KernelServerImpl'
+    main = 'amino.run.kernel.server.KernelServerImpl'
     args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
 }
 
