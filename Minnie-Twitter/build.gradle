@@ -270,11 +270,5 @@ subprojects {
         main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
-
-    task runapp(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'amino.run.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
-        args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
-    }
 }
 

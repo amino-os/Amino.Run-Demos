@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amino.run.app.Language;
-import amino.run.app.SapphireObjectSpec;
+import amino.run.app.MicroServiceSpec;
+import amino.run.app.Registry;
 import amino.run.appexamples.minnietwitter.app.TagManager;
 import amino.run.appexamples.minnietwitter.app.Timeline;
 import amino.run.appexamples.minnietwitter.app.Tweet;
@@ -14,10 +15,9 @@ import amino.run.appexamples.minnietwitter.app.TweetContainer;
 import amino.run.appexamples.minnietwitter.app.TwitterManager;
 import amino.run.appexamples.minnietwitter.app.UserManager;
 import amino.run.appexamples.minnietwitter.app.User;
-import amino.run.common.SapphireObjectID;
+import amino.run.common.MicroServiceID;
 import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
-import amino.run.oms.OMSServer;
 
 public class TwitterWorldGenerator {
 	public static UserManager userManager;

@@ -3,11 +3,9 @@ package amino.run.appexamples.minnietwitter.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import amino.run.app.SapphireObject;
-import amino.run.runtime.SapphireConfiguration;
+import amino.run.app.MicroService;
 
-@SapphireConfiguration(Policies = "amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy")
-public class Timeline implements SapphireObject {
+public class Timeline implements MicroService {
 	//private User user;
 	private String userName;
 

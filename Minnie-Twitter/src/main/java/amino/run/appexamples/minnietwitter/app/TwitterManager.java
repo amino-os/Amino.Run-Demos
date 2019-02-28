@@ -2,12 +2,18 @@ package amino.run.appexamples.minnietwitter.app;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Language;
-import amino.run.app.SapphireObject;
-import amino.run.app.SapphireObjectSpec;
+import amino.run.app.MicroServiceSpec;
+import amino.run.app.MicroService;
+import amino.run.common.MicroServiceCreationException;
 import amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
-import static amino.run.runtime.Sapphire.*;
 
-public class TwitterManager implements SapphireObject {
+import java.util.logging.Logger;
+
+import static amino.run.runtime.MicroService.delete_;
+import static amino.run.runtime.MicroService.new_;
+
+public class TwitterManager implements MicroService {
+	private static Logger logger = Logger.getLogger(TwitterManager.class.getName());
 	private UserManager userManager;
 	private TagManager tagManager;
 	
@@ -30,7 +36,7 @@ public class TwitterManager implements SapphireObject {
 			tagManager = (TagManager) new_(tagManagerSpec);
 			userManager = (UserManager) new_(userManagerSpec, tagManager);
 		} catch (MicroServiceCreationException e) {
-			e.printStackTrace();
+			logger.warning("Creating MicroService failed" + e.toString());
 		}
 	}
 

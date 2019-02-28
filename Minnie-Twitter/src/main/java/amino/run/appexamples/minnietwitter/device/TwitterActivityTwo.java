@@ -2,20 +2,23 @@ package amino.run.appexamples.minnietwitter.device;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.List;
 
+import amino.run.app.Language;
+import amino.run.app.Registry;
 import amino.run.appexamples.minnietwitter.app.Timeline;
 import amino.run.appexamples.minnietwitter.app.TagManager;
 import amino.run.appexamples.minnietwitter.app.Tweet;
 import amino.run.appexamples.minnietwitter.app.TwitterManager;
 import amino.run.appexamples.minnietwitter.app.User;
 import amino.run.appexamples.minnietwitter.app.UserManager;
-import amino.run.common.SapphireObjectID;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceID;
 import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
-import amino.run.oms.OMSServer;
 
+//TODO: Convert this into android application and make changes as per latest amino code and this is required as it
+// covers multi-user scenario.
 public class TwitterActivityTwo {
     /**
      * To execute this application, please pass in three parameters: <OMS-IP> <OMS-Port> <KernelServer-Port>
@@ -28,8 +31,9 @@ public class TwitterActivityTwo {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        Registry registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-        OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+        java.rmi.registry.Registry registry;
+        registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
+        Registry server = (Registry) registry.lookup("SapphireOMS");
 
         // This kernel server is a fake kernel server. It is _not_ registered in OMS. Therefore
         // there will be no Sapphire object on this server. The purpose of creating such a fake
@@ -41,8 +45,15 @@ public class TwitterActivityTwo {
         // other kernel servers. To keep things simple, I hard coded it as "127.0.0.2".
         KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress("127.0.0.2", Integer.parseInt(args[2])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
-        SapphireObjectID sapphireObjId = server.createSapphireObject("amino.run.appexamples.minnietwitter.app.TwitterManager");
-        TwitterManager tm = (TwitterManager)server.acquireSapphireObjectStub(sapphireObjId);
+        /* Creating the Spec */
+
+        MicroServiceSpec spec = MicroServiceSpec.newBuilder()
+                .setLang(Language.java)
+                .setJavaClassName("sapphire.appexamples.minnietwitter.app.TwitterManager")
+                .create();
+
+        MicroServiceID sapphireObjId = server.create(spec.toString());
+        TwitterManager tm = (TwitterManager)server.acquireStub(sapphireObjId);
         System.out.println("Received Twitter Manager Stub: " + tm);
 
         UserManager userManger = tm.getUserManager();

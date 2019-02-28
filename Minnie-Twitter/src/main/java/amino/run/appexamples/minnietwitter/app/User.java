@@ -2,16 +2,20 @@ package amino.run.appexamples.minnietwitter.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Language;
-import amino.run.app.SapphireObject;
-import amino.run.app.SapphireObjectSpec;
+import amino.run.app.MicroService;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceCreationException;
 import amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
 
-import static amino.run.runtime.Sapphire.*;
+import static amino.run.runtime.MicroService.delete_;
+import static amino.run.runtime.MicroService.new_;
 
-public class User implements SapphireObject {
+public class User implements MicroService {
+	private static Logger logger = Logger.getLogger(User.class.getName());
 	private Timeline timeline;
 	private UserInfo ui;
 	List<User> followers;
@@ -38,7 +42,7 @@ public class User implements SapphireObject {
 		try {
 			timeline = (Timeline) new_(timelineSpec, u, tagManager);
 		} catch (MicroServiceCreationException e) {
-			e.printStackTrace();
+			logger.warning("Creating MicroService failed" + e.toString());
 		}
 		timeline.initialize(timeline);
 	}
