@@ -5,15 +5,15 @@ import java.util.Map;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Language;
+import amino.run.app.MicroService;
 import amino.run.app.MicroServiceSpec;
-import amino.run.app.SapphireObject;
 import amino.run.common.MicroServiceCreationException;
 import amino.run.policy.cache.CacheLeasePolicy;
 import amino.run.policy.dht.DHTKey;
 
-import static amino.run.runtime.Sapphire.new_;
+import static amino.run.runtime.MicroService.new_;
 
-public class TodoListManager implements SapphireObject {
+public class TodoListManager implements MicroService {
     Map<DHTKey, TodoList> todoLists = new Hashtable<DHTKey, TodoList>();
 
 	public TodoList newTodoList(String name) throws MicroServiceCreationException {
