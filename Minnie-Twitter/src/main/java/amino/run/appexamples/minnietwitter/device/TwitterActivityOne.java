@@ -1,21 +1,21 @@
-package sapphire.appexamples.minnietwitter.device;
+package amino.run.appexamples.minnietwitter.device;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
 
-import sapphire.appexamples.minnietwitter.app.TagManager;
-import sapphire.appexamples.minnietwitter.app.Timeline;
-import sapphire.appexamples.minnietwitter.app.Tweet;
-import sapphire.appexamples.minnietwitter.app.TwitterManager;
-import sapphire.appexamples.minnietwitter.app.User;
-import sapphire.appexamples.minnietwitter.app.UserManager;
-import sapphire.common.SapphireObjectID;
-import sapphire.kernel.common.GlobalKernelReferences;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
+import amino.run.appexamples.minnietwitter.app.TagManager;
+import amino.run.appexamples.minnietwitter.app.Timeline;
+import amino.run.appexamples.minnietwitter.app.Tweet;
+import amino.run.appexamples.minnietwitter.app.TwitterManager;
+import amino.run.appexamples.minnietwitter.app.User;
+import amino.run.appexamples.minnietwitter.app.UserManager;
+import amino.run.common.SapphireObjectID;
+import amino.run.kernel.common.GlobalKernelReferences;
+import amino.run.kernel.server.KernelServer;
+import amino.run.kernel.server.KernelServerImpl;
+import amino.run.oms.OMSServer;
 
 public class TwitterActivityOne {
 
@@ -48,7 +48,7 @@ public class TwitterActivityOne {
         // other kernel servers. To keep things simple, I hard coded it as "127.0.0.2".
         GlobalKernelReferences.nodeServer = new KernelServerImpl(new InetSocketAddress("127.0.0.2", Integer.parseInt(args[2])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
-        SapphireObjectID sapphireObjId = server.createSapphireObject("sapphire.appexamples.minnietwitter.app.TwitterManager");
+        SapphireObjectID sapphireObjId = server.createSapphireObject("amino.run.appexamples.minnietwitter.app.TwitterManager");
         TwitterManager tm = (TwitterManager)server.acquireSapphireObjectStub(sapphireObjId);
         System.out.println("Received Twitter Manager Stub: " + tm);
 

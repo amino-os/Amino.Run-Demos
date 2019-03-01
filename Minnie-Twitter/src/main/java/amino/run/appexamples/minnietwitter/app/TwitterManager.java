@@ -1,11 +1,11 @@
-package sapphire.appexamples.minnietwitter.app;
+package amino.run.appexamples.minnietwitter.app;
 
-import sapphire.app.DMSpec;
-import sapphire.app.Language;
-import sapphire.app.SapphireObject;
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
-import static sapphire.runtime.Sapphire.*;
+import amino.run.app.DMSpec;
+import amino.run.app.Language;
+import amino.run.app.SapphireObject;
+import amino.run.app.SapphireObjectSpec;
+import amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
+import static amino.run.runtime.Sapphire.*;
 
 public class TwitterManager implements SapphireObject {
 	private UserManager userManager;

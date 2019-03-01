@@ -1,4 +1,4 @@
-package sapphire.appexamples.minnietwitter.device.generator;
+package amino.run.appexamples.minnietwitter.device.generator;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
@@ -6,19 +6,19 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import sapphire.app.Language;
-import sapphire.app.SapphireObjectSpec;
-import sapphire.appexamples.minnietwitter.app.TagManager;
-import sapphire.appexamples.minnietwitter.app.Timeline;
-import sapphire.appexamples.minnietwitter.app.Tweet;
-import sapphire.appexamples.minnietwitter.app.TweetContainer;
-import sapphire.appexamples.minnietwitter.app.TwitterManager;
-import sapphire.appexamples.minnietwitter.app.UserManager;
-import sapphire.appexamples.minnietwitter.app.User;
-import sapphire.common.SapphireObjectID;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
+import amino.run.app.Language;
+import amino.run.app.SapphireObjectSpec;
+import amino.run.appexamples.minnietwitter.app.TagManager;
+import amino.run.appexamples.minnietwitter.app.Timeline;
+import amino.run.appexamples.minnietwitter.app.Tweet;
+import amino.run.appexamples.minnietwitter.app.TweetContainer;
+import amino.run.appexamples.minnietwitter.app.TwitterManager;
+import amino.run.appexamples.minnietwitter.app.UserManager;
+import amino.run.appexamples.minnietwitter.app.User;
+import amino.run.common.SapphireObjectID;
+import amino.run.kernel.server.KernelServer;
+import amino.run.kernel.server.KernelServerImpl;
+import amino.run.oms.OMSServer;
 
 public class TwitterWorldGenerator {
 	public static UserManager userManager;
@@ -35,7 +35,7 @@ public class TwitterWorldGenerator {
 
 			SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
 					.setLang(Language.java)
-					.setJavaClassName("sapphire.appexamples.minnietwitter.app.TwitterManager")
+					.setJavaClassName("amino.run.appexamples.minnietwitter.app.TwitterManager")
 					.create();
 
 			/* Get Twitter and User Manager */
