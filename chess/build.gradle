@@ -116,7 +116,6 @@ subprojects {
         def pkgName = 'engine'
         def src = "$projectDir.parent/build/intermediates/classes/debug/engine"
         def dst = "$projectDir.parent/src/main/java/engine/stubs/"
-        outputs.dir dst
         args src, pkgName, dst
     }
 
