@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import amino.run.app.SapphireObject;
+import amino.run.app.MicroService;
 import chesspresso.*;
 import chesspresso.move.*;
 import chesspresso.position.*;
@@ -23,7 +23,7 @@ import chesspresso.position.*;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 
-public class SimpleEngine implements ChessEngine, SapphireObject {
+public class SimpleEngine implements ChessEngine, MicroService {
 	private Position position;
 	private boolean computerIsWhite;
 	private int ply;

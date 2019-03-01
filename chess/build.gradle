@@ -101,7 +101,6 @@ subprojects {
     task genChessStubs(type: JavaExec) {
         main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-
         def pkgName = 'chessmanager'
         def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
         def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
@@ -110,8 +109,7 @@ subprojects {
 
     // Task for Stub generation
     task genEngineStubs(type: JavaExec){
-        dependsOn genChessStubs
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
         def pkgName = 'engine'
         def src = "$projectDir.parent/build/intermediates/classes/debug/engine"
@@ -133,7 +131,6 @@ subprojects {
     genEngineStubs.mustRunAfter compileJava
     genEngineStubs.dependsOn copyClasses
     compileChessStubs.dependsOn genEngineStubs
-
     fatJar.dependsOn compileChessStubs
 
     task runoms(type: JavaExec) {

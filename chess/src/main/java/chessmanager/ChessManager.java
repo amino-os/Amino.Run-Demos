@@ -6,16 +6,16 @@ package chessmanager;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Language;
+import amino.run.app.MicroService;
 import amino.run.app.MicroServiceSpec;
-import amino.run.app.SapphireObject;
 import amino.run.common.MicroServiceCreationException;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 import engine.SimpleEngine;
 
-import static amino.run.runtime.Sapphire.new_;
+import static amino.run.runtime.MicroService.new_;
 
 
-public class ChessManager implements SapphireObject {
+public class ChessManager implements MicroService {
 
     private SimpleEngine simpleEngine;
 
