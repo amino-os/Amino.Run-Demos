@@ -47,7 +47,7 @@ More information on setting up OpenCV and Python bindings on Ubuntu can be found
 [here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/). Make sure to 
 use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
 
-If virtualenv is used to install OpenCV, the python path in all java files[Detection.java, Tracking.java, FrameGenerator.java, Recognition.java] should be changed to be the same as that of the virtualenv's python path.
+The python path needs to be changed accordingly before running the app.
 
 To build the Docker image, clone this repo and type at the project root:
 ```bash
