@@ -2,9 +2,9 @@ package sapphire.appexamples.hankstodo.app;
 
 import java.util.ArrayList;
 
-import sapphire.app.*;
+import amino.run.app.MicroService;
 
-public class TodoList implements SapphireObject {
+public class TodoList implements MicroService {
 	ArrayList<Object> toDos = new ArrayList<Object>();
 	String name = "Hanks todo";
 
