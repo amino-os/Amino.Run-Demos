@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import sapphire.app.*;
+import amino.run.app.MicroService;
 
-public class TodoList implements SapphireObject {
+public class TodoList implements MicroService {
     HashMap<String, String> toDos;
     String id = "0";
 

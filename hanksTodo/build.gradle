@@ -12,7 +12,7 @@ buildscript {
          * https://issuetracker.google.com/issues/38454212
          * https://github.com/requery/requery/issues/467
          */
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 }
 
@@ -58,7 +58,6 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'org.yaml:snakeyaml:1.23'
 }
 
 subprojects {
@@ -89,7 +88,7 @@ subprojects {
 
     // Task for Stub generation
     task genHanksTodoStubs(type: JavaExec) {
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
         def pkgName = 'sapphire.appexamples.hankstodo.app'
         def src = "$projectDir.parent/build/intermediates/classes/debug/sapphire/appexamples/hankstodo/app/"
@@ -103,16 +102,17 @@ subprojects {
 
     task runoms(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.oms.OMSServerImpl'
+        main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
+        main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
 
     // TODO: Add gradle task for running app in emulator from command line.
     // Link for reference: https://developer.android.com/studio/run/emulator-commandline
 }
+
