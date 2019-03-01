@@ -99,9 +99,8 @@ subprojects {
 
     // Task for Stub generation
     task genChessStubs(type: JavaExec) {
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-
         def pkgName = 'chessmanager'
         def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
         def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
@@ -110,8 +109,7 @@ subprojects {
 
     // Task for Stub generation
     task genEngineStubs(type: JavaExec){
-        dependsOn genChessStubs
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
         def pkgName = 'engine'
         def src = "$projectDir.parent/build/intermediates/classes/debug/engine"
@@ -138,21 +136,20 @@ subprojects {
     task runoms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.oms.OMSServerImpl'
+        main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
+        main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServer1Ip'), project.property('kernelServer1Port'), project.property('omsIp'), project.property('omsPort')
     }
 
     task runks2 (type: JavaExec){
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
-        args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
+     classpath = sourceSets.main.runtimeClasspath
+     main = 'amino.run.kernel.server.KernelServerImpl'
+     args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
     }
-
 }
 
