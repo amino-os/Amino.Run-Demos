@@ -64,8 +64,7 @@ public class MainActivity extends Activity {
 	private ChessEngine engine;
 	private int ply = 0;
 	private boolean moveEnabled = false;
-	private SamplePrint samplePrint;
-    private static int cnt = 0;
+	private static int cnt = 0;
 
 
 	private MyHandler mMyHandler = new MyHandler();
@@ -101,15 +100,6 @@ public class MainActivity extends Activity {
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(Configuration.hostAddress[2], Integer.parseInt(Configuration.hostAddress[3])), new InetSocketAddress(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1])));
 			SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
 			ChessManager newChessManager = (ChessManager) server.acquireSapphireObjectStub(sapphireObjId);
-
-
-			/*SamplePrint samplePrint = newChessManager.getSamplePrintManager();
-
-			for (int i = 0; i< 4; i++) {
-				samplePrint.printSampleLine();
-				samplePrint.printSampleLine2();
-				samplePrint.printSampleLine3();
-			}*/
 
 			engine = newChessManager.getSimpleEngine();
 

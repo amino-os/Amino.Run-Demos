@@ -12,7 +12,7 @@ buildscript {
          * https://issuetracker.google.com/issues/38454212
          * https://github.com/requery/requery/issues/467
          */
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath 'com.bmuschko:gradle-docker-plugin:3.0.7'
     }
 }
@@ -90,8 +90,6 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'org.yaml:snakeyaml:1.23'
-
 }
 
 task copyScripts(type: Copy){
@@ -220,8 +218,6 @@ subprojects {
 
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
-        compile 'org.graalvm:graal-sdk:1.0.0-rc7'
-        compile 'org.yaml:snakeyaml:1.23'
     }
 
     task fatJar(type: Jar) {
@@ -282,3 +278,4 @@ subprojects {
         args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
     }
 }
+
