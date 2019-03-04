@@ -223,8 +223,7 @@ subprojects {
     task fatJar(type: Jar) {
         manifest {
             attributes 'Implementation-Title': 'Gradle Uberjar',
-                    'Implementation-Version': '1.0',
-                    'Main-Class': 'sapphire.appexamples.minnietwitter.cloud.MinnieTwitterStart'
+                    'Implementation-Version': '1.0'
         }
         baseName = project.parent.name
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -247,7 +246,7 @@ subprojects {
 
     // Task for Stub generation
     task genMinnieTwitterStubs(type: JavaExec) {
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
         def pkgName = 'amino.run.appexamples.minnietwitter.app'
         def src = "$projectDir.parent/build/intermediates/classes/debug/amino/run/appexamples/minnietwitter/app/"
@@ -262,20 +261,14 @@ subprojects {
     task runoms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.oms.OMSServerImpl'
+        main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
+        main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
-    }
-
-    task runapp(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'amino.run.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
-        args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
     }
 }
 

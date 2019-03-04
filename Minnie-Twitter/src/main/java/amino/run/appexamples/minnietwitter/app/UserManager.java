@@ -3,15 +3,17 @@ package amino.run.appexamples.minnietwitter.app;
 import java.security.MessageDigest;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import amino.run.app.Language;
-import amino.run.app.SapphireObject;
-import static amino.run.runtime.Sapphire.*;
-
-import amino.run.app.SapphireObjectSpec;
+import amino.run.app.MicroServiceSpec;
+import amino.run.app.MicroService;
+import amino.run.common.MicroServiceCreationException;
 import amino.run.policy.dht.DHTKey;
+import static amino.run.runtime.MicroService.*;
 
-public class UserManager implements SapphireObject {
+public class UserManager implements MicroService {
+	private static Logger logger = Logger.getLogger(UserManager.class.getName());
 	Map<DHTKey, User> users;
 	private TagManager tm;
 
@@ -22,14 +24,18 @@ public class UserManager implements SapphireObject {
 
 	public User addUser(String username, String passwd) {
 
-		SapphireObjectSpec userSpec;
+		MicroServiceSpec userSpec;
+		User user = null;
 
-		userSpec = SapphireObjectSpec.newBuilder()
+		userSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(User.class.getName())
 				.create();
-
-		User user = (User) new_(userSpec, new UserInfo(username, passwd), tm);
+		try {
+			user = (User) new_(userSpec, new UserInfo(username, passwd), tm);
+		} catch (MicroServiceCreationException e) {
+			logger.warning("Creating MicroService failed" + e.toString());
+		}
 		user.initialize(user);
 		users.put(new DHTKey(username), user);
 
