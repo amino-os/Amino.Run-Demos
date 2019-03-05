@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import amino.run.app.MicroService;
+import amino.run.policy.mobility.explicitmigration.ExplicitMigrator;
+import amino.run.policy.mobility.explicitmigration.MigrationException;
 import chesspresso.*;
 import chesspresso.move.*;
 import chesspresso.position.*;
@@ -23,7 +25,7 @@ import chesspresso.position.*;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 
-public class SimpleEngine implements ChessEngine, MicroService {
+public class SimpleEngine implements ChessEngine, MicroService, ExplicitMigrator {
 	private Position position;
 	private boolean computerIsWhite;
 	private int ply;
@@ -44,8 +46,6 @@ public class SimpleEngine implements ChessEngine, MicroService {
 		return Move.getString(position.getLastShortMove());
 	}
 	public SimpleEngine() {
-System.out.println("Inside the Simple Engine");
-
 		killers = new short[200];
 //		reset();
 		position = Position.createInitialPosition();
@@ -62,8 +62,8 @@ System.out.println("Inside the Simple Engine");
 		ply = 0;
 	}
 
-	public void migrateObject(InetSocketAddress serverInfo) throws Exception {
-		System.out.println("Inside the migrateObject of app directly with count as " + cnt++);
+	@Override
+	public void migrateTo(InetSocketAddress serverInfo) throws MigrationException {
 		System.out.println("Object has been migrated to kernal server with  "+serverInfo.getHostName()+" : "+serverInfo.getPort());
 	}
 
