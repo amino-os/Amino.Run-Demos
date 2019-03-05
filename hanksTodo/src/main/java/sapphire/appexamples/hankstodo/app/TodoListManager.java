@@ -70,8 +70,8 @@ public class TodoListManager implements MicroService {
 		return t;
 	}
 
-	public void deleteTodoList(String name) {
-		TodoList t = todoLists.remove(name);
+	public void deleteTodoList(String id) {
+		TodoList t = todoLists.remove(id);
 		if (t != null) {
 			delete_(t);
 		}

@@ -28,7 +28,7 @@ public class TodoActivity {
 
 			MicroServiceSpec spec = MicroServiceSpec.newBuilder()
 					.setLang(Language.java)
-					.setJavaClassName("sapphire.appexamples.hankstodo.app.TodoListManager")
+					.setJavaClassName(TodoListManager.class.getName())
 					.create();
 
 			MicroServiceID microServiceID = server.create(spec.toString());
@@ -39,10 +39,10 @@ public class TodoActivity {
 		}
 	}
 
-	public static void createNewToDoList(String listName) {
+	public static void createNewToDoList(String id) {
 		TodoList tl = null;
 		try {
-			tl = tlm.newTodoList(listName);
+			tl = tlm.newTodoList(id);
 			// Consensus policy needs some time after creating new Sapphire object; otherwise,
 			// leader election may fail.
 			sleep(7000);
@@ -52,33 +52,33 @@ public class TodoActivity {
 		}
 	}
 
-	public static void addTaskItem(String listName, String item) {
+	public static void addTaskItem(String subject, String content) {
 		TodoList tl = null;
 		try {
-			tl = tlm.newTodoList(listName);
-			String outcome = tl.addToDo(listName, item);
+			tl = tlm.newTodoList(subject);
+			String outcome = tl.addToDo(subject, content);
 			System.out.println(outcome);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void removeTaskItem(String listName, String itemName) {
+	public static void removeTaskItem(String subject, String content) {
 		TodoList tl = null;
 		try {
-			tl = tlm.newTodoList(listName);
-			tl.removeToDo(listName, itemName);
+			tl = tlm.newTodoList(subject);
+			tl.removeToDo(subject, content);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static String fetchToDoItems(String listName) {
+	public static String fetchToDoItems(String id) {
 		TodoList tl;
 		String myItems = null;
 		try {
-			tl = tlm.newTodoList(listName);
-			myItems = tl.getToDo(listName);
+			tl = tlm.newTodoList(id);
+			myItems = tl.getToDo(id);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,7 +90,7 @@ public class TodoActivity {
 		return tlm.getAllTodoLists();
 	}
 
-	public static void removeToDo(String listName) {
-		tlm.deleteTodoList(listName);
+	public static void removeToDo(String id) {
+		tlm.deleteTodoList(id);
 	}
 }
