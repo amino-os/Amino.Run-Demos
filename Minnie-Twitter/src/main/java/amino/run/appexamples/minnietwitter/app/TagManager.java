@@ -1,15 +1,15 @@
-package sapphire.appexamples.minnietwitter.app;
+package amino.run.appexamples.minnietwitter.app;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import sapphire.app.SapphireObject;
-import sapphire.policy.dht.DHTKey;
+import amino.run.app.MicroService;
+import amino.run.policy.dht.DHTKey;
 
 
-public class TagManager implements SapphireObject {
+public class TagManager implements MicroService {
 	Map<DHTKey, Tag> tags = new Hashtable<DHTKey, Tag>();
 	
 	public TagManager() {

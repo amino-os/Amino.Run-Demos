@@ -1,29 +1,27 @@
 package application;
 
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceID;
+import amino.run.policy.DefaultPolicy;
 import facerecog.FrameGenerator;
 import facerecog.Detection;
 import facerecog.Recognition;
 import facerecog.Tracking;
-import sapphire.app.DMSpec;
-import sapphire.common.SapphireObjectID;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
-import sapphire.app.Language;
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.DefaultSapphirePolicy;
+import amino.run.app.DMSpec;
+import amino.run.kernel.server.KernelServer;
+import amino.run.kernel.server.KernelServerImpl;
+import amino.run.app.Language;
+import amino.run.app.Registry;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
 
 public class DemoAppStart {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         String frame, resp;
-        Registry registry;
+        java.rmi.registry.Registry registry;
         String sourceType = args[5]; // "camera": for onboard camera, "video": for video file
         FrameGenerator frameGenerator = new FrameGenerator(sourceType);
 
@@ -31,7 +29,7 @@ public class DemoAppStart {
 
             // refer to gradle.properties file for the sequence of arguments
             registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-            OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+            Registry server = (Registry) registry.lookup("SapphireOMS");
 
             // "10.0.2.15", "22345" - Kernel server
             KernelServer nodeServer = new KernelServerImpl(
@@ -57,16 +55,16 @@ public class DemoAppStart {
                 }
                 else if (args[4].equalsIgnoreCase("tracking")) {
                     /* recog is a remote object that has handles to the iostream of recognition.py running on server */
-                    SapphireObjectSpec spec = SapphireObjectSpec.newBuilder()
+                    MicroServiceSpec spec = MicroServiceSpec.newBuilder()
                             .setLang(Language.java)
                             .setJavaClassName("facerecog.Recognition").addDMSpec(
                                     DMSpec.newBuilder()
-                                    .setName(DefaultSapphirePolicy.class.getName())
+                                    .setName(DefaultPolicy.class.getName())
                                     .create())
                             .create();
 
-                    SapphireObjectID sapphireObjId = server.createSapphireObject(spec.toString());
-                    Recognition recog = (Recognition)server.acquireSapphireObjectStub(sapphireObjId);
+                    MicroServiceID sapphireObjId = server.create(spec.toString());
+                    Recognition recog = (Recognition)server.acquireStub(sapphireObjId);
                     Tracking track = new Tracking(recog, args[6]);
 
                     int i = 0;

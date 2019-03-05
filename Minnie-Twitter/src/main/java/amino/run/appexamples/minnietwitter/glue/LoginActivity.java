@@ -1,4 +1,4 @@
-package sapphire.appexamples.minnietwitter.glue;
+package amino.run.appexamples.minnietwitter.glue;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,11 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.minnietwitter.R;
 
-import sapphire.appexamples.minnietwitter.app.User;
-import sapphire.appexamples.minnietwitter.device.generator.TwitterWorldGenerator;
+import amino.run.appexamples.minnietwitter.app.User;
+import amino.run.appexamples.minnietwitter.device.generator.TwitterWorldGenerator;
 
 public class LoginActivity extends Activity {
     EditText txtUsername, txtPassword;
@@ -61,7 +62,11 @@ public class LoginActivity extends Activity {
         String username = txtUsername.getText().toString();
         String password = txtPassword.getText().toString();
         intent.putExtra("username", username);
-        new DoLogin().execute(username, password);
+        if(username.matches("") || password.matches("")) {
+            Toast.makeText(this, "Username, Password cannot be empty!!", Toast.LENGTH_SHORT).show();
+        } else {
+            new DoLogin().execute(username, password);
+        }
     }
 
     private class DoLogin extends AsyncTask<String, Void, User> {

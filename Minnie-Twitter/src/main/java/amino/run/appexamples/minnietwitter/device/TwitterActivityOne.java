@@ -1,22 +1,25 @@
-package sapphire.appexamples.minnietwitter.device;
+package amino.run.appexamples.minnietwitter.device;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.List;
 
-import sapphire.appexamples.minnietwitter.app.TagManager;
-import sapphire.appexamples.minnietwitter.app.Timeline;
-import sapphire.appexamples.minnietwitter.app.Tweet;
-import sapphire.appexamples.minnietwitter.app.TwitterManager;
-import sapphire.appexamples.minnietwitter.app.User;
-import sapphire.appexamples.minnietwitter.app.UserManager;
-import sapphire.common.SapphireObjectID;
-import sapphire.kernel.common.GlobalKernelReferences;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
+import amino.run.appexamples.minnietwitter.app.TagManager;
+import amino.run.appexamples.minnietwitter.app.Timeline;
+import amino.run.appexamples.minnietwitter.app.Tweet;
+import amino.run.appexamples.minnietwitter.app.TwitterManager;
+import amino.run.appexamples.minnietwitter.app.User;
+import amino.run.appexamples.minnietwitter.app.UserManager;
+import amino.run.kernel.server.KernelServer;
+import amino.run.app.Language;
+import amino.run.app.Registry;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceID;
+import amino.run.kernel.common.GlobalKernelReferences;
+import amino.run.kernel.server.KernelServerImpl;
 
+//TODO: Convert this into android application and make changes as per latest amino code and this is required as it
+// covers retweeting scenario.
 public class TwitterActivityOne {
 
     /**
@@ -34,8 +37,9 @@ public class TwitterActivityOne {
         final String userName = "user12";
         final int tweetCnt = 10;
 
-        Registry registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-        OMSServer server = (OMSServer) registry.lookup("SapphireOMS");
+        java.rmi.registry.Registry registry;
+        registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
+        Registry server = (Registry) registry.lookup("SapphireOMS");
         System.out.println("Connected to the OMS: " + server);
 
         // This kernel server is a fake kernel server. It is _not_ registered in OMS. Therefore
@@ -48,8 +52,15 @@ public class TwitterActivityOne {
         // other kernel servers. To keep things simple, I hard coded it as "127.0.0.2".
         GlobalKernelReferences.nodeServer = new KernelServerImpl(new InetSocketAddress("127.0.0.2", Integer.parseInt(args[2])), new InetSocketAddress(args[0], Integer.parseInt(args[1])));
 
-        SapphireObjectID sapphireObjId = server.createSapphireObject("sapphire.appexamples.minnietwitter.app.TwitterManager");
-        TwitterManager tm = (TwitterManager)server.acquireSapphireObjectStub(sapphireObjId);
+        /* Creating the Spec */
+
+        MicroServiceSpec spec = MicroServiceSpec.newBuilder()
+                .setLang(Language.java)
+                .setJavaClassName("sapphire.appexamples.minnietwitter.app.TwitterManager")
+                .create();
+
+        MicroServiceID sapphireObjId = server.create(spec.toString());
+        TwitterManager tm = (TwitterManager)server.acquireStub(sapphireObjId);
         System.out.println("Received Twitter Manager Stub: " + tm);
 
         UserManager userManger = tm.getUserManager();

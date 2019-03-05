@@ -12,7 +12,7 @@ buildscript {
          * https://issuetracker.google.com/issues/38454212
          * https://github.com/requery/requery/issues/467
          */
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 }
 
@@ -64,8 +64,6 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'org.yaml:snakeyaml:1.23'
-
 }
 
 
@@ -80,9 +78,7 @@ subprojects {
 
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
-        compile 'org.graalvm:graal-sdk:1.0.0-rc7'
-        compile 'org.yaml:snakeyaml:1.23'
-        }
+    }
 
     task fatJar(type: Jar) {
         manifest {
@@ -101,6 +97,26 @@ subprojects {
         into 'build/classes/java/main/'
     }
 
+    // Task for Stub generation
+    task genChessStubs(type: JavaExec) {
+        main = "amino.run.compiler.StubGenerator"
+        classpath = sourceSets.main.runtimeClasspath
+        def pkgName = 'chessmanager'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
+        def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
+        args src, pkgName, dst
+    }
+
+    // Task for Stub generation
+    task genEngineStubs(type: JavaExec){
+        main = "amino.run.compiler.StubGenerator"
+        classpath = sourceSets.main.runtimeClasspath
+        def pkgName = 'engine'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/engine"
+        def dst = "$projectDir.parent/src/main/java/engine/stubs/"
+        args src, pkgName, dst
+    }
+
     // Task for Stub compilation
     task compileChessStubs(type: JavaCompile) {
         source = sourceSets.main.java.srcDirs
@@ -109,47 +125,31 @@ subprojects {
         options.incremental = true
     }
 
-    // Task for Stub generation
-    task genChessStubs(type: JavaExec) {
-        main = "sapphire.compiler.StubGenerator"
-        classpath = sourceSets.main.runtimeClasspath
-
-        def pkgName = 'chessmanager'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/chessmanager"
-        def dst = "$projectDir.parent/src/main/java/chessmanager/stubs/"
-        args src, pkgName, dst
-
-        def pkgName1 = 'engine'
-        def src1 = "$projectDir.parent/build/intermediates/classes/debug/engine"
-        def dst1 = "$projectDir.parent/src/main/java/engine/stubs/"
-        args src1, pkgName1, dst1
-
-    }
     genChessStubs.mustRunAfter compileJava
     genChessStubs.dependsOn copyClasses
     compileChessStubs.dependsOn genChessStubs
+    genEngineStubs.mustRunAfter compileJava
+    genEngineStubs.dependsOn copyClasses
+    compileChessStubs.dependsOn genEngineStubs
     fatJar.dependsOn compileChessStubs
 
     task runoms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.oms.OMSServerImpl'
+        main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
+        main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServer1Ip'), project.property('kernelServer1Port'), project.property('omsIp'), project.property('omsPort')
     }
+
     task runks2 (type: JavaExec){
      classpath = sourceSets.main.runtimeClasspath
-     main = 'sapphire.kernel.server.KernelServerImpl'
+     main = 'amino.run.kernel.server.KernelServerImpl'
      args project.property('kernelServer2Ip'), project.property('kernelServer2Port'), project.property('omsIp'), project.property('omsPort')
     }
-
 }
-    // Task for Stub generation
-
-// Start kernel server with "gradlew runks"
 

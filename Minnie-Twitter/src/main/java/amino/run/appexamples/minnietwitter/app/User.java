@@ -1,17 +1,21 @@
-package sapphire.appexamples.minnietwitter.app;
+package amino.run.appexamples.minnietwitter.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-import sapphire.app.DMSpec;
-import sapphire.app.Language;
-import sapphire.app.SapphireObject;
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
+import amino.run.app.DMSpec;
+import amino.run.app.Language;
+import amino.run.app.MicroService;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceCreationException;
+import amino.run.policy.atleastoncerpc.AtLeastOnceRPCPolicy;
 
-import static sapphire.runtime.Sapphire.*;
+import static amino.run.runtime.MicroService.delete_;
+import static amino.run.runtime.MicroService.new_;
 
-public class User implements SapphireObject {
+public class User implements MicroService {
+	private static Logger logger = Logger.getLogger(User.class.getName());
 	private Timeline timeline;
 	private UserInfo ui;
 	List<User> followers;
@@ -26,8 +30,8 @@ public class User implements SapphireObject {
 	}
 
 	public void initialize(User u) {
-		SapphireObjectSpec timelineSpec;
-		timelineSpec = SapphireObjectSpec.newBuilder()
+		MicroServiceSpec timelineSpec;
+		timelineSpec = MicroServiceSpec.newBuilder()
 				.setLang(Language.java)
 				.setJavaClassName(Timeline.class.getName())
 				.addDMSpec(
@@ -35,8 +39,11 @@ public class User implements SapphireObject {
 								.setName(AtLeastOnceRPCPolicy.class.getName())
 								.create())
 				.create();
-
-		timeline = (Timeline) new_(timelineSpec, u, tagManager);
+		try {
+			timeline = (Timeline) new_(timelineSpec, u, tagManager);
+		} catch (MicroServiceCreationException e) {
+			logger.warning("Creating MicroService failed" + e.toString());
+		}
 		timeline.initialize(timeline);
 	}
 

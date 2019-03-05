@@ -4,23 +4,24 @@ package chessmanager;
  * Created by mbssaiakhil on 27/1/18.
  */
 
+import amino.run.app.DMSpec;
+import amino.run.app.Language;
+import amino.run.app.MicroService;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceCreationException;
+import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 import engine.SimpleEngine;
-import sapphire.app.DMSpec;
-import sapphire.app.Language;
-import sapphire.app.SapphireObject;
 
-import static sapphire.runtime.Sapphire.new_;
+import static amino.run.runtime.MicroService.new_;
 
-import sapphire.app.SapphireObjectSpec;
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
-public class ChessManager implements SapphireObject {
+public class ChessManager implements MicroService {
 
     private SimpleEngine simpleEngine;
 
     public ChessManager() {
-        SapphireObjectSpec simpleEngineSpec;
-        simpleEngineSpec = SapphireObjectSpec.newBuilder()
+        MicroServiceSpec simpleEngineSpec;
+        simpleEngineSpec = MicroServiceSpec.newBuilder()
                 .setLang(Language.java)
                 .setJavaClassName(SimpleEngine.class.getName())
                 .addDMSpec(
@@ -28,7 +29,11 @@ public class ChessManager implements SapphireObject {
                                 .setName(ExplicitMigrationPolicy.class.getName())
                                 .create())
                 .create();
-        simpleEngine = (SimpleEngine) new_(simpleEngineSpec);
+        try {
+            simpleEngine = (SimpleEngine) new_(simpleEngineSpec);
+        } catch (MicroServiceCreationException e) {
+            e.printStackTrace();
+        }
     }
 
     public SimpleEngine getSimpleEngine() { return simpleEngine; }

@@ -30,6 +30,14 @@ or displayed in a window as a live stream.
 
 ## Installation
 
+### Prerequisites
+
+```
+Python Version - 3.5+
+OpenCV and OpenCVContrib Versions - 3.4+
+```
+**Note:** OpenCV and OpenCVContrib versions should be the same. Tested with python version 3.5.2 and openCV version 3.4.2 .
+
 A `Dockerfile` has been provided to build a Docker image with all the dependencies (OpenCV, face_recognition, dlib, and
 jdk1.8.0_181) for this project to run. You may customize this file to suite your needs.
 
@@ -38,6 +46,8 @@ More information on setting up OpenCV and Python bindings on Ubuntu can be found
 `face_recognition`, `dlib` and some related helper modules used in this demo can be found
 [here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/). Make sure to 
 use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
+
+The python path needs to be changed accordingly before running the app.
 
 To build the Docker image, clone this repo and type at the project root:
 ```bash

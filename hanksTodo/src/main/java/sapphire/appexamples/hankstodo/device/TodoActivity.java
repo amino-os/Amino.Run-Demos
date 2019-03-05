@@ -31,8 +31,8 @@ public class TodoActivity {
 					.setJavaClassName(TodoListManager.class.getName())
 					.create();
 
-			MicroServiceID microServiceID = server.create(spec.toString());
-			tlm = (TodoListManager)server.acquireStub(microServiceID);
+			MicroServiceID microServiceId = server.create(spec.toString());
+			tlm = (TodoListManager)server.acquireStub(microServiceId);
 			System.out.println("Received tlm: " + tlm);
 		} catch (Exception e) {
 			e.printStackTrace();

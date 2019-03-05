@@ -12,7 +12,7 @@ buildscript {
          * https://issuetracker.google.com/issues/38454212
          * https://github.com/requery/requery/issues/467
          */
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath 'com.bmuschko:gradle-docker-plugin:3.0.7'
     }
 }
@@ -90,8 +90,6 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'org.yaml:snakeyaml:1.23'
-
 }
 
 task copyScripts(type: Copy){
@@ -220,15 +218,12 @@ subprojects {
 
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
-        compile 'org.graalvm:graal-sdk:1.0.0-rc7'
-        compile 'org.yaml:snakeyaml:1.23'
     }
 
     task fatJar(type: Jar) {
         manifest {
             attributes 'Implementation-Title': 'Gradle Uberjar',
-                    'Implementation-Version': '1.0',
-                    'Main-Class': 'sapphire.appexamples.minnietwitter.cloud.MinnieTwitterStart'
+                    'Implementation-Version': '1.0'
         }
         baseName = project.parent.name
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -251,11 +246,11 @@ subprojects {
 
     // Task for Stub generation
     task genMinnieTwitterStubs(type: JavaExec) {
-        main = "sapphire.compiler.StubGenerator"
+        main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-        def pkgName = 'sapphire.appexamples.minnietwitter.app'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/sapphire/appexamples/minnietwitter/app/"
-        def dst = "$projectDir.parent/src/main/java/sapphire/appexamples/minnietwitter/app/stubs/"
+        def pkgName = 'amino.run.appexamples.minnietwitter.app'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/amino/run/appexamples/minnietwitter/app/"
+        def dst = "$projectDir.parent/src/main/java/amino/run/appexamples/minnietwitter/app/stubs/"
         args src, pkgName, dst
     }
     genMinnieTwitterStubs.mustRunAfter compileJava
@@ -266,19 +261,14 @@ subprojects {
     task runoms(type: JavaExec) {
         dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.oms.OMSServerImpl'
+        main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.kernel.server.KernelServerImpl'
+        main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
-
-    task runapp(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'sapphire.appexamples.minnietwitter.device.generator.TwitterWorldGenerator'
-        args project.property('omsIp'), project.property('omsPort'), project.property('kernelIpAndroid'), project.property('kernelServerPort')
-    }
 }
+
