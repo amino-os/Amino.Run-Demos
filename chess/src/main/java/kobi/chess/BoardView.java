@@ -83,8 +83,8 @@ public class BoardView extends View {
 		
 		canvas.drawBitmap(m_Board, 0, 0, null);
 		
-		int pixelScaleWidth = (this.getWidth()) / 8;
-		int pixelScaleHeight = this.getHeight() / 8;
+		int pixelScaleWidth = m_Board.getWidth() / 8;
+		int pixelScaleHeight = m_Board.getHeight() / 8;
 		
 		for (int y=0; y<8; y++)
 		{
