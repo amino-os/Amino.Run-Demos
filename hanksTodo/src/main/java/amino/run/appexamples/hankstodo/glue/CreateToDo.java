@@ -1,4 +1,4 @@
-package sapphire.appexamples.hankstodo.glue;
+package amino.run.appexamples.hankstodo.glue;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +15,7 @@ import com.example.hankstodo.R;
 
 import java.util.ArrayList;
 
-import sapphire.appexamples.hankstodo.device.TodoActivity;
+import amino.run.appexamples.hankstodo.device.TodoActivity;
 
 public class CreateToDo extends Activity {
     private ArrayList<String> todos;

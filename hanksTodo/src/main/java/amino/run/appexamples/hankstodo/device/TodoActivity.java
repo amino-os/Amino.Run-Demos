@@ -1,4 +1,4 @@
-package sapphire.appexamples.hankstodo.device;
+package amino.run.appexamples.hankstodo.device;
 
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
@@ -10,8 +10,8 @@ import amino.run.app.Registry;
 import amino.run.common.MicroServiceID;
 import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
-import sapphire.appexamples.hankstodo.app.TodoList;
-import sapphire.appexamples.hankstodo.app.TodoListManager;
+import amino.run.appexamples.hankstodo.app.TodoList;
+import amino.run.appexamples.hankstodo.app.TodoListManager;
 
 import static java.lang.Thread.sleep;
 

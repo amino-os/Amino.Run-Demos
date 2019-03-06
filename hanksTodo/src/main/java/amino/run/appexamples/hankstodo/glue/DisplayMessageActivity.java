@@ -1,4 +1,4 @@
-package sapphire.appexamples.hankstodo.glue;
+package amino.run.appexamples.hankstodo.glue;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
