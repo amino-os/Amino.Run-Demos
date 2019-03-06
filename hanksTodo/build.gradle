@@ -101,7 +101,6 @@ subprojects {
     jar.dependsOn compileHanksTodoStubs
 
     task runoms(type: JavaExec) {
-        //dependsOn fatJar
         classpath = sourceSets.main.runtimeClasspath
         main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIp'), project.property('omsPort')
@@ -112,4 +111,8 @@ subprojects {
         main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
     }
+
+    // TODO: Add gradle task for running app in emulator from command line.
+    // Link for reference: https://developer.android.com/studio/run/emulator-commandline
 }
+
