@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
 					.create();
 			registry = LocateRegistry.getRegistry(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1]));
 
-			Registry server = (Registry) registry.lookup("SapphireOMS");
+			Registry server = (Registry) registry.lookup("io.amino.run.oms");
 
 			KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(Configuration.hostAddress[2], Integer.parseInt(Configuration.hostAddress[3])), new InetSocketAddress(Configuration.hostAddress[0], Integer.parseInt(Configuration.hostAddress[1])));
 			MicroServiceID microServiceId = server.create(spec.toString());
