@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import sapphire.common.Configuration;
+import org.openalpr.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
         if (sa == null) {
             sa = new SapphireAccess();
         }
-        // Below is to execute kernel server on the device.
-        // Android limits network call to async operation in Main activity.
-        new OpenAlprSapphireInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         Utils.copyAssetFolder(MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
         infoTextView.setText(infoTextStr);
@@ -139,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Configuration.natOmsAddress = new String [] { address, port};
-                        sa.omsServer = null;
                         resultTextView.setText("OMS was successfully updated: " + Configuration.getNatOmsString());
                         closeSoftKeyboard(view);
                     } else {

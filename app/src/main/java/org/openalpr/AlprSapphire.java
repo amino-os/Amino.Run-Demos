@@ -13,15 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sapphire.app.SapphireObject;
-import sapphire.common.Configuration;
+import amino.run.app.MicroService;
 
-import sapphire.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
+import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
-public class AlprSapphire implements SapphireObject<ExplicitMigrationPolicy> {
+public class AlprSapphire implements MicroService {
 
     private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
@@ -29,7 +28,7 @@ public class AlprSapphire implements SapphireObject<ExplicitMigrationPolicy> {
 
     /**
      * Migrate object from device to cloud.
-     * @param inetSocketAddress
+     * @param address
      */
     public void migrateObject(InetSocketAddress address) {
         System.out.println("Migrate object to: " + address.getHostName());

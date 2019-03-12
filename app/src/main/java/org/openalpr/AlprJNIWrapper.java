@@ -4,7 +4,7 @@ import org.openalpr.json.JSONException;
 
 import java.io.File;
 
-import sapphire.common.Configuration;
+import org.openalpr.Configuration;
 
 /**
  * This Class loads Alpr for license plate recognition on a default machine (e.g., Linux/Windows).
