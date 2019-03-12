@@ -90,9 +90,9 @@ subprojects {
     task genHanksTodoStubs(type: JavaExec) {
         main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
-        def pkgName = 'sapphire.appexamples.hankstodo.app'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/sapphire/appexamples/hankstodo/app/"
-        def dst = "$projectDir.parent/src/main/java/sapphire/appexamples/hankstodo/app/stubs/"
+        def pkgName = 'amino.run.appexamples.hankstodo.app'
+        def src = "$projectDir.parent/build/intermediates/classes/debug/amino/run/appexamples/hankstodo/app/"
+        def dst = "$projectDir.parent/src/main/java/amino/run/appexamples/hankstodo/app/stubs/"
         args src, pkgName, dst
     }
     genHanksTodoStubs.mustRunAfter compileJava

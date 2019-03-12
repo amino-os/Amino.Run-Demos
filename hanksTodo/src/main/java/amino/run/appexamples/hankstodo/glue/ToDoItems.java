@@ -1,4 +1,4 @@
-package sapphire.appexamples.hankstodo.glue;
+package amino.run.appexamples.hankstodo.glue;
 
 import com.example.hankstodo.R;
 
@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import amino.run.common.MicroServiceCreationException;
-import sapphire.appexamples.hankstodo.device.TodoActivity;
-import sapphire.appexamples.hankstodo.glue.ListAdapter.customButtonListener;
+import amino.run.appexamples.hankstodo.device.TodoActivity;
+import amino.run.appexamples.hankstodo.glue.ListAdapter.customButtonListener;
 
 public class ToDoItems extends Activity implements customButtonListener {
     public final static String EXTRA_MESSAGE = "com.example.hankstodo.MESSAGE";

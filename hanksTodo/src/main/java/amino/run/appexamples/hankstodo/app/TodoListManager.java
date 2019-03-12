@@ -1,4 +1,4 @@
-package sapphire.appexamples.hankstodo.app;
+package amino.run.appexamples.hankstodo.app;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,14 +60,12 @@ public class TodoListManager implements MicroService {
 				todoList.add(todo.getKey());
 			}
 			return todoList;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public TodoList getToDoList(String id) {
-		TodoList t = todoLists.get(id);
-		return t;
+		return todoLists.get(id);
 	}
 
 	public void deleteTodoList(String id) {
