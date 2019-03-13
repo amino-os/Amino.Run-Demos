@@ -39,14 +39,15 @@ task runoms(type: JavaExec) {
     dependsOn jar
     classpath = sourceSets.main.runtimeClasspath
     main = 'amino.run.oms.OMSServerImpl'
-    args project.property('omsIp'), project.property('omsPort')
+    args project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
 }
 
 // Task for running the Kernel Server
 task runks(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'amino.run.kernel.server.KernelServerImpl'
-    args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
+    args project.property('kernelServerIpFlag'), project.property('kernelServerIp'), project.property('kernelServerPortFlag'), project.property('kernelServerPort'),
+            project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
 }
 
 
