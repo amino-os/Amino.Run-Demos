@@ -29,7 +29,7 @@ public class DemoAppStart {
 
             // refer to gradle.properties file for the sequence of arguments
             registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-            Registry server = (Registry) registry.lookup("SapphireOMS");
+            Registry server = (Registry) registry.lookup("io.amino.run.oms");
 
             // "10.0.2.15", "22345" - Kernel server
             KernelServer nodeServer = new KernelServerImpl(
