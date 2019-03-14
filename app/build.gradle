@@ -27,19 +27,14 @@ android {
 
 repositories {
     mavenCentral()
-    //google()
-    flatDir {
-        dirs 'libs/sapphire'
-    }
+    maven { url  "https://dl.bintray.com/terryzhuo/DCAP" }
 }
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':sapphire-core')
-    //compile 'com.google.code.gson:gson:2.5'
-    compile(name: 'openalpr-1.0.0', ext: 'jar')
-    compile(name: 'gson-2.2.4', ext: 'jar')
+    compile 'com.huawei.paas:sapphire-core:1.0.0'
+    compile 'com.google.code.gson:gson:2.5'
 }
 //
 //task deleteJar(type: Delete) {

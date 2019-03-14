@@ -82,7 +82,7 @@ public final class AlprSapphire_Stub extends org.openalpr.AlprSapphire implement
         java.lang.Object $__result = null;
         try {
             if ($__directInvocation)
-                super.migrateObject( $param_InetSocketAddress_1);
+                super.migrateTo( $param_InetSocketAddress_1);
             else {
                 java.util.ArrayList<Object> $__params = new java.util.ArrayList<Object>();
                 String $__method = "public void org.openalpr.AlprSapphire.migrateObject(java.net.InetSocketAddress)";

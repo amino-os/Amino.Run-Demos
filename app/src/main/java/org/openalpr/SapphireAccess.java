@@ -40,14 +40,14 @@ public class SapphireAccess
             try {
                 java.rmi.registry.Registry registry;
                 registry = LocateRegistry.getRegistry(Configuration.natOmsAddress[0], Integer.parseInt(Configuration.natOmsAddress[1]));
-                Registry server = (Registry) registry.lookup("SapphireOMS");
+                Registry server = (Registry) registry.lookup("io.amino.run.oms");
 
                 KernelServer nodeServer = new KernelServerImpl(Configuration.getNatDeviceKernelAddress(), new InetSocketAddress(Configuration.natOmsAddress[0], Integer.parseInt(Configuration.natOmsAddress[1])));
 
                 MicroServiceSpec spec =
                         MicroServiceSpec.newBuilder()
                                 .setLang(Language.java)
-                                .setJavaClassName("org.openalpr.AlprSapphire")
+                                .setJavaClassName(AlprSapphire.class.getName())
                                 .addDMSpec(
                                         DMSpec.newBuilder()
                                                 .setName(ExplicitMigrationPolicy.class.getName())
@@ -59,14 +59,14 @@ public class SapphireAccess
                 e.printStackTrace();
             }
             if (lr == null) {
-                System.out.println("Failed to get the app entry point.");
+                System.out.println("Failed to acquire stub for microservice.");
                 return null;
             }
         } else if (previousEntity != processEntity) {
             if (processEntity == Configuration.ProcessEntity.SERVER) {
-                lr.migrateObject(Configuration.getNatServerKernelAddress());
+                lr.migrateTo(Configuration.getNatServerKernelAddress());
             } else {
-                lr.migrateObject(Configuration.getNatDeviceKernelAddress());
+                lr.migrateTo(Configuration.getNatDeviceKernelAddress());
             }
         }
 

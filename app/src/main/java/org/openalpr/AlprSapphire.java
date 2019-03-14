@@ -16,11 +16,12 @@ import java.util.List;
 import amino.run.app.MicroService;
 
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
+import amino.run.policy.mobility.explicitmigration.ExplicitMigrator;
 
 /**
  * Open ALPR Sapphire wrapper.
  */
-public class AlprSapphire implements MicroService {
+public class AlprSapphire implements MicroService, ExplicitMigrator {
 
     private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
@@ -30,7 +31,9 @@ public class AlprSapphire implements MicroService {
      * Migrate object from device to cloud.
      * @param address
      */
-    public void migrateObject(InetSocketAddress address) {
+    //TODO: Implement migration scenario
+    @Override
+    public void migrateTo(InetSocketAddress address) {
         System.out.println("Migrate object to: " + address.getHostName());
     }
 
