@@ -3,6 +3,7 @@ package amino.run.appexamples.hankstodo.device;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import amino.run.app.Language;
 import amino.run.app.MicroServiceSpec;
@@ -16,6 +17,8 @@ import amino.run.appexamples.hankstodo.app.TodoListManager;
 import static java.lang.Thread.sleep;
 
 public class TodoActivity {
+	private static final Logger logger = Logger.getLogger(TodoActivity.class.getName());
+
 	public static TodoListManager tlm;
 
 	public static void setObject(String[] args){
@@ -33,7 +36,7 @@ public class TodoActivity {
 
 			MicroServiceID microServiceId = server.create(spec.toString());
 			tlm = (TodoListManager)server.acquireStub(microServiceId);
-			System.out.println("Received tlm: " + tlm);
+			logger.info("Received tlm: " + tlm);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,7 +49,6 @@ public class TodoActivity {
 			// Consensus policy needs some time after creating new Sapphire object; otherwise,
 			// leader election may fail.
 			sleep(7000);
-			System.out.println("Received tl: " + tl);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +59,7 @@ public class TodoActivity {
 		try {
 			tl = tlm.newTodoList(subject);
 			String outcome = tl.addToDo(subject, content);
-			System.out.println(outcome);
+			logger.info("Add task item success with response " + outcome);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

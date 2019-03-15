@@ -3,6 +3,7 @@ package amino.run.appexamples.hankstodo.app;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Language;
@@ -16,15 +17,11 @@ import static amino.run.runtime.MicroService.delete_;
 import static amino.run.runtime.MicroService.new_;
 
 public class TodoListManager implements MicroService {
+    private static final Logger logger = Logger.getLogger(TodoListManager.class.getName());
+
     LinkedHashMap<String, TodoList> todoLists = new LinkedHashMap<>();
 
-	public TodoListManager() {
-		System.out.println("Instantiating TodoListManager...");
-	}
-
-	public void doSomething(String input) {
-		System.out.println("Input received: " + input);
-	}
+	public void doSomething(String input) { logger.info("Input received: " + input); }
 
 	public TodoList newTodoList(String id) throws MicroServiceCreationException {
 		TodoList t = todoLists.get(id);
@@ -45,11 +42,10 @@ public class TodoListManager implements MicroService {
 
 			t = (TodoList) new_(spec, id);
 			todoLists.put(id, t);
-			System.out.println("Created new Todo list");
+			logger.info("Created new Todo list with ID: "+ id);
 		} else {
-			System.out.println("ToDoList for ID: "+ id + " already exists.");
+			logger.info("ToDoList for ID: "+ id + " exists.");
 		}
-		System.out.println("This managers lists" + todoLists.toString());
 		return t;
 	}
 
@@ -73,6 +69,6 @@ public class TodoListManager implements MicroService {
 		if (t != null) {
 			delete_(t);
 		}
-		System.out.println("ToDoList Deleted");
+		logger.info("ToDoList: " + id + " deleted.");
 	}
 }
