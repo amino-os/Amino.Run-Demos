@@ -39,7 +39,7 @@ public class TwitterActivityOne {
 
         java.rmi.registry.Registry registry;
         registry = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
-        Registry server = (Registry) registry.lookup("SapphireOMS");
+        Registry server = (Registry) registry.lookup("io.amino.run.oms");
         System.out.println("Connected to the OMS: " + server);
 
         // This kernel server is a fake kernel server. It is _not_ registered in OMS. Therefore

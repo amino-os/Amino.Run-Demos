@@ -103,13 +103,14 @@ subprojects {
     task runoms(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'amino.run.oms.OMSServerImpl'
-        args project.property('omsIp'), project.property('omsPort')
+        args project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'amino.run.kernel.server.KernelServerImpl'
-        args project.property('kernelServerIp'), project.property('kernelServerPort'), project.property('omsIp'), project.property('omsPort')
+        args project.property('kernelServerIpFlag'), project.property('kernelServerIp'), project.property('kernelServerPortFlag'), project.property('kernelServerPort'),
+                project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
     }
 
     // TODO: Add gradle task for running app in emulator from command line.
