@@ -13,6 +13,7 @@ import amino.run.app.MicroServiceSpec;
 import amino.run.common.MicroServiceID;
 import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
+import amino.run.oms.OMSServerImpl;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 
@@ -23,6 +24,31 @@ public class SapphireAccess
     public static long processingTime; // image recognition processing time.
 
     private static Configuration.ProcessEntity previousEntity = Configuration.ProcessEntity.UNDECIDED;
+
+    public void initialize() {
+
+        try {
+            String[] kernelArgs = new String[]{ KernelServerImpl.KERNEL_SERVER_IP_OPT,
+                    Configuration.natDeviceKernelAddress[0],
+                    KernelServerImpl.KERNEL_SERVER_PORT_OPT,
+                    Configuration.natDeviceKernelAddress[1],
+                    OMSServerImpl.OMS_IP_OPT,
+                    Configuration.natOmsAddress[0],
+                    OMSServerImpl.OMS_PORT_OPT,
+                    Configuration.natOmsAddress[1],
+                    KernelServerImpl.LABEL_OPT,
+                    KernelServerImpl.REGION_KEY + "=" + Configuration.ProcessEntity.DEVICE.toString()
+            };
+
+            // Launch local Sapphire kernel server.
+            KernelServerImpl.main(kernelArgs);
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     /**
      * Get license plate recognition result for the given image file in the device.
@@ -41,8 +67,6 @@ public class SapphireAccess
                 java.rmi.registry.Registry registry;
                 registry = LocateRegistry.getRegistry(Configuration.natOmsAddress[0], Integer.parseInt(Configuration.natOmsAddress[1]));
                 Registry server = (Registry) registry.lookup("io.amino.run.oms");
-
-                KernelServer nodeServer = new KernelServerImpl(Configuration.getNatDeviceKernelAddress(), new InetSocketAddress(Configuration.natOmsAddress[0], Integer.parseInt(Configuration.natOmsAddress[1])));
 
                 MicroServiceSpec spec =
                         MicroServiceSpec.newBuilder()
