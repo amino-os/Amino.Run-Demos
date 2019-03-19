@@ -4,15 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
+import amino.run.app.DMSpec;
+import amino.run.app.Registry;
 
-import sapphire.common.Configuration;
-import sapphire.kernel.common.GlobalKernelReferences;
-import sapphire.kernel.server.KernelServer;
-import sapphire.kernel.server.KernelServerImpl;
-import sapphire.oms.OMSServer;
-import sapphire.runtime.Sapphire;
+import amino.run.app.Language;
+import amino.run.app.MicroServiceSpec;
+import amino.run.common.MicroServiceID;
+import amino.run.kernel.server.KernelServer;
+import amino.run.kernel.server.KernelServerImpl;
+import amino.run.oms.OMSServerImpl;
+import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 
 public class SapphireAccess
@@ -20,65 +22,32 @@ public class SapphireAccess
     public AlprSapphire lr;
     public static long fileUploadTime; // file upload time.
     public static long processingTime; // image recognition processing time.
-    public OMSServer omsServer = null;
 
     private static Configuration.ProcessEntity previousEntity = Configuration.ProcessEntity.UNDECIDED;
-    private static boolean kernelReady = false;
 
     public void initialize() {
 
         try {
-            String[] kernelArgs = new String[]{
+            String[] kernelArgs = new String[]{ KernelServerImpl.KERNEL_SERVER_IP_OPT,
                     Configuration.natDeviceKernelAddress[0],
+                    KernelServerImpl.KERNEL_SERVER_PORT_OPT,
                     Configuration.natDeviceKernelAddress[1],
+                    OMSServerImpl.OMS_IP_OPT,
                     Configuration.natOmsAddress[0],
+                    OMSServerImpl.OMS_PORT_OPT,
                     Configuration.natOmsAddress[1],
-                    Configuration.ProcessEntity.DEVICE.toString()
+                    KernelServerImpl.LABEL_OPT,
+                    KernelServerImpl.REGION_KEY + "=" + Configuration.ProcessEntity.DEVICE.toString()
             };
 
             // Launch local Sapphire kernel server.
             KernelServerImpl.main(kernelArgs);
-            kernelReady = true;
         }
         catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             throw e;
         }
-    }
-
-    /**
-     * Gets the OMS server from existing configuration information.
-     * @return sapphire.oms.OMSServer
-     */
-    private sapphire.oms.OMSServer getOmsServer() {
-        try {
-            String omsAddress = Configuration.natOmsAddress[0];
-            int omsPort = Integer.parseInt(Configuration.natOmsAddress[1]);
-
-            Registry registry = LocateRegistry.getRegistry(omsAddress, omsPort);
-            omsServer = (OMSServer) registry.lookup("SapphireOMS");
-
-            return omsServer;
-        } catch (Exception e) {
-            System.out.println("Failed to get OMS server: " + Configuration.natOmsAddress[0] + ":" + Configuration.natOmsAddress[1]);
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public AlprSapphire getNewAppEntryPoint(Configuration.ProcessEntity processEntity) {
-        try {
-            lr = (AlprSapphire) omsServer.getAppEntryPoint(processEntity.toString());
-
-            return lr;
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     /**
@@ -92,32 +61,36 @@ public class SapphireAccess
      */
     public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
         Results results = null;
-        try {
-            while (!kernelReady) {Thread.sleep(100);}
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        if (omsServer == null) {
-            omsServer = getOmsServer();
-            if (omsServer == null) {
-                return null;
-            }
-        }
 
         if (previousEntity == Configuration.ProcessEntity.UNDECIDED || lr == null) {
-            lr = getNewAppEntryPoint(processEntity);
+            try {
+                java.rmi.registry.Registry registry;
+                registry = LocateRegistry.getRegistry(Configuration.natOmsAddress[0], Integer.parseInt(Configuration.natOmsAddress[1]));
+                Registry server = (Registry) registry.lookup("io.amino.run.oms");
+
+                MicroServiceSpec spec =
+                        MicroServiceSpec.newBuilder()
+                                .setLang(Language.java)
+                                .setJavaClassName(AlprSapphire.class.getName())
+                                .addDMSpec(
+                                        DMSpec.newBuilder()
+                                                .setName(ExplicitMigrationPolicy.class.getName())
+                                                .create())
+                                .create();
+                MicroServiceID microServiceId = server.create(spec.toString());
+                lr = (AlprSapphire) server.acquireStub(microServiceId);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             if (lr == null) {
-                System.out.println("Failed to get the app entry point.");
+                System.out.println("Failed to acquire stub for microservice.");
                 return null;
             }
         } else if (previousEntity != processEntity) {
             if (processEntity == Configuration.ProcessEntity.SERVER) {
-                lr.migrateObject(Configuration.getNatServerKernelAddress());
+                lr.migrateTo(Configuration.getNatServerKernelAddress());
             } else {
-                lr.migrateObject(Configuration.getNatDeviceKernelAddress());
+                lr.migrateTo(Configuration.getNatDeviceKernelAddress());
             }
         }
 

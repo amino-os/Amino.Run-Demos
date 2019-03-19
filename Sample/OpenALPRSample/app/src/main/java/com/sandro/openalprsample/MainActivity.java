@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import sapphire.common.Configuration;
+import org.openalpr.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -139,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Configuration.natOmsAddress = new String [] { address, port};
-                        sa.omsServer = null;
                         resultTextView.setText("OMS was successfully updated: " + Configuration.getNatOmsString());
                         closeSoftKeyboard(view);
                     } else {

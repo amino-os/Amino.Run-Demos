@@ -3,8 +3,6 @@ package org.openalpr;
 import java.io.RandomAccessFile;
 import java.io.File;
 
-import sapphire.common.Configuration;
-
 /**
  * Open ALPR Sapphire wrapper.
  * (SungwookM, 3/22/2018) This code is to test native code from non-Android OpenAlpr repository for checking if it runs on desktop machines.

@@ -5,11 +5,11 @@ import android.os.AsyncTask;
 import org.openalpr.SapphireAccess;
 import org.openalpr.Results;
 
-import sapphire.common.Configuration;
-
+import org.openalpr.Configuration;
 /**
  * Created by SMoon on 2/27/2018.
  */
+
 public class OpenAlprSapphire extends AsyncTask<Void, Void, Results> {
     private String ANDROID_DATA_DIR;
     private String countryCode;

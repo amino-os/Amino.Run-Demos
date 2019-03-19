@@ -1,8 +1,8 @@
-package sapphire.common;
+package org.openalpr;
 
 import java.net.InetSocketAddress;
 
-import static sapphire.common.Configuration.ProcessEntity.SERVER;
+import static org.openalpr.Configuration.ProcessEntity.SERVER;
 
 /**
  * Created by SMoon on 2/27/2018.
@@ -23,9 +23,9 @@ public class Configuration {
 
     public enum ProcessEntity { DEVICE, SERVER, UNDECIDED };
 
-    public static String[] natOmsAddress = { "10.8.0.1", "22343" };
-    public static String[] natServerKernelAddress = { "10.8.0.1", "22345" };
-    public static String[] natDeviceKernelAddress = { "10.8.0.2", "31111" };
+    public static String[] natOmsAddress = { "100.64.40.111", "22346" };
+    public static String[] natServerKernelAddress = { "100.64.40.111", "22343" };
+    public static String[] natDeviceKernelAddress = { "100.64.40.111", "22345" };
 
     public static InetSocketAddress getNatServerKernelAddress() {
         return new InetSocketAddress(natServerKernelAddress[0], Integer.parseInt(natServerKernelAddress[1]));
@@ -39,5 +39,6 @@ public class Configuration {
         return natOmsAddress[0] + ":" + natOmsAddress[1];
     }
 
-    public static String omsUsage = "Usage: hostname (or IP address):port \nE.g. 10.8.0.1:22343";
+    public static String omsUsage = "Usage: hostname (or IP address):port \nE.g. 100.64.40.111:22343";
 }
+
