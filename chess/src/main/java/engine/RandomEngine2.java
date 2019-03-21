@@ -49,7 +49,6 @@ public class RandomEngine2 implements ChessEngine {
 	 * @see com.imaginot.chess.engine.ChessEngine#go()
 	 */
 	public String go() {
-		System.out.println("Inside the go of Random Engine");
 		/*if (isDraw()) {
 			return "DRAW";
 		} else if (isMate()) {

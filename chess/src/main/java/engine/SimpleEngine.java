@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import amino.run.app.MicroService;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrator;
@@ -26,6 +27,7 @@ import chesspresso.position.*;
  */
 
 public class SimpleEngine implements ChessEngine, MicroService, ExplicitMigrator {
+	private static Logger logger = Logger.getLogger(SimpleEngine.class.getName());
 	private Position position;
 	private boolean computerIsWhite;
 	private int ply;
@@ -64,15 +66,14 @@ public class SimpleEngine implements ChessEngine, MicroService, ExplicitMigrator
 
 	@Override
 	public void migrateTo(InetSocketAddress serverInfo) throws MigrationException {
-		System.out.println("Object has been migrated to kernal server with  "+serverInfo.getHostName()+" : "+serverInfo.getPort());
+		logger.info("Object has been migrated to kernel server with  "+serverInfo.getHostName()+" : "+serverInfo.getPort());
 	}
 
 	/* (non-Javadoc)
 	 * @see com.imaginot.chess.engine.ChessEngine#go()
 	 */
 	public synchronized String go() {
-		System.out.println("---***---***PROCESSING BACKEND OF AUTOMATED MOVE - " + cnt++ + "***---***---");
-		//System.out.println("Inside the go() of SimpleEngine");
+		cnt++;
 		if (isDraw()) {
 			return "DRAW";
 		} else if (isMate()) {

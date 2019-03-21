@@ -50,12 +50,15 @@ import amino.run.kernel.server.KernelServerImpl;
 import chessmanager.ChessManager;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
+import java.util.logging.Logger;
 
 import engine.ChessEngine;
 import engine.SimpleEngine;
 
 
 public class MainActivity extends Activity {
+	private static Logger logger = Logger.getLogger(MainActivity.class.getName());
+
 	public static final int ACITIVITY_OPTIONS = 1;
 	public static final int ACITIVITY_HELP = 0;
 	private BoardView boardView;
@@ -170,7 +173,6 @@ public class MainActivity extends Activity {
     
     private void PlayerMove(String move)
     {
-    	System.out.println("Inside the PlayerMove with move as " + move);
     	char selectedPiece = getSelectedPiece(engine.getBoard(ply), move);
     	
     	if (move.charAt(move.length() - 1) == '8' && selectedPiece == 'P')
@@ -192,10 +194,8 @@ public class MainActivity extends Activity {
     	}
     	
     	String res = engine.makeMove(move);
-    	System.out.println("Result of the first makeMove() is " + res);
     	if (res.startsWith("ERROR")) {
     		String res2 = engine.makeMove(move.replace('-', 'x'));
-			System.out.println("Result of the second makeMove() is " + res);
     		if (res2.startsWith("ERROR")) {
 	    		if (!(engine.isDraw() || engine.isMate()))
 	    			showToastNotification(this.getString(R.string.illegal_move_try_again));
@@ -206,13 +206,11 @@ public class MainActivity extends Activity {
 	    	}
     		else
     		{
-				System.out.println("First else for makeComputerMove()");
     			makeComputerMove();
     		}
     	}
     	else 
     	{
-			System.out.println("Second else for makeComputerMove()");
     		makeComputerMove();
     	}
     	//return res;
@@ -257,8 +255,6 @@ public class MainActivity extends Activity {
     
     private void makeComputerMove()
     {
-    	System.out.println("Inside the makeComputerMove");
-
     	// TODO run in thread
     	this.boardView.displayPieces(engine.getBoard(ply));
 		//mMyHandler.machineGO();
@@ -310,19 +306,18 @@ public class MainActivity extends Activity {
      */
     private synchronized void computerMove()
     {
-    	//System.out.println("Inside the computerMove()");
-        System.out.println("Inside the computerMove() with count as " + cnt++);
+    	cnt++;
         if (cnt % 5 == 0) {
             try {
                 /*TODO
                   OMS.getServer will be  used  and then a random server will be picked from List
                   Same will used in migration
                   Or
-                User will pick  a random kernal server and Same will used  if it is not found then
-                DM will throw a  Exception  Requested Kernal Server Not Found  along with the available server
+                User will pick  a random kernel server and Same will used  if it is not found then
+                DM will throw a  Exception  Requested Kernel Server Not Found  along with the available server
                  */
 
-				System.out.println("Migrating object with cnt as " + cnt);
+				logger.info("Migrating object with cnt as " + cnt);
                InetSocketAddress ksInfo;
 				if (cnt%2==1) {
 					ksInfo = new InetSocketAddress(Configuration.kernelServerAddress[0], Integer.parseInt(Configuration.kernelServerAddress[1]));

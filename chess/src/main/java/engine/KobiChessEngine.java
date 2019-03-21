@@ -165,7 +165,6 @@ public class KobiChessEngine implements ChessEngine {
 	 * @see com.imaginot.chess.engine.ChessEngine#go()
 	 */
 	public String go() {
-		System.out.println("Inside the go from MainActivity for Engine Move..");
 		short myMove = bestMove();
 		try {
 			position.doMove(myMove);
@@ -183,7 +182,6 @@ public class KobiChessEngine implements ChessEngine {
 	 */
 	private short bestMove()
 	{
-		System.out.println("Inside the bestMove()");
 		short best = Move.ILLEGAL_MOVE;
 		
 		short moves[];
