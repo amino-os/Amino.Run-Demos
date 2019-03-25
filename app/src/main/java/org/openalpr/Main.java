@@ -4,7 +4,7 @@ import java.io.RandomAccessFile;
 import java.io.File;
 
 /**
- * Open ALPR Sapphire wrapper.
+ * Open ALPR Microservice wrapper.
  * (SungwookM, 3/22/2018) This code is to test native code from non-Android OpenAlpr repository for checking if it runs on desktop machines.
  */
 public class Main {

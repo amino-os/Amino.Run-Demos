@@ -2,16 +2,16 @@ package com.sandro.openalprsample;
 
 import android.os.AsyncTask;
 
-import org.openalpr.SapphireAccess;
+import org.openalpr.MicroServiceAccess;
 
 
 /**
  * Created by SMoon on 2/27/2018.
  */
-public class OpenAlprSapphireInit extends AsyncTask<Void, Void, String> {
+public class OpenAlprMicroServiceInit extends AsyncTask<Void, Void, String> {
 
-    SapphireAccess sa;
-    public OpenAlprSapphireInit(SapphireAccess sa) {
+    MicroServiceAccess sa;
+    public OpenAlprMicroServiceInit(MicroServiceAccess sa) {
         this.sa = sa;
     }
 

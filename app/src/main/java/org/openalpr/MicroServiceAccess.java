@@ -2,7 +2,6 @@ package org.openalpr;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
 
 import amino.run.app.DMSpec;
@@ -11,15 +10,14 @@ import amino.run.app.Registry;
 import amino.run.app.Language;
 import amino.run.app.MicroServiceSpec;
 import amino.run.common.MicroServiceID;
-import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
 import amino.run.oms.OMSServerImpl;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 
-public class SapphireAccess
+public class MicroServiceAccess
 {
-    public AlprSapphire lr;
+    public AlprMicroService lr;
     public static long fileUploadTime; // file upload time.
     public static long processingTime; // image recognition processing time.
 
@@ -40,7 +38,7 @@ public class SapphireAccess
                     KernelServerImpl.REGION_KEY + "=" + Configuration.ProcessEntity.DEVICE.toString()
             };
 
-            // Launch local Sapphire kernel server.
+            // Launch local Microservice kernel server.
             KernelServerImpl.main(kernelArgs);
         }
         catch (Exception e) {
@@ -71,14 +69,14 @@ public class SapphireAccess
                 MicroServiceSpec spec =
                         MicroServiceSpec.newBuilder()
                                 .setLang(Language.java)
-                                .setJavaClassName(AlprSapphire.class.getName())
+                                .setJavaClassName(AlprMicroService.class.getName())
                                 .addDMSpec(
                                         DMSpec.newBuilder()
                                                 .setName(ExplicitMigrationPolicy.class.getName())
                                                 .create())
                                 .create();
                 MicroServiceID microServiceId = server.create(spec.toString());
-                lr = (AlprSapphire) server.acquireStub(microServiceId);
+                lr = (AlprMicroService) server.acquireStub(microServiceId);
             }catch (Exception e){
                 e.printStackTrace();
             }
