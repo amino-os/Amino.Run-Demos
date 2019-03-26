@@ -205,7 +205,7 @@ public class BoardView extends View {
 	/**
 	 * getsParameters While moving fingers
 	 * @param startPoint
-	 * @param endPoint
+	 * @param movePoint
 	 */
 	public void getMovePoint(Point startPoint, Point movePoint)
 	{

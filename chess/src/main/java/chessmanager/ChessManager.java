@@ -19,7 +19,7 @@ public class ChessManager implements MicroService {
 
     private SimpleEngine simpleEngine;
 
-    public ChessManager() {
+    public ChessManager() throws MicroServiceCreationException {
         MicroServiceSpec simpleEngineSpec;
         simpleEngineSpec = MicroServiceSpec.newBuilder()
                 .setLang(Language.java)
@@ -29,11 +29,7 @@ public class ChessManager implements MicroService {
                                 .setName(ExplicitMigrationPolicy.class.getName())
                                 .create())
                 .create();
-        try {
-            simpleEngine = (SimpleEngine) new_(simpleEngineSpec);
-        } catch (MicroServiceCreationException e) {
-            e.printStackTrace();
-        }
+        simpleEngine = (SimpleEngine) new_(simpleEngineSpec);
     }
 
     public SimpleEngine getSimpleEngine() { return simpleEngine; }
