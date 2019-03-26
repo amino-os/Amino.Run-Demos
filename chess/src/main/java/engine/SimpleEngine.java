@@ -66,7 +66,7 @@ public class SimpleEngine implements ChessEngine, MicroService, ExplicitMigrator
 
 	@Override
 	public void migrateTo(InetSocketAddress serverInfo) throws MigrationException {
-		logger.info("Object has been migrated to kernel server with  "+serverInfo.getHostName()+" : "+serverInfo.getPort());
+		logger.info("Object has been migrated to kernel server with  " + serverInfo.getHostName() + " : " + serverInfo.getPort());
 	}
 
 	/* (non-Javadoc)
