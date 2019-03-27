@@ -19,13 +19,13 @@ import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrator;
 
 /**
- * Open ALPR Sapphire wrapper.
+ * Open ALPR Microservice wrapper.
  */
-public class AlprSapphire implements MicroService, ExplicitMigrator {
+public class AlprMicroService implements MicroService, ExplicitMigrator {
 
     private HashMap<String, Integer> licensePlatesMap = new HashMap<> ();
 
-    public AlprSapphire() {}
+    public AlprMicroService() {}
 
     /**
      * Migrate object from device to cloud.

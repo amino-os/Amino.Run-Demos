@@ -29,7 +29,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import org.openalpr.Constants;
-import org.openalpr.SapphireAccess;
+import org.openalpr.MicroServiceAccess;
 import org.openalpr.model.Result;
 import org.openalpr.Results;
 import org.openalpr.util.Utils;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText omsEditText;
     private ImageView imageView;
     private long resizeElapsedTime;
-    SapphireAccess sa = null;
+    MicroServiceAccess sa = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
         omsEditText = (EditText) findViewById(R.id.editText_OMS_address);
 
         if (sa == null) {
-            sa = new SapphireAccess();
+            sa = new MicroServiceAccess();
         }
         // Below is to execute kernel server on the device.
         // Android limits network call to async operation in Main activity.
-        new OpenAlprSapphireInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new OpenAlprMicroServiceInit(sa).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         Utils.copyAssetFolder(MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
         infoTextView.setText(infoTextStr);
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                             Utils.copyAssetFolder
                                     (MainActivity.this.getAssets(), "runtime_data", ANDROID_DATA_DIR + File.separatorChar + "runtime_data");
 
-                            results = new OpenAlprSapphire(
+                            results = new OpenAlprMicroService(
                                     ANDROID_DATA_DIR, "us", "", imageFilePath, Configuration.WhereToProcess, sa)
                                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
@@ -218,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
                                         String textToShow = "";
                                         textToShow += "Total processing time: " + String.format("%.2f", ((elapsedTime/1000.0)%60)) + " seconds\n";
                                         textToShow += "Image resize time: " + String.format("%.2f", ((resizeElapsedTime/1000.0)%60)) + " seconds\n";
-                                        textToShow += "File upload time: " + String.format("%.2f", ((SapphireAccess.fileUploadTime/1000.0)%60)) + " seconds\n";
-                                        textToShow += "Processing algorithm run time: " + String.format("%.2f", ((SapphireAccess.processingTime/1000.0)%60)) + " seconds\n";
+                                        textToShow += "File upload time: " + String.format("%.2f", ((MicroServiceAccess.fileUploadTime/1000.0)%60)) + " seconds\n";
+                                        textToShow += "Processing algorithm run time: " + String.format("%.2f", ((MicroServiceAccess.processingTime/1000.0)%60)) + " seconds\n";
                                         textToShow += "Number of plates found: " + finalResults.getResults().size() +"\n\n";
 
                                         for (Result result : finalResults.getResults()) {
