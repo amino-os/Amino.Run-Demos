@@ -61,17 +61,13 @@ subprojects {
     dependencies {
         compile 'com.huawei.paas:sapphire-core:1.0.0'
         compile 'com.google.code.gson:gson:2.5'
-    }
-
-    task copyClasses(type: Copy) {
-        from "$projectDir.parent/build/intermediates/classes/debug/"
-        into 'build/classes/java/main/'
+        compile 'com.google.android:android:4.0.1.2'
     }
 
     // Task for Stub generation
     task genStubs(type: JavaExec) {
         main = "amino.run.compiler.StubGenerator"
-        classpath = sourceSets.main.runtimeClasspath
+        classpath = sourceSets.main.runtimeClasspath + files("$project.parent.buildDir/intermediates/classes/debug/")
         def pkgName = 'org.openalpr'
         def src = "$projectDir.parent/build/intermediates/classes/debug/org/openalpr/"
         def dst = "$projectDir.parent/src/main/java/org/openalpr/stubs/"
@@ -80,15 +76,27 @@ subprojects {
     }
 
     // Task for Stub compilation
-      task compileStubs(type: JavaCompile) {
-          source = sourceSets.main.java.srcDirs
-          classpath = sourceSets.main.compileClasspath
-          destinationDir = sourceSets.main.output.classesDir
-          options.incremental = true
+    task compileStubsDebug(type: JavaCompile) {
+        source = files("$projectDir.parent/src/main/java")
+        destinationDir = file("$project.parent.buildDir/intermediates/classes/debug/")
+        classpath = sourceSets.main.runtimeClasspath + files("$project.parent.buildDir/intermediates/classes/debug/")
+        options.incremental = true
       }
 
-    genStubs.dependsOn copyClasses
-    compileStubs.dependsOn genStubs
+    // Task for Stub compilation
+    task compileStubsRelease(type: JavaCompile) {
+        source = files("$projectDir.parent/src/main/java")
+        destinationDir = file("$project.parent.buildDir/intermediates/classes/release/")
+        classpath = sourceSets.main.runtimeClasspath + files("$project.parent.buildDir/intermediates/classes/release/")
+        options.incremental = true
+    }
+
+    compileStubsDebug.dependsOn genStubs
+    compileStubsRelease.dependsOn compileStubsDebug
 }
 
-build.finalizedBy(subprojects.compileStubs)
+build.finalizedBy(subprojects.compileStubsRelease)
+
+clean {
+    delete subprojects.genStubs.outputs.files
+}
