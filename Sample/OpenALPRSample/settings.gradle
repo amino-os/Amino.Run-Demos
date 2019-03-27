@@ -1,2 +1,4 @@
 include ':app', ':OpenALPR'
+include ':OpenALPR:subprojects'
 project(':OpenALPR').projectDir = new File('../../app')
+project(':OpenALPR:subprojects').projectDir = new File('../../app/subprojects')
