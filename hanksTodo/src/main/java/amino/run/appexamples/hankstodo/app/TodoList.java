@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import amino.run.app.MicroService;
 
 public class TodoList implements MicroService {
+    private static final Logger logger = Logger.getLogger(TodoList.class.getName());
     HashMap<String, String> toDos;
     String id = "0";
 
@@ -24,7 +26,7 @@ public class TodoList implements MicroService {
      * @return
      */
     public String addToDo(String subject, String content) {
-        System.out.println("TodoList>> subject: " + subject + " addToDo: " + content);
+        logger.info("TodoList>> subject: " + subject + " addToDo: " + content);
         String oldContent = toDos.get(subject);
         oldContent = (oldContent == null) ? "" : oldContent + ", ";
         String newContent = oldContent + content;
@@ -61,7 +63,7 @@ public class TodoList implements MicroService {
         } else {
             toDos.put(subject, "");
         }
-        System.out.println("ToDo item removed.");
+        logger.info("TodoList>> subject: " + subject + " removeToDo: " + content);
     }
 
     /**
