@@ -16,14 +16,22 @@ import amino.run.app.Registry;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
+import java.util.logging.Logger;
 
 public class DemoAppStart {
+    private static final Logger logger = Logger.getLogger(DemoAppStart.class.getName());
 
     public static void main(String[] args) throws IOException, InterruptedException {
         String frame, resp;
         java.rmi.registry.Registry registry;
         String sourceType = args[5]; // "camera": for onboard camera, "video": for video file
-        FrameGenerator frameGenerator = new FrameGenerator(sourceType);
+        FrameGenerator frameGenerator = null;
+        if ( sourceType.equalsIgnoreCase("camera") || sourceType.equalsIgnoreCase("video") ) {
+            frameGenerator = new FrameGenerator(sourceType);
+        } else {
+            logger.severe("Incorrect source specified, use either \"camera\" or \"video\"");
+            return;
+        }
 
         try {
 
@@ -43,14 +51,12 @@ public class DemoAppStart {
 
                     int i = 0;
                     while ((frame = frameGenerator.getFrame()) != null) {
-                        // System.out.println("frame from generator: " + frame);
                         /* ignore first few frames to allow for camera warm up */
                         if (i < 3) {
                             i++;
                             continue;
                         }
                         resp = detect.processFrame(frame);
-                        // System.out.println("response from detection: " + resp);
                     }
                 }
                 else if (args[4].equalsIgnoreCase("tracking")) {
@@ -69,7 +75,6 @@ public class DemoAppStart {
 
                     int i = 0;
                     while ((frame = frameGenerator.getFrame()) != null) {
-                        // System.out.println("frame from generator: " + frame);
                         /* ignore first few frames to allow for camera warm up */
                         if (i < 3) {
                             i++;
@@ -78,18 +83,17 @@ public class DemoAppStart {
                         track.processFrame(frame);
                     }
                 }
-                else System.err.println("Incorrect input: please input oms_ip, oms_port, kernel_android_ip, " +
-                                        "kernel_server_port, detection/tracking, camera/video, display/file");
+                else {
+                    logger.severe("Incorrect input: please input oms_ip, oms_port, kernel_android_ip, " +
+                            "kernel_server_port, detection/tracking, camera/video, display/file");
+                }
             } else {
-                System.err.println("Incorrect input: please input oms_ip, oms_port, kernel_android_ip, " +
+                logger.severe("Incorrect input: please input oms_ip, oms_port, kernel_android_ip, " +
                         "kernel_server_port, detection/tracking, camera/video, display/file");
             }
-
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 }
