@@ -1,14 +1,29 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+        
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
 apply plugin: 'com.android.application'
-//apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
 
     defaultConfig {
         applicationId "com.sandro.openalprsample"
-        minSdkVersion 22
-        targetSdkVersion 23
+        minSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.1.2"
     }
@@ -38,28 +53,14 @@ android {
 
 repositories {
     mavenCentral()
+    google()
     maven { url  "https://dl.bintray.com/terryzhuo/DCAP" }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':OpenALPR')
+    compile project(':openALPR')
     compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'com.github.pcj:google-options:1.0.0'
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'org.yaml:snakeyaml:1.21'
 }
-//
-//task deleteJar(type: Delete) {
-//    delete 'libs/openalpr.jar'
-//}
-
-task createJar(type: Copy) {
-    from('app/build/intermediates/bundles/debug/')
-//    into('libs/jars/')
-    include('classes.jar')
-    rename('classes.jar', 'openalpr.jar')
-}
-
-//createJar.dependsOn(deleteJar, build)
