@@ -1,0 +1,85 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        /**
+         * Be careful at upgrading to higher version of gradle (e.g., > 3.0):
+         * Compilation may work but application will have error when executed due to AAPT2 exception.
+         * Disabling AAPT2 will hide an issue with AAPT2 and may cause to stop unit tests to work.
+         * Please update only after either the issue is fixed on Android side or fix the bug in the project for AAPT2.
+         * https://issuetracker.google.com/issues/38454212
+         * https://github.com/requery/requery/issues/467
+         */
+        classpath 'com.android.tools.build:gradle:3.3.1'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        google()
+        maven { url  "https://dl.bintray.com/terryzhuo/Amino" }
+    }
+}
+
+subprojects {
+    if (getPath().contains(':subprojects')) {
+        apply plugin: 'java-library'
+
+        dependencies {
+            implementation 'com.amino-os.run:amino-run-core:1.0.0.RC6'
+        }
+
+        task copyClasses(type: Copy) {
+            from "$projectDir.parent/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/"
+            into 'build/classes/java/main/'
+        }
+
+        // Task for Stub generation
+        task genStubs(type: JavaExec) {
+            classpath = sourceSets.main.runtimeClasspath
+            mustRunAfter compileJava
+            dependsOn copyClasses
+            main = "amino.run.compiler.StubGenerator"
+        }
+
+        // Task for Stub compilation
+        task compileStubs(type: JavaCompile) {
+            dependsOn genStubs
+            source = sourceSets.main.java.srcDirs
+            classpath = sourceSets.main.compileClasspath
+            destinationDir = sourceSets.main.output.classesDir
+            options.incremental = true
+        }
+        jar.dependsOn compileStubs
+
+        def common = {
+            def projectCh = this.parent.getProperties().getAt("buildDir")
+            classpath = sourceSets.main.runtimeClasspath + files("$projectCh/intermediates/javac/debug/compileDebugJavaWithJavac/classes/")
+            args project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
+        }
+
+        // Run OMS
+        task runoms(type: JavaExec) {
+            configure common
+            main = 'amino.run.oms.OMSServerImpl'
+        }
+
+        // Run a kernel server
+        task runks(type: JavaExec) {
+            configure common
+            main = 'amino.run.kernel.server.KernelServerImpl'
+            args project.property('kernelServerIpFlag'), project.property('kernelServer1Ip'), project.property('kernelServerPortFlag'), project.property('kernelServer1Port')
+        }
+
+        // Run a second kernel server
+        task runks2(type: JavaExec) {
+            configure common
+            main = 'amino.run.kernel.server.KernelServerImpl'
+            args project.property('kernelServerIpFlag'), project.property('kernelServer2Ip'), project.property('kernelServerPortFlag'), project.property('kernelServer2Port')
+        }
+    }
+}
