@@ -57,8 +57,7 @@ subprojects {
         jar.dependsOn compileStubs
 
         def common = {
-            def projectCh = this.parent.getProperties().getAt("buildDir")
-            classpath = sourceSets.main.runtimeClasspath + files("$projectCh/intermediates/javac/debug/compileDebugJavaWithJavac/classes/")
+            classpath = sourceSets.main.runtimeClasspath
             args project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
         }
 
