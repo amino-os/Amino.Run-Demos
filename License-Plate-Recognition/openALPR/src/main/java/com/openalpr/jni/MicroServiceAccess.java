@@ -1,8 +1,10 @@
-package org.openalpr;
+package com.openalpr.jni;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.InetSocketAddress;
 import java.rmi.registry.LocateRegistry;
+import java.util.logging.Logger;
 
 import amino.run.app.DMSpec;
 import amino.run.app.Registry;
@@ -10,6 +12,7 @@ import amino.run.app.Registry;
 import amino.run.app.Language;
 import amino.run.app.MicroServiceSpec;
 import amino.run.common.MicroServiceID;
+import amino.run.kernel.server.KernelServer;
 import amino.run.kernel.server.KernelServerImpl;
 import amino.run.oms.OMSServerImpl;
 import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
@@ -17,6 +20,7 @@ import amino.run.policy.mobility.explicitmigration.ExplicitMigrationPolicy;
 
 public class MicroServiceAccess
 {
+    private static final Logger logger = Logger.getLogger(MicroServiceAccess.class.getName());
     public AlprMicroService lr;
     public static long fileUploadTime; // file upload time.
     public static long processingTime; // image recognition processing time.
@@ -39,7 +43,9 @@ public class MicroServiceAccess
             };
 
             // Launch local Microservice kernel server.
-            KernelServerImpl.main(kernelArgs);
+            //TODO: Once running on device works, this can be replaced with
+            // KernelServerImpl.main(kernelArgs);
+            KernelServer nodeServer = new KernelServerImpl(new InetSocketAddress(kernelArgs[1], Integer.parseInt(kernelArgs[3])), new InetSocketAddress(kernelArgs[5], Integer.parseInt(kernelArgs[7])));
         }
         catch (Exception e) {
             // TODO Auto-generated catch block
@@ -59,6 +65,12 @@ public class MicroServiceAccess
      */
     public Results getResult(String ANDROID_DATA_DIR, String countryCode, String region, String imageFilePath, Configuration.ProcessEntity processEntity) {
         Results results = null;
+
+        //TODO: Running on the device should be supported
+        if(processEntity == Configuration.ProcessEntity.DEVICE) {
+            logger.warning("Currently device is not supported. Please select SERVER");
+            return null;
+        }
 
         if (previousEntity == Configuration.ProcessEntity.UNDECIDED || lr == null) {
             try {

@@ -29,11 +29,11 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import org.openalpr.Constants;
-import org.openalpr.MicroServiceAccess;
-import org.openalpr.model.Result;
-import org.openalpr.Results;
-import org.openalpr.util.Utils;
+import com.openalpr.jni.Constants;
+import com.openalpr.jni.MicroServiceAccess;
+import com.openalpr.jni.model.Result;
+import com.openalpr.jni.Results;
+import com.openalpr.jni.util.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.openalpr.Configuration;
+import com.openalpr.jni.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
