@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,30 +17,34 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.sandro.openalprsample"
-        minSdkVersion 24
-        targetSdkVersion 27
+        minSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.1.2"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     dexOptions {
         preDexLibraries = false
         additionalParameters = ["--core-library"]
     }
+
     lintOptions{
         disable 'MissingTranslation'
         abortOnError false
     }
+
     splits {
         abi {
             enable true
@@ -49,18 +53,24 @@ android {
             universalApk true
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {
     mavenCentral()
+    jcenter()
     google()
-    maven { url  "https://dl.bintray.com/terryzhuo/DCAP" }
+    maven { url  "https://dl.bintray.com/terryzhuo/Amino" }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':openALPR')
-    compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':openALPR')
+    implementation 'com.amino-os.run:amino-run-core:1.0.0.RC6'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }

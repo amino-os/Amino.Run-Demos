@@ -23,9 +23,9 @@ public class Configuration {
 
     public enum ProcessEntity { DEVICE, SERVER, UNDECIDED };
 
-    public static String[] natOmsAddress = { "100.64.40.111", "22346" };
-    public static String[] natServerKernelAddress = { "100.64.40.111", "22343" };
-    public static String[] natDeviceKernelAddress = { "100.64.40.111", "22345" };
+    public static String[] natOmsAddress = { "127.0.0.1", "22346" };
+    public static String[] natServerKernelAddress = { "127.0.0.1", "22343" };
+    public static String[] natDeviceKernelAddress = { "127.0.0.1", "22345" };
 
     public static InetSocketAddress getNatServerKernelAddress() {
         return new InetSocketAddress(natServerKernelAddress[0], Integer.parseInt(natServerKernelAddress[1]));
