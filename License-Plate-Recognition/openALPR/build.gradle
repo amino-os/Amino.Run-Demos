@@ -1,18 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.SandroMachado'
-
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0.1"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -26,14 +25,16 @@ android {
 }
 
 repositories {
+    jcenter()
+    google()
     mavenCentral()
-    maven { url "https://dl.bintray.com/terryzhuo/DCAP" }
+    maven { url  "https://dl.bintray.com/terryzhuo/Amino" }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.huawei.paas:sapphire-core:1.0.0'
-    compile 'com.google.code.gson:gson:2.5'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.amino-os.run:amino-run-core:1.0.0.RC6'
+    implementation 'com.google.code.gson:gson:2.5'
 }
 
 subprojects {
@@ -41,14 +42,15 @@ subprojects {
 
     repositories {
         jcenter()
-        maven { url "https://dl.bintray.com/terryzhuo/DCAP" }
+        google()
+        maven { url  "https://dl.bintray.com/terryzhuo/Amino" }
     }
 
     dependencies {
-        compile 'com.huawei.paas:sapphire-core:1.0.0'
-        compile 'com.google.code.gson:gson:2.5'
-        compile 'com.google.android:android:4.0.1.2'
-        compile files("$project.parent.buildDir/intermediates/classes/debug/")
+        implementation 'com.amino-os.run:amino-run-core:1.0.0.RC6'
+        implementation 'com.google.code.gson:gson:2.5'
+        implementation 'com.google.android:android:4.0.1.2'
+        implementation files("$project.parent.buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes/")
     }
 
     // Task for Stub generation
@@ -60,7 +62,7 @@ subprojects {
         main = "amino.run.compiler.StubGenerator"
         classpath = sourceSets.main.runtimeClasspath
         def pkgName = 'com.openalpr.jni'
-        def src = "$projectDir.parent/build/intermediates/classes/debug/com/openalpr/jni"
+        def src = "$projectDir.parent/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/openalpr/jni/"
         def dst = "$projectDir.parent/src/main/java/com/openalpr/jni/stubs/"
         args src, pkgName, dst
         outputs.dir dst
@@ -68,40 +70,36 @@ subprojects {
 
     // Task for Stub compilation
     task compileStubsDebug(type: JavaCompile) {
+        dependsOn genStubs
         source = files("$projectDir.parent/src/main/java")
-        destinationDir = file("$project.parent.buildDir/intermediates/classes/debug/")
+        destinationDir = file("$project.parent.buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes/")
         classpath = sourceSets.main.runtimeClasspath
         options.incremental = true
       }
 
     // Task for Stub compilation
     task compileStubsRelease(type: JavaCompile) {
+        dependsOn compileStubsDebug
         source = files("$projectDir.parent/src/main/java")
-        destinationDir = file("$project.parent.buildDir/intermediates/classes/release/")
+        destinationDir = file("$project.parent.buildDir/intermediates/javac/release/compileReleaseJavaWithJavac/classes/")
         classpath = sourceSets.main.runtimeClasspath
         options.incremental = true
     }
 
     task runoms(type: JavaExec) {
-        def projectOpenALPR = project(":openALPR").getProperties().getAt("buildDir")
-        classpath = sourceSets.main.runtimeClasspath + files("$projectOpenALPR/intermediates/classes/debug/")
+        classpath = sourceSets.main.runtimeClasspath
         main = 'amino.run.oms.OMSServerImpl'
         args project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort')
     }
 
     task runks(type: JavaExec) {
-        def projectOpenALPR = project(":openALPR").getProperties().getAt("buildDir")
-        classpath = sourceSets.main.runtimeClasspath + files("$projectOpenALPR/intermediates/classes/debug/")
+        classpath = sourceSets.main.runtimeClasspath
         main = 'amino.run.kernel.server.KernelServerImpl'
         args project.property('kernelServerIpFlag'), project.property('kernelServerIp'), project.property('kernelServerPortFlag'), project.property('kernelServerPort'),
                 project.property('omsIpFlag'), project.property('omsIp'), project.property('omsPortFlag'), project.property('omsPort'), project.property('labelsFlag'),
                 project.property('regionFlag')+project.property('regionValue')
     }
-
-    compileStubsDebug.dependsOn genStubs
-    compileStubsRelease.dependsOn compileStubsDebug
 }
-
 build.finalizedBy(subprojects.compileStubsRelease)
 
 clean {
