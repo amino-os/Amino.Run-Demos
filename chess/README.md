@@ -5,12 +5,12 @@ The chess app is an android board game in which the user competes against the sy
 
 ### Amino MicroServices
 1. **ChessManager** :
-    This class implements the MicroService and makes use of the Default Deployment Manager(DM).
+    This class implements the microservice and makes use of the Default Deployment Manager(DM).
 
 2. **SimpleEngine** :
-    Second class in the app to implement the Microservice and makes use of the ExplicitMigration DM.
+    This class implements the microservice and makes use of the ExplicitMigration DM. Upon every 5<sup>th</sup> move by the user, the microservice migrates to the other kernelServer.
 
-### Local Deployment
+## Local Deployment
 
 ### Add Android Properties
 This can be done in two ways:
@@ -22,7 +22,7 @@ Alternatively,
 
 2. **From the command prompt**:
 ```shell
-    $ cd DCAP-Sapphire-Examples/hanksTodo/
+    $ cd Amino.Run-Demos/chess/
     > cat >> local.properties  << EOF
     ndk.dir=<your ndk dir>
     sdk.dir=<your sdk dir>
@@ -33,47 +33,50 @@ Alternatively,
 Start by building the app, this ensures the generation of the required stubs.
 ```
 
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew build
 ```
 ### Environment Setup
-1. Replace the below ip addresses with the ip address of oms and kernelServers respectively:
+1. Replace the below ip addresses and ports with that of oms and kernelServers respectively:
 
-    DCAP-Sapphire-Examples/**gradle.properties** 
+    Amino.Run-Demos/**gradle.properties** 
     ```
     omsIp = 127.0.0.1
     kernelServer1Ip = 127.0.0.1
     kernelServer2Ip = 127.0.0.1
+    omsPort=22346
+    kernelServer1Port=22345
+    kernelServer2Port=22344
     ```
     
-2.  Replace the first argument passed to the hostAddress with the ```omsIp``` address:
+2.  Replace the first and second argument passed to the **hostAddress** with the ```omsIp``` and ```omsPort``` respectively:
 
-    DCAP-Sapphire-Examples/hanksTodo/src/main/java/amino/run/appexamples/hankstodo/glue/**Configuration.java**
+    Amino.Run-Demos/chess/src/main/java/kobi/chess/**Configuration.java**
     ```
     public static String[] hostAddress = { "127.0.0.1", "22346", "10.0.2.15", "22345" };
     ```
-    The third argument above in the hostAddress is your device ip address.
+    The third and fourth argument above in the hostAddress are your device kernelServer ip and port respectively.
     
-    Also, replace the first and third argument passed to the kernelServerAddress with the ```kernelServer1Ip``` and ```kernelServer2Ip``` respectively:
+    Replace the arguments passed to the **kernelServerAddress** with ```kernelServer1Ip```, ```kernelServer1Port```, ```kernelServer2Ip``` and ```kernelServer2Port``` respectively:
     ```
     public static String[] kernelServerAddress = { "127.0.0.1", "22345", "127.0.0.1", "22344" };
     ```
 
 ### Run OMS
 ```
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew chess:subprojects:runoms
 ```
 
 ### Run KernelServer
 ```
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew chess:subprojects:runks
 ```
 
-### Run a second KernelServer
+### Run Second KernelServer
 ```
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew chess:subprojects:runks2
 ```
 

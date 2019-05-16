@@ -5,10 +5,10 @@ The hanksTodo app allows users to create multiple todo lists. Users can maintain
 
 ### Amino MicroServices
 1. **TodoListManager** :
-    Second class in the app to implement the Microservice and makes use of the Default Deployment Manager(DM).
+    This class implements the microservice and makes use of the Default Deployment Manager(DM).
     
 2. **TodoList** :
-    This class implements the MicroService and makes use of multi-DM. The combination of DMs used is DHT and ConsensusRSM.
+    This class implements the microservice and uses the combination of DHT and ConsensusRSM DMs.
 
 
 ## Local Deployment
@@ -23,7 +23,7 @@ Alternatively,
 
 2. **From the command prompt**:
 ```shell
-    $ cd DCAP-Sapphire-Examples/hanksTodo/
+    $ cd Amino.Run-Demos/hanksTodo/
     > cat >> local.properties  << EOF
     ndk.dir=<your ndk dir>
     sdk.dir=<your sdk dir>
@@ -34,35 +34,37 @@ Alternatively,
 Start by building the app, this ensures the generation of the required stubs.
 ```
 
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew build
 ```
 ### Environment Setup
-1. Replace the below ip addresses with the ip address of oms and kernelServer respectively:
+1. Replace the below ip addresses and ports with that of oms and kernelServer respectively:
 
-    DCAP-Sapphire-Examples/**gradle.properties** 
+    Amino.Run-Demos/**gradle.properties** 
     ```
     omsIp = 127.0.0.1
     kernelServer1Ip = 127.0.0.1
+    omsPort=22346
+    kernelServer1Port=22345
     ```
     
-2.  Replace the first argument passed to the hostAddress with the ```omsIp``` address:
+2.  Replace the first and second argument passed to the **hostAddress** with the ```omsIp``` and ```omsPort``` respectively:
 
-    DCAP-Sapphire-Examples/hanksTodo/src/main/java/amino/run/appexamples/hankstodo/glue/**Configuration.java**
+    Amino.Run-Demos/hanksTodo/src/main/java/amino/run/appexamples/hankstodo/glue/**Configuration.java**
     ```
     public static String [] hostAddress = { "127.0.0.1", "22346", "10.0.2.15", "22345" };
     ```
-    The third argument above in the hostAddress is your device ip address.
+    The third and fourth argument above in the hostAddress are your device kernelServer ip and port respectively.
 
 ### Run OMS
 ```
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew hankTodo:subprojects:runoms
 ```
 
 ### Run KernelServer
 ```
-$ cd DCAP-Sapphire-Examples/
+$ cd Amino.Run-Demos/
 $ ./gradlew hanksTodo:subprojects:runks
 ```
 
