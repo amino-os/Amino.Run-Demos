@@ -10,8 +10,8 @@ For more information about Amino.Run please visit [Amino.Run](https://github.com
 
 Below are the sample demos of Amino.Run
 
-1. [Face Recognition App](face-recognition-demo/README.md)
-2. [Chess Android App](chess/README.md)
-3. [Hanks-Todo Android App](hanksTodo/README.md)
-4. [Minnie-Twitter Android App](minnieTwitter/README.md)
-5. [License Plate Recognition Android App](License-Plate-Recognition/README.md)
+1. [Face Recognition App](face-recognition-demo/)
+2. [Chess Android App](chess/)
+3. [Hanks-Todo Android App](hanksTodo/)
+4. [Minnie-Twitter Android App](minnieTwitter/)
+5. [License Plate Recognition Android App](License-Plate-Recognition/)
