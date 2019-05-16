@@ -8,22 +8,21 @@ Registered users can tweet and view their tweet history in timeline.
 ### Amino MicroServices
 
 1. **TagManager:**
-    Manages the tags for tweets which involves adding the tags for tweets
-    and getting the tweets by passing the tags. This is using default DM.
+    Manages the tags for tweets which involves adding the tags for tweets,
+    getting the tweets by passing the tags and makes use of the Default Deployment Manager(DM).
 
 2. **UserManager:**
-    This micro service is responsible for user addition, deletion and getting the user.
-    It will verify the user authentication. This is using AtLeastOnceRPCPolicy DM.
+    This microservice is responsible for user addition, deletion, user lookup and makes use of the AtLeastOnceRPC
+    Deployment Manager(DM).
 
 3. **TwitterManager:**
-   Helps to get Tagmanager and UserManager. This is using default DM.
+   Manages the TagManager, UserManager and makes use of the Default Deployment Manager(DM).
 
 4. **Timeline:**
-    Helps user to tweet and view the tweets. This is using AtLeastOnceRPCPolicy DM.
+    Helps User to tweet, view the tweets and makes use of the AtLeastOnceRPC Deployment Manager(DM).
 
 5. **User:**
-   It contains the user information like user name, password and timeline.
-   This is using default DM.
+   It contains the user information like user name, password, timeline and makes use of the Default Deployment Manager(DM).
 
 ## Local deployment
 
@@ -56,21 +55,23 @@ $ cd Amino.Run-Demos/
 $ ./gradlew build
 ```
 ### Environment Setup
-1. Replace the below ip addresses with the ip address of oms and kernelServer respectively:
+1. Replace the below ip addresses and ports with that of oms and kernelServers respectively:
 
     File path: Amino.Run-Demos/**gradle.properties**
     ```
     omsIp = 127.0.0.1
     kernelServer1Ip = 127.0.0.1
+    omsPort=22346
+    kernelServer1Port=22345
     ```
 
-2.  Replace the first argument passed to the hostAddress with the ```omsIp``` address:
+2.  Replace the first and second argument passed to the **hostAddress** with the ```omsIp``` and ```omsPort``` respectively:
 
     File path: Amino.Run-Demos/minnieTwitter/src/main/java/amino/run/appexamples/minnietwitter/glue/**Configuration.java**
     ```
     public static String [] hostAddress = { "127.0.0.1", "22346", "10.0.2.15", "22345" };
     ```
-    The third argument above in the hostAddress is your device ip address.
+    The third and fourth argument above in the hostAddress are your device kernelServer ip and port respectively.
 
 ### Run OMS
 ```
