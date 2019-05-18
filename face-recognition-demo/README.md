@@ -36,19 +36,27 @@ or displayed in a window as a live stream.
 Python Version - 3.5+
 OpenCV and OpenCVContrib Versions - 3.4+
 ```
-**Note:** 
-- OpenCV and OpenCVContrib versions should be the same. Tested with python version 3.5.2 and openCV version 3.4.2 .
+**Note:**
+- We have tested this demo on Ubuntu 16.04, using OpenCV version 3.4.2 and Python version 3.5.2 .
+- OpenCV and OpenCVContrib versions should be the same.
 - The python path needs to be changed as per the environment setup.
 
-#### Environment Setup (Host System)
-Information on setting up OpenCV and Python bindings on Ubuntu can be found 
-[here](https://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/). Information to setup 
-`face_recognition`, `dlib` and some related helper modules used in this demo can be found
-[here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/). Make sure to 
-use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
+#### Environment Setup (Host System)  
+1. Steps to setup `OpenCV` and `Python` bindings on:  
+ - [**Ubuntu 16.04**](https://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv/)  
+ - [**Ubuntu 18.04**](https://www.pyimagesearch.com/2018/05/28/ubuntu-18-04-how-to-install-opencv/)
 
+2. Information on setting up `dlib`, `face_recognition` and `imutils` used in this demo can be found
+[here](https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/).   
+Make sure to use appropriate cmake flags to enable multicore/GPU optimizations to improve performance if you need them.
+
+3. Install `imageio`: 
+    ```
+    $ workon <your env name here> # optional
+    $ pip install imageio
+    ```   
 - Make sure to use OpenCV version 3.4.2 and OpenCVContrib version 3.4.2 in installation.
-- Run kernel server and application in OpenCV virtual environment. Use ```workon <virtual_environment_name>``` command to
+- Run kernel server and application in OpenCV virtual environment. Use ```workon <your env name here>``` command to
   enable OpenCV virtual environment.
 
 #### Environment Setup (Containerized Environment)
